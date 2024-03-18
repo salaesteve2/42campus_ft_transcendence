@@ -12,6 +12,8 @@ services:
       - ./.env.dev
     depends_on:
       - db
+    environment:
+      - ./.env.dev
   db:
     image: postgres:15.1
     volumes:
