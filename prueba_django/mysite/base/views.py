@@ -67,8 +67,8 @@ def user_api(request):
     authorization_code = url_obj.query.split("=")[1] if "code" in url_obj.query else None
 
     # Parámetros necesarios para la solicitud POST
-    client_id = 'u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657'
-    client_secret = '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'
+    client_id = os.getenv('ID')
+    client_secret = os.getenv('SECRET')
     code =  authorization_code
     redirect_uri = 'http://localhost:443/api'  # Tu URL de redirección
 
@@ -101,7 +101,7 @@ def user_api(request):
                 # Muestra el nombre de usuario
                 print(f"Nombre de usuario: {username}")
                 if not User.objects.filter(username=username).exists():
-                    usuario = User.objects.create_user(username=username, email='correo@ejemplo.com', password=token)
+                    usuario = User.objects.create_user(username=username, email='', password=token)
                     usuario.save()
                 user = authenticate(request, username=username, password=token)
                 if user:
