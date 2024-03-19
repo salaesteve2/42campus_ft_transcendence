@@ -70,7 +70,7 @@ def user_api(request):
     client_id = os.getenv('ID')
     client_secret = os.getenv('SECRET')
     code =  authorization_code
-    redirect_uri = 'http://localhost:443/api'  # Tu URL de redirección
+    redirect_uri = 'https://localhost/api'  # Tu URL de redirección
 
     if code:
         print(authorization_code)
