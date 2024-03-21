@@ -86,6 +86,12 @@ def user_api(request):
 
         print(response)
         if response.status_code == 200:
+
+
+            # 2Authentification
+
+
+
             token = response.json().get('access_token')
 
             headers = {
