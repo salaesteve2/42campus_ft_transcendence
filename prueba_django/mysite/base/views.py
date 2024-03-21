@@ -38,8 +38,8 @@ def home(request):
         #print(proximosTorneos)
         #print(jugar)
     context = { 'jugar': jugar, 
-                      'proximosTorneos': proximosTorneos, 
-                      'hayProximosTorneos': hayProximosTorneos }
+                    'proximosTorneos': proximosTorneos, 
+                    'hayProximosTorneos': hayProximosTorneos }
     return render(request, 'base/home_t.html', context)
 
 # signup page
@@ -63,7 +63,6 @@ def user_api(request):
     print("La URL actual es:", url)
     url_obj = requests.utils.urlparse(url)
 
-# Usa el método parse_qs para obtener el código de autorización
     authorization_code = url_obj.query.split("=")[1] if "code" in url_obj.query else None
 
     # Parámetros necesarios para la solicitud POST
@@ -100,6 +99,7 @@ def user_api(request):
                 username = response.json().get('login')
                 # Muestra el nombre de usuario
                 print(f"Nombre de usuario: {username}")
+                # Guarda nombre de usuario y en caso de existir te redirecciona a home
                 if not User.objects.filter(username=username).exists():
                     usuario = User.objects.create_user(username=username, email='', password=token)
                     usuario.save()
