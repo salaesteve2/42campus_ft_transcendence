@@ -76,13 +76,15 @@ table, th, td {
 }
 
 button {
-  padding: 15px;
+  padding: 15px 50px;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 50px;
   width: 180px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
 }
 
 button:hover {
