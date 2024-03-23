@@ -24,11 +24,14 @@ from torneos import views as to_views
 from partidos import views as pa_views
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     #path('admin/', admin.site.urls), # ya estaba
     path('', ba_views.home, name='home'),
     path('login', ba_views.user_login, name='login'),
+	path('setup_google_authenticator', ba_views.setup_google_authenticator, name='setup_google_authenticator'),
     path('api', ba_views.user_api, name='api'),
+	path('google_code', ba_views.google_code, name='google_code'),
     path('signup', ba_views.user_signup, name='signup'),
     path('logout', ba_views.user_logout, name='logout'),
     path('change_es', ba_views.change_es, name='es'),
