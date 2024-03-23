@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'two_factor',
+	'django_otp',
+    'django_otp.plugins.otp_totp',
 ]
 
 MIDDLEWARE = [
@@ -171,3 +174,8 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGIN_URL = 'two_factor:login'
+LOGIN_REDIRECT_URL = '/'
+TWO_FACTOR_AUTHENTICATION_BACKENDS = (
+    'two_factor.auth_backends.TwoFactorAuthBackend',
+)

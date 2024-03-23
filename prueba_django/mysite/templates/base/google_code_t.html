@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	{% load i18n %}
+<head>
+    <meta charset="UTF-8"/>
+	<!--<link rel="stylesheet" href="static/base.css">-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../../static/base.css">
+
+	<!-- href="static/base.css"/>-->
+	<link rel="icon" type="image/x-icon" href="static/favicon.ico">
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Entrar con Google Authenticator</title>
+</head>
+<body>
+    <form action="{% url 'setup_google_authenticator' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{username}}">
+        <label for="verification_code">Código de Verificación:</label><br>
+        <input type="text" id="verification_code" name="verification_code"><br>
+        <button type="submit">Enviar Código</button>
+    </form>
+    <button class="boton" onclick="mostrarImagen()">No tengo QR</button>
+
+<!-- Contenedor de la imagen -->
+<div id="contenedorImagen" style="display: none;">
+    <img id="imagen" src="" alt="Imagen">
+</div>
+
+<script>
+    var username = "{{ username }}";
+</script>
+
+<script>
+    function mostrarImagen() {
+        // Obtener el contenedor de la imagen
+        var contenedor = document.getElementById('contenedorImagen');
+        // Mostrar el contenedor
+        contenedor.style.display = 'block';
+        // Obtener la imagen
+        var imagen = document.getElementById('imagen');
+        // Establecer la ruta de la imagen que deseas mostrar
+        imagen.src = 'static/qrs/' + username + '_qr.png'; // Reemplaza 'ruta_de_la_imagen.jpg' por la ruta de tu imagen
+        console.log(imagen.src);
+    }
+</script>
+</body>
+</html>
