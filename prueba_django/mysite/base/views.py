@@ -5,17 +5,18 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import UserCreationForm, LoginForm
 from general.views import activate_language
 from torneos.views import torneo_jugar, proximos_torneos
-from django.http import HttpRequest
 import requests
 from django.contrib.auth.models import User
 import os
 
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django_otp import devices_for_user
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import pyotp
 import qrcode
+
+from django.conf import settings
+import jwt
+from datetime import datetime, timedelta
 
 def change_en(request):
     request.session['myLanguage'] = 'en'
@@ -73,6 +74,17 @@ def google_code(request):
 # Google Authenticator page
 def setup_google_authenticator(request):
     activate_language(request)
+    # Verificar si el usuario está autenticado
+    if 'token' in request.session:
+        token = request.session['token']
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+            user = User.objects.get(id=user_id)
+            print(user)
+        except jwt.ExpiredSignatureError:
+            print('Token expirado')
+            return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username')
         # Obtener el secreto del usuario
@@ -83,10 +95,7 @@ def setup_google_authenticator(request):
         totp = pyotp.TOTP(secreto)
         if totp.verify(codigo):
             login(request, User.objects.get(username=username))
-            return redirect('home')
-        else:
-            activate_language(request)
-            return redirect('home')
+        return redirect('home')
     else:
         return render(request, 'base/google_t.html')
 
@@ -134,6 +143,10 @@ def user_api(request):
                     # 2FA
                     secret = pyotp.random_base32()
                     qr_path = 'static/qrs/{}_qr.png'.format(username)
+                    # Generar token
+                    token = generate_jwt_token(user)
+                    request.session['token'] = token
+                    # Verificar si el usuario ya tiene un dispositivo TOTP
                     if not TOTPDevice.objects.filter(user=user).exists():
                         device = TOTPDevice.objects.create(user=User.objects.get(username=username))
                         device.key = secret
@@ -160,20 +173,33 @@ def user_login(request):
                 # 2FA
                 secret = pyotp.random_base32()
                 qr_path = 'static/qrs/{}_qr.png'.format(username)
+                # Generar token
+                token = generate_jwt_token(user)
+                request.session['token'] = token
+                # Si no existe el dispositivo, se crea
                 if not TOTPDevice.objects.filter(user=user).exists():
                     device = TOTPDevice.objects.create(user=User.objects.get(username=username))
                     device.key = secret
                     device.save()
                     otp_url = pyotp.totp.TOTP(secret).provisioning_uri(username, issuer_name='42')
+                    # Generar QR
                     qr = qrcode.make(otp_url)
                     qr.save(qr_path)
-                else:
-                    return render(request, 'base/google_code_t.html', {'username': username})
-                return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
+                    return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
+                return render(request, 'base/google_code_t.html', {'username': username})
+                
     else:
         form = LoginForm()
     # crear el html para editar o error en form
     return render(request, 'base/login_t.html', {'form': form})
+
+def generate_jwt_token(user):
+    payload = {
+        'user_id': user.id,
+        'exp': datetime.utcnow() + timedelta(hours=1)
+    }
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+    return token
 
 # logout page
 def user_logout(request):
