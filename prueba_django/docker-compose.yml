@@ -33,6 +33,10 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "email@trascendence.com"
       PGADMIN_DEFAULT_PASSWORD: "contra123"
-
+  solidity-dev:
+    build: ./block
+    volumes:
+    - ./block/contract_address.txt:/usr/src/app/block/address.txt
+    command: bash -c "./start.sh"
 volumes:
   postgres_data:
