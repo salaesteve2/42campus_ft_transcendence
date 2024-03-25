@@ -80,17 +80,6 @@ def google_code(request):
 # Google Authenticator page
 def setup_google_authenticator(request):
     activate_language(request)
-    # Verificar si el usuario está autenticado
-    if 'token' in request.session:
-        token = request.session['token']
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-            user_id = payload['user_id']
-            user = User.objects.get(id=user_id)
-            print(user)
-        except jwt.ExpiredSignatureError:
-            print('Token expirado')
-            return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username')
         # Obtener el secreto del usuario
@@ -117,7 +106,8 @@ def user_2fa(request):
             print(user)
         except jwt.ExpiredSignatureError:
             print('Token expirado')
-            return redirect('home')
+            logout(request)
+            return JsonResponse({'error': 'Token expirado'},status=400)#redirect('home')
     if request.method == 'POST':
         data = request.POST
         print(data)
@@ -183,14 +173,14 @@ def user_api(request):
                     user2 = User.objects.get(username=username)
                     fa = UserSettings.objects.get(user=user2).two_factor_auth_enabled
                 if user:
+                    # Generar token
+                    token = generate_jwt_token(user)
+                    request.session['token'] = token
                     # 2FA
                     if fa:
                         print('2FA')
                         secret = pyotp.random_base32()
                         qr_path = 'static/{}_qr.png'.format(username)
-                        # Generar token
-                        token = generate_jwt_token(user)
-                        request.session['token'] = token
                         # Verificar si el usuario ya tiene un dispositivo TOTP
                         if not TOTPDevice.objects.filter(user=user).exists():
                             device = TOTPDevice.objects.create(user=User.objects.get(username=username))
@@ -226,14 +216,14 @@ def user_login(request):
                 elif not created:
                     user2 = User.objects.get(username=username)
                     fa = UserSettings.objects.get(user=user2).two_factor_auth_enabled
+                # Generar token
+                token = generate_jwt_token(user)
+                request.session['token'] = token
                 # 2FA
                 if fa:
                     print('2FA')
                     secret = pyotp.random_base32()
                     qr_path = 'static/{}_qr.png'.format(username)
-                    # Generar token
-                    token = generate_jwt_token(user)
-                    request.session['token'] = token
                     # Si no existe el dispositivo, se crea
                     if not TOTPDevice.objects.filter(user=user).exists():
                         device = TOTPDevice.objects.create(user=User.objects.get(username=username))

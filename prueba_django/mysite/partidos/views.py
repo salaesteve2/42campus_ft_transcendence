@@ -537,6 +537,8 @@ def fun_arranque_rapido(request): # arranque de partido rápido
 
 def partidos_mlist(request):
 	activate_language(request)
+	if not request.user.is_authenticated:
+		return redirect('home')
 	user = request.user
 	partidos2 = Partido_historia.objects.filter(Q(jugador1=user) | Q(jugador2=user)).annotate(duracion=F('fin') - F('comienzo')).order_by('-comienzo')
 	context = {'partidos': partidos2, }
@@ -544,6 +546,8 @@ def partidos_mlist(request):
 
 def partidos_list(request):
 	activate_language(request)
+	if not request.user.is_authenticated:
+		return redirect('home')
 	partidos2 = Partido_historia.objects.all().annotate(duracion=F('fin') - F('comienzo')).order_by('-comienzo')
 	context = {'partidos': partidos2, }
 	return render(request, 'partidos/partidos_list_t.html', context)
