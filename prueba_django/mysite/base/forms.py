@@ -4,7 +4,12 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+from general.models import UserSettings
 
+class UserSettingsForm(forms.ModelForm):
+    class Meta:
+        model = UserSettings
+        fields = ['two_factor_auth_enabled']
 # Form de Django
 class SignupForm(UserCreationForm):
     class Meta:

@@ -18,6 +18,12 @@ from django.conf import settings
 import jwt
 from datetime import datetime, timedelta
 
+from general.models import UserSettings
+from .forms import UserSettingsForm
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
+
 def change_en(request):
     request.session['myLanguage'] = 'en'
     return redirect('home')
@@ -99,6 +105,25 @@ def setup_google_authenticator(request):
     else:
         return render(request, 'base/google_t.html')
 
+@csrf_protect
+@login_required
+def user_2fa(request):
+    if request.method == 'POST':
+        data = request.POST
+        print(data)
+        if data.get('activate_2fa') == 'true':
+            user = User.objects.get(username=request.user.username)
+            user_settings, created = UserSettings.objects.get_or_create(user=user)
+            user_settings.two_factor_auth_enabled = True  # Modificar el atributo
+            user_settings.save()  # Guardar los cambios
+            return JsonResponse({'ok': 'true'})
+        else:
+            user = User.objects.get(username=request.user.username)
+            user_settings, created = UserSettings.objects.get_or_create(user=user)
+            user_settings.two_factor_auth_enabled = False  # Modificar el atributo
+            user_settings.save()  # Guardar los cambios
+            return JsonResponse({'ok': 'false'})
+
 # API page
 def user_api(request):
     activate_language(request)
@@ -134,30 +159,43 @@ def user_api(request):
 
             if response.status_code == 200:
                 username = response.json().get('login')
-                # Guarda nombre de usuario y en caso de existir te redirecciona a home
+                fa = None
+                # Verificar si el usuario ya existe
                 if not User.objects.filter(username=username).exists():
                     usuario = User.objects.create_user(username=username, email='', password=token)
                     usuario.save()
                 user = authenticate(request, username=username, password=token)
+                # Verificar si el usuario tiene habilitado 2FA
+                user_settings, created = UserSettings.objects.get_or_create(user=user)
+                if created:
+                    user_settings.save()
+                elif not created:
+                    user2 = User.objects.get(username=username)
+                    fa = UserSettings.objects.get(user=user2).two_factor_auth_enabled
                 if user:
                     # 2FA
-                    secret = pyotp.random_base32()
-                    qr_path = 'static/{}_qr.png'.format(username)
-                    # Generar token
-                    token = generate_jwt_token(user)
-                    request.session['token'] = token
-                    # Verificar si el usuario ya tiene un dispositivo TOTP
-                    if not TOTPDevice.objects.filter(user=user).exists():
-                        device = TOTPDevice.objects.create(user=User.objects.get(username=username))
-                        device.key = secret
-                        device.save()
-                        otp_url = pyotp.totp.TOTP(secret).provisioning_uri(username, issuer_name='42')
-                        # Generar QR
-                        qr = qrcode.make(otp_url)
-                        qr.save(qr_path)
+                    if fa:
+                        print('2FA')
+                        secret = pyotp.random_base32()
+                        qr_path = 'static/{}_qr.png'.format(username)
+                        # Generar token
+                        token = generate_jwt_token(user)
+                        request.session['token'] = token
+                        # Verificar si el usuario ya tiene un dispositivo TOTP
+                        if not TOTPDevice.objects.filter(user=user).exists():
+                            device = TOTPDevice.objects.create(user=User.objects.get(username=username))
+                            device.key = secret
+                            device.save()
+                            otp_url = pyotp.totp.TOTP(secret).provisioning_uri(username, issuer_name='42')
+                            # Generar QR
+                            qr = qrcode.make(otp_url)
+                            qr.save(qr_path)
+                        else:
+                            return render(request, 'base/google_code_t.html', {'username': username})
+                        return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
                     else:
-                        return render(request, 'base/google_code_t.html', {'username': username})
-                    return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
+                        login(request, user)
+                        return redirect('home')
     return render(request, 'base/home_t.html')
 
 # login page
@@ -168,26 +206,38 @@ def user_login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+            fa = None
             user = authenticate(request, username=username, password=password)
+            # Verificar si el usuario tiene habilitado 2FA
+            user_settings, created = UserSettings.objects.get_or_create(user=user)
+            if created:
+                user_settings.save()
+            elif not created:
+                user2 = User.objects.get(username=username)
+                fa = UserSettings.objects.get(user=user2).two_factor_auth_enabled
             if user:
                 # 2FA
-                secret = pyotp.random_base32()
-                qr_path = 'static/{}_qr.png'.format(username)
-                # Generar token
-                token = generate_jwt_token(user)
-                request.session['token'] = token
-                # Si no existe el dispositivo, se crea
-                if not TOTPDevice.objects.filter(user=user).exists():
-                    device = TOTPDevice.objects.create(user=User.objects.get(username=username))
-                    device.key = secret
-                    device.save()
-                    otp_url = pyotp.totp.TOTP(secret).provisioning_uri(username, issuer_name='42')
-                    # Generar QR
-                    qr = qrcode.make(otp_url)
-                    qr.save(qr_path)
-                    return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
-                return render(request, 'base/google_code_t.html', {'username': username})
-                
+                if fa:
+                    print('2FA')
+                    secret = pyotp.random_base32()
+                    qr_path = 'static/{}_qr.png'.format(username)
+                    # Generar token
+                    token = generate_jwt_token(user)
+                    request.session['token'] = token
+                    # Si no existe el dispositivo, se crea
+                    if not TOTPDevice.objects.filter(user=user).exists():
+                        device = TOTPDevice.objects.create(user=User.objects.get(username=username))
+                        device.key = secret
+                        device.save()
+                        otp_url = pyotp.totp.TOTP(secret).provisioning_uri(username, issuer_name='42')
+                        # Generar QR
+                        qr = qrcode.make(otp_url)
+                        qr.save(qr_path)
+                        return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
+                    return render(request, 'base/google_code_t.html', {'username': username})
+                else:
+                    login(request, user)
+                    return redirect('home')
     else:
         form = LoginForm()
     # crear el html para editar o error en form
