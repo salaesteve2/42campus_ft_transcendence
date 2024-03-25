@@ -108,6 +108,16 @@ def setup_google_authenticator(request):
 @csrf_protect
 @login_required
 def user_2fa(request):
+    if 'token' in request.session:
+        token = request.session['token']
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+            user = User.objects.get(id=user_id)
+            print(user)
+        except jwt.ExpiredSignatureError:
+            print('Token expirado')
+            return redirect('home')
     if request.method == 'POST':
         data = request.POST
         print(data)
@@ -208,14 +218,14 @@ def user_login(request):
             password = form.cleaned_data['password']
             fa = None
             user = authenticate(request, username=username, password=password)
-            # Verificar si el usuario tiene habilitado 2FA
-            user_settings, created = UserSettings.objects.get_or_create(user=user)
-            if created:
-                user_settings.save()
-            elif not created:
-                user2 = User.objects.get(username=username)
-                fa = UserSettings.objects.get(user=user2).two_factor_auth_enabled
             if user:
+                # Verificar si el usuario tiene habilitado 2FA
+                user_settings, created = UserSettings.objects.get_or_create(user=user)
+                if created:
+                    user_settings.save()
+                elif not created:
+                    user2 = User.objects.get(username=username)
+                    fa = UserSettings.objects.get(user=user2).two_factor_auth_enabled
                 # 2FA
                 if fa:
                     print('2FA')
