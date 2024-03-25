@@ -257,3 +257,8 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
+@login_required
+def doble_factor(request):
+    estado_2fa = UserSettings.objects.get(user=request.user).two_factor_auth_enabled  # Asume que este es el campo en tu modelo de usuario que indica el estado de 2FA
+    print(estado_2fa)
+    return JsonResponse({'double_factor_auth_enabled': estado_2fa})

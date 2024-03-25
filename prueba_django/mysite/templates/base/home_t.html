@@ -127,26 +127,42 @@
 </div>
 <script>
   $(document).ready(function() {
-    $('#activate_2fa').change(function() {
-        // Obtener el estado del checkbox
-        var isChecked = $(this).is(':checked');
-        
-        // Enviar solicitud al backend usando AJAX
-        $.ajax({
-            url: $('#2faForm').attr('action'),
-            method: 'POST',
-            data: { activate_2fa: isChecked },
-            headers: { "X-CSRFToken": "{{ csrf_token }}" }, // Asegúrate de enviar el token CSRF
-            success: function(response) {
-                console.log('Estado de 2FA actualizado correctamente.');
-            },
-            error: function(xhr, errmsg, err) {
-                console.error('Error al actualizar el estado de 2FA:', errmsg);
-            }
-        });
-    });
-});
-</script>
+
+      // Enviar una solicitud al backend para obtener el estado actual de 2FA
+      $.ajax({
+          url: '{% url "check" %}',  // URL para obtener el estado actual de 2FA
+          method: 'GET',
+          success: function(response) {
+              // Verificar si el 2FA está activado y marcar el checkbox en consecuencia
+              if (response.double_factor_auth_enabled) {
+                  $('#activate_2fa').prop('checked', true);
+              }
+          },
+          error: function(xhr, errmsg, err) {
+              console.error('Error al obtener el estado de 2FA:', errmsg);
+          }
+      });
+  
+      $('#activate_2fa').change(function() {
+          // Obtener el estado del checkbox
+          var isChecked = $(this).is(':checked');
+          
+          // Enviar solicitud al backend usando AJAX
+          $.ajax({
+              url: $('#2faForm').attr('action'),
+              method: 'POST',
+              data: { activate_2fa: isChecked },
+              headers: { "X-CSRFToken": "{{ csrf_token }}" }, // Asegúrate de enviar el token CSRF
+              success: function(response) {
+                  console.log('Estado de 2FA actualizado correctamente.');
+              },
+              error: function(xhr, errmsg, err) {
+                  console.error('Error al actualizar el estado de 2FA:', errmsg);
+              }
+          });
+      });
+  });
+  </script>
 </main>
 <footer>
   (c) 42Madrid excentric pong
