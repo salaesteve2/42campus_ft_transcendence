@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# sleep 600
-
 ganache-cli &
 
 sleep 5
