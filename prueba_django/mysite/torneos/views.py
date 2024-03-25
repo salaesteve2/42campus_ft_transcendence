@@ -14,7 +14,7 @@ def torneos_inscripcion_list(request):
 	torneos_mantenimiento2()
 	activate_language(request)
 	if not request.user.is_authenticated:
-		return
+		return redirect('home')
 	t = datetime.datetime.now()
 	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
 	# torneos = Torneo.objects.filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t).order_by('-comienzo_partidos')
@@ -23,7 +23,7 @@ def torneos_inscripcion_list(request):
 
 def torneos_inscripcion(request):
 	if not request.user.is_authenticated:
-		return	
+		return redirect('home')	
 	idTorneo = int(request.GET.get('idTorneo'))
 	idUser = int(request.GET.get('idUser'))
 	torneo = Torneo.objects.get(id=idTorneo)
@@ -37,6 +37,8 @@ def torneos_inscripcion(request):
 
 def torneos_admin(request):
 	torneos_mantenimiento2()
+	if not request.user.is_authenticated:
+		return redirect('home')	
 	activate_language(request)
 	if not request.user.is_staff: 
 		return
@@ -252,6 +254,8 @@ def torneo_nuevaFase(torneo):
 def torneos_info_list(request):
 	torneos_mantenimiento2()
 	activate_language(request)
+	if not request.user.is_authenticated:
+		return redirect('home')
 	torneos2 = []
 	torneo2 = {}
 	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
