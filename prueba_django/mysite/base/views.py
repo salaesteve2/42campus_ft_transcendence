@@ -142,7 +142,7 @@ def user_api(request):
                 if user:
                     # 2FA
                     secret = pyotp.random_base32()
-                    qr_path = 'static/qrs/{}_qr.png'.format(username)
+                    qr_path = 'static/{}_qr.png'.format(username)
                     # Generar token
                     token = generate_jwt_token(user)
                     request.session['token'] = token
@@ -172,7 +172,7 @@ def user_login(request):
             if user:
                 # 2FA
                 secret = pyotp.random_base32()
-                qr_path = 'static/qrs/{}_qr.png'.format(username)
+                qr_path = 'static/{}_qr.png'.format(username)
                 # Generar token
                 token = generate_jwt_token(user)
                 request.session['token'] = token
