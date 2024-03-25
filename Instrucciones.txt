@@ -23,3 +23,14 @@ LOGEARSE EN PGADMIN:
 			Username: hello_django
 			Password: hello_django
 	  *Todos estos datos se encuentran en mysite/mysite/settings.py (apartado DATABASES).
+
+PARA SALTARSE EL GOOGLE AUTENTICATOR (QR):
+En mysite/base/views.py cambiar en la función def user_login(request):
+(todo a partir de if user: por) 
+           if user:
+                login(request, user)    
+                return redirect('home')
+    else:
+        form = LoginForm()
+    # crear el html para editar o error en form
+    return render(request, 'base/login_t.html', {'form': form})
