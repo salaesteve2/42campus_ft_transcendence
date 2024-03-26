@@ -125,6 +125,7 @@
 
 </div>
 </div>
+{% if request.user.is_authenticated %}
 <script>
   $(document).ready(function() {
 
@@ -163,6 +164,7 @@
       });
   });
   </script>
+  {% endif %}
 </main>
 <footer>
   (c) 42Madrid excentric pong
