@@ -1,4 +1,14 @@
 version: '3.8'
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  postgres_data:
 
 services:
   web:
@@ -12,6 +22,7 @@ services:
       - ./.env.dev
     depends_on:
       - db
+    restart: unless-stopped
   db:
     image: postgres:15.1
     volumes:
@@ -20,23 +31,92 @@ services:
       - POSTGRES_USER=hello_django
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
+    restart: unless-stopped
   nginx:
     build: ./nginx
+    container_name: nginx
     ports:
       - 443:443
+      - 80:80
+      - 8080:8080
     depends_on:
       - web
-  pgadmin:
-    image: dpage/pgadmin4:latest  # Use the official pgAdmin image
+    restart: unless-stopped
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:1.1.0
+    container_name: nginx-exporter
     ports:
-      - "5050:80"  # Map container port 80 (pgAdmin) to host port 5050
+      - "9113:9113"
+    command: --nginx.scrape-uri=http://nginx:8080/stub_status
+    depends_on:
+      - nginx
+    restart: unless-stopped
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "5050:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: "email@trascendence.com"
       PGADMIN_DEFAULT_PASSWORD: "contra123"
+    restart: unless-stopped
   solidity-dev:
     build: ./block
     volumes:
       - ./block:/usr/src/app/block
     command: bash -c "./start.sh"
-volumes:
-  postgres_data:
+    restart: unless-stopped
+
+##### monitoring #######
+
+  #collect and stores data
+  prometheus:
+    image: prom/prometheus:v2.37.9
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    user: "1000:1000"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    volumes:
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./data:/prometheus
+    restart: unless-stopped
+
+  #dashboard
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+  #os level metrics
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.5.0
+    container_name: node_exporter
+    command: '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys/:ro
+
+  #container monitoring
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: cadvisor
+    command:
+      - '-port=8098'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    privileged: true
+    restart: unless-stopped
+
