@@ -59,8 +59,11 @@ services:
     build: ./block
     volumes:
       - ./block:/usr/src/app/block
+    ports:
+      - 8545:8545
     command: bash -c "./start.sh"
     restart: unless-stopped
+    
 
 ##### monitoring #######
 
