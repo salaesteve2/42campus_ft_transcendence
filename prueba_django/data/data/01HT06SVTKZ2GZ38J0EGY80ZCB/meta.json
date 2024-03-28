@@ -1,0 +1,17 @@
+{
+	"ulid": "01HT06SVTKZ2GZ38J0EGY80ZCB",
+	"minTime": 1711540800236,
+	"maxTime": 1711548000000,
+	"stats": {
+		"numSamples": 1835491,
+		"numSeries": 7326,
+		"numChunks": 14625
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01HT06SVTKZ2GZ38J0EGY80ZCB"
+		]
+	},
+	"version": 1
+}
