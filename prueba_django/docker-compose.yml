@@ -1,7 +1,7 @@
 version: '3.8'
-networks:
-  monitoring:
-    driver: bridge
+# networks:
+#   monitoring:
+#     driver: bridge
 
 volumes:
   prometheus-data:
@@ -11,6 +11,7 @@ volumes:
   postgres_data:
 
 services:
+
   web:
     build: ./mysite
     command: python manage.py runserver 0.0.0.0:8000
@@ -23,6 +24,7 @@ services:
     depends_on:
       - db
     restart: unless-stopped
+
   db:
     image: postgres:15.1
     volumes:
@@ -32,6 +34,7 @@ services:
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
     restart: unless-stopped
+
   nginx:
     build: ./nginx
     container_name: nginx
@@ -42,15 +45,7 @@ services:
     depends_on:
       - web
     restart: unless-stopped
-  nginx-exporter:
-    image: nginx/nginx-prometheus-exporter:1.1.0
-    container_name: nginx-exporter
-    ports:
-      - "9113:9113"
-    command: --nginx.scrape-uri=http://nginx:8080/stub_status
-    depends_on:
-      - nginx
-    restart: unless-stopped
+
   pgadmin:
     image: dpage/pgadmin4:latest
     ports:
@@ -59,6 +54,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: "email@trascendence.com"
       PGADMIN_DEFAULT_PASSWORD: "contra123"
     restart: unless-stopped
+
   solidity-dev:
     build: ./block
     volumes:
@@ -120,3 +116,25 @@ services:
     privileged: true
     restart: unless-stopped
 
+  #nginx monitoring
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:1.1.0
+    container_name: nginx-exporter
+    ports:
+      - "9113:9113"
+    command: --nginx.scrape-uri=http://nginx:8080/stub_status
+    depends_on:
+      - nginx
+    restart: unless-stopped
+  
+  #postgres monitoring
+  postgres_exporter:
+    image: wrouesnel/postgres_exporter
+    container_name: postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://hello_django:hello_django@db:5432/hello_django_dev?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      - db
+    restart: unless-stopped

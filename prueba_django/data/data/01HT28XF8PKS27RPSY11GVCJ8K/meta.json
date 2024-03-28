@@ -1,0 +1,17 @@
+{
+	"ulid": "01HT28XF8PKS27RPSY11GVCJ8K",
+	"minTime": 1711548000000,
+	"maxTime": 1711555200000,
+	"stats": {
+		"numSamples": 667084,
+		"numSeries": 4312,
+		"numChunks": 4312
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01HT28XF8PKS27RPSY11GVCJ8K"
+		]
+	},
+	"version": 1
+}
