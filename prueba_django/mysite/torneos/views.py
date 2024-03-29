@@ -16,8 +16,10 @@ def torneos_inscripcion_list(request):
 	if not request.user.is_authenticated:
 		return redirect('home')
 	t = datetime.datetime.now()
-	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
-	# torneos = Torneo.objects.filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t).order_by('-comienzo_partidos')
+	# torneos = Torneo.objects.all().order_by('-comienzo_partidos')
+	# torneos = Torneo.objects.filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
+	# torneos = Torneo.objects.filter(comienzo_inscripcion=t, fin_inscripcion=t).order_by('-comienzo_partidos')
+	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
 	context = {'torneos': torneos, 'user': request.user, }
 	return render(request, 'torneos/torneos_inscripcion_t.html', context)
 

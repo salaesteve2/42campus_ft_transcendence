@@ -2,10 +2,10 @@
 <html>
 {% load i18n %}
 <head>
-<meta charset="UTF-8"/>
-<link rel="stylesheet" href="static/torneos.css"/>
-<link rel="icon" type="image/x-icon" href="static/favicon.ico">
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="static/torneos.css"/>
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -27,22 +27,16 @@
         <th>{% trans "Minutes between matches" %}</th>
     </tr>
     <tr><td colspan='8'></td></tr>
-    {% for torneo in torneos %}
+	    {% for torneo in torneos %}
         <tr>
-            <td><a href="torneos_edit?idTorneo={{ torneo.id }}">{% trans "Edit" %}</a></td>
-            <td><a href="torneos_delete?idTorneo={{ torneo.id }}">{% trans "Delete" %}</a></td>
-            <td>{{ torneo.nombre }}</td>
+            <td><a href="torneos_edit?idTorneo={{ torneo.id }}">{{ torneo.id }}</a></td>
+            <td><a href="torneos_delete?idTorneo={{ torneo.id }}">{{ torneo.nombre }}</a></td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
             <td>{{ torneo.comienzo_partidos }}</td>
             <td>{{ torneo.minutos_duracion_maxima_partidos }}</td>
             <td>{{ torneo.minutos_entre_partidos }}</td>
         </tr>
-        <tr>
-            <th colspan='2'>{% trans "Players registered" %}</th>
-            <td colspan='6'>{{ torneo.jugadores.all|join:", " }}</td>
-        </tr>
-        <tr><td colspan='8'></td></tr>
     {% endfor %}
 </table>
 
