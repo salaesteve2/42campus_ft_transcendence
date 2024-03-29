@@ -69,7 +69,8 @@ services:
 
   #collect and stores data
   prometheus:
-    image: prom/prometheus:v2.37.9
+    # image: prom/prometheus:v2.37.9
+    image: prom/prometheus:v2.51.1
     container_name: prometheus
     ports:
       - 9090:9090
@@ -116,7 +117,7 @@ services:
       - /dev/disk/:/dev/disk:ro
     devices:
       - /dev/kmsg
-    privileged: true
+    # privileged: true
     restart: unless-stopped
 
   #nginx monitoring
