@@ -9,7 +9,7 @@ from general.models import UserSettings
 class UserSettingsForm(forms.ModelForm):
     class Meta:
         model = UserSettings
-        fields = ['two_factor_auth_enabled', 'language']
+        fields = ['two_factor_auth_enabled', 'language', 'alias']
 # Form de Django
 class SignupForm(UserCreationForm):
     class Meta:
