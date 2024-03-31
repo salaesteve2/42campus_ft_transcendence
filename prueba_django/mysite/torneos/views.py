@@ -7,6 +7,7 @@ from .models import Torneo, FaseTorneo
 from .forms import TorneoForm
 from general.views import  activate_language
 import datetime
+import pytz
 import random
 import re
 
@@ -15,12 +16,18 @@ def torneos_inscripcion_list(request):
 	activate_language(request)
 	if not request.user.is_authenticated:
 		return redirect('home')
-	t = datetime.datetime.now()
-	# torneos = Torneo.objects.all().order_by('-comienzo_partidos')
-	# torneos = Torneo.objects.filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
-	# torneos = Torneo.objects.filter(comienzo_inscripcion=t, fin_inscripcion=t).order_by('-comienzo_partidos')
-	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
-	context = {'torneos': torneos, 'user': request.user, }
+	t_utc = datetime.datetime.utcnow()
+
+	tz = pytz.timezone('Europe/Madrid')  # Por ejemplo, 'Europe/Madrid' para España
+	t = t_utc.replace(tzinfo=pytz.utc).astimezone(tz).replace(second=0, microsecond=0)
+	t_str = t.strftime('%Y-%m-%d %H:%M:%S')
+	t_local = datetime.datetime.strptime(t_str, '%Y-%m-%d %H:%M:%S')
+	torneos = Torneo.objects.all()
+	torneos_validos = []
+	for torneo in torneos:
+		if torneo.comienzo_inscripcion <= t_local <= torneo.fin_inscripcion:
+			torneos_validos.append(torneo)
+	context = {'torneos': torneos_validos, 'user': request.user}
 	return render(request, 'torneos/torneos_inscripcion_t.html', context)
 
 def torneos_inscripcion(request):
