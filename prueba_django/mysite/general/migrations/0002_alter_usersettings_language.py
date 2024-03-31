@@ -15,4 +15,10 @@ class Migration(migrations.Migration):
             name='language',
             field=models.CharField(choices=[('no', 'No'), ('en', 'English'), ('es', 'Spanish'), ('fr', 'French')], default='no', max_length=10),
         ),
+        
+        migrations.AlterField(
+            model_name='usersettings',
+            name='alias',
+            field=models.CharField(max_length=50, default='', blank=True),  # Define el valor predeterminado como una cadena vacía
+        ),
     ]
