@@ -226,7 +226,8 @@ def user_login(request):
                     user_settings.save()
                 elif not created:
                     user2 = User.objects.get(username=username)
-                    request.session['myLanguage'] = user_settings.language
+                    if user_settings.language != "no":
+                        request.session['myLanguage'] = user_settings.language
                     fa = UserSettings.objects.get(user=user2).two_factor_auth_enabled
                 # Generar token
                 token = generate_jwt_token(user)
