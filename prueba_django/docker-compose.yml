@@ -86,10 +86,12 @@ services:
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
+    depends_on:
+      - prometheus
     ports:
       - '3000:3000'
     volumes:
-      - grafana-data:/var/lib/grafana
+      - ./grafana-data:/var/lib/grafana
     restart: unless-stopped
 
   #os level metrics
@@ -117,7 +119,7 @@ services:
       - /dev/disk/:/dev/disk:ro
     devices:
       - /dev/kmsg
-    # privileged: true
+    privileged: false
     restart: unless-stopped
 
   #nginx monitoring
