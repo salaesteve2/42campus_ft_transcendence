@@ -28,6 +28,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("singlepage.urls")),
+	path('update_alias', to_views.update_alias, name='update_alias'),
     path('', ba_views.home, name='home'),
     path('login', ba_views.user_login, name='login'),
 	path('setup_google_authenticator', ba_views.setup_google_authenticator, name='setup_google_authenticator'),
