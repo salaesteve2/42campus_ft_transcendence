@@ -12,6 +12,7 @@
 <h1>{% trans "Tournament registration" %}</h1>
 
 <p>{% trans "User" %}: {{ request.user.username }}</p>
+
 <form method="post" action="{% url 'update_alias' %}">
     {% csrf_token %}
     <label for="alias">{% trans "New Alias:" %}</label>
@@ -25,6 +26,7 @@
         {% endfor %}
     </ul>
 {% endif %}
+  
 <table>
     <tr>
         <th>&nbsp;</th>
