@@ -300,5 +300,7 @@ def doble_factor(request):
         # user_settings, created = UserSettings.objects.get_or_create(user=user)
         # user_settings.two_factor_auth_enabled = True
         # user_settings.save()
+        user = request.user
+        qr_path = 'static/{}_qr.png'.format(user.username)
         return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
     # return JsonResponse({'double_factor_auth_enabled': estado_2fa})
