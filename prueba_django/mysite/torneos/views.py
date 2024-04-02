@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from .models import Torneo, FaseTorneo
 from .forms import TorneoForm
 from general.views import  activate_language
+from general.models import UserSettings
+from base.forms import UserSettingsForm
 import datetime
 import pytz
 import random
@@ -32,6 +34,29 @@ def torneos_inscripcion_list(request):
 	#		torneos_validos.append(torneo)
 	# context = {'torneos': torneos_validos, 'user': request.user}
 	# return render(request, 'torneos/torneos_inscripcion_t.html', context)
+
+def update_alias(request):
+	if request.method == 'POST':
+			aa = request.POST.get('alias')
+			if aa == "":
+				user = User.objects.get(username=request.user.username)
+				user_settings, created = UserSettings.objects.get_or_create(user=user)
+				user_settings.alias = aa
+				user_settings.save()
+				messages.success(request, "Alias eliminado correctamente.")
+			elif re.match("^[a-zA-Z0-9]+$", aa):
+				if len(aa) <= 50:
+					user = User.objects.get(username=request.user.username)
+					user_settings, created = UserSettings.objects.get_or_create(user=user)
+					user_settings.alias = aa
+					user_settings.save()
+					messages.success(request, "Alias actualizado correctamente.")
+					return redirect('torneos_inscripcion_list')  # Redirige a la página de torneos después de guardar
+				else:
+					messages.error(request, "El alias no puede tener más de 50 caracteres.")
+			else:
+				messages.error(request, "El alias solo puede contener letras y números.")
+	return redirect('torneos_inscripcion_list')
 
 def torneos_inscripcion(request):
 	if not request.user.is_authenticated:
