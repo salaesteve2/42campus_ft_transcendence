@@ -8,10 +8,106 @@ from .forms import TorneoForm
 from general.views import  activate_language
 from general.models import UserSettings
 from base.forms import UserSettingsForm
+from web3 import Web3
 import datetime
 import random
 import re
 from django.contrib import messages
+
+# # Conexión a la red Sepolia
+w3 = Web3(Web3.HTTPProvider('https://sepolia.infura.io/v3/f5cce3890e6c4cc99eea5820a95ac386'))
+
+# Dirección y ABI del contrato
+contract_address = '0x63D1B16Cb89D7c0E8E597D0B5e566F2C029fD25b'
+contract_abi = [
+    {
+        "constant": False,
+        "inputs": [
+            {
+                "name": "_login",
+                "type": "string"
+            },
+            {
+                "name": "_score",
+                "type": "uint32"
+            }
+        ],
+        "name": "doUser",
+        "outputs": [],
+        "payable": False,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": True,
+        "inputs": [
+            {
+                "name": "_login",
+                "type": "string"
+            }
+        ],
+        "name": "getUserScore",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint32"
+            }
+        ],
+        "payable": False,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "anonymous": False,
+        "inputs": [
+            {
+                "indexed": False,
+                "name": "_login",
+                "type": "string"
+            },
+            {
+                "indexed": False,
+                "name": "_score",
+                "type": "uint32"
+            }
+        ],
+        "name": "newUser",
+        "type": "event"
+    },
+    {
+        "anonymous": False,
+        "inputs": [
+            {
+                "indexed": False,
+                "name": "_login",
+                "type": "string"
+            },
+            {
+                "indexed": False,
+                "name": "_score",
+                "type": "uint32"
+            }
+        ],
+        "name": "scoreUpdate",
+        "type": "event"
+    }
+]
+
+# # Instanciar contrato
+contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+
+# # ESTO ES PARA ESCRIBIR; no gastar ETH pls
+# def agregar_o_actualizar_usuario(login, score):
+#     # Llamar a la función doUser del contrato inteligente
+#     tx_hash = contract.functions.doUser(login, score).transact({'from': w3.eth.accounts[0]})
+#     # Esperar la confirmación de la transacción
+#     w3.eth.waitForTransactionReceipt(tx_hash)
+
+def obtener_puntaje_usuario(login):
+    # Llamar a la función getUserScore del contrato inteligente
+    puntaje = contract.functions.getUserScore(login).call()
+    return puntaje
+
 
 def torneos_inscripcion_list(request):
 	torneos_mantenimiento2()
@@ -21,6 +117,11 @@ def torneos_inscripcion_list(request):
 	t = datetime.datetime.now()
 	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
 	context = {'torneos': torneos, 'user': request.user, }
+	# AQui mismo hago la prueba de lectura; se activa clicando en inscripcion torneos y printea en el CLI de Django
+	login = "jaja"
+	puntos = obtener_puntaje_usuario(login)
+	print("\npuntos de jaja:\n")
+	print(puntos)
 	return render(request, 'torneos/torneos_inscripcion_t.html', context)
 
 def update_alias(request):
@@ -233,6 +334,12 @@ def torneo_nuevaFase(torneo):
 		print('hay un ganador')
 		torneo.terminado = True
 		torneo.save()
+		# # DESCOMENTAR PARA ESCRIBIR AL BLOCKCHAIN
+		# ganador_id = list[0][0]
+    	# login = User.objects.get(id=ganador_id).**login_field**
+    	# score = User.objects.get(id=ganador_id).**score_field**
+    	# # Llamar a las funciones del contrato inteligente
+    	# agregar_o_actualizar_usuario(login, score)
 		return
 	fSortListOfTuple(list)
 	#print(list)
