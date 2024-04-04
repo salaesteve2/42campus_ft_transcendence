@@ -9,28 +9,20 @@ from general.views import  activate_language
 from general.models import UserSettings
 from base.forms import UserSettingsForm
 from web3 import Web3
+from web3.contract import Contract
+from web3.auto import w3
+from eth_account import Account
 import datetime
 import random
 import re
 from django.contrib import messages
 
-# # Conexión a la red Sepolia
-w3 = Web3(Web3.HTTPProvider('https://sepolia.infura.io/v3/f5cce3890e6c4cc99eea5820a95ac386'))
-
-# Dirección y ABI del contrato
-contract_address = '0x63D1B16Cb89D7c0E8E597D0B5e566F2C029fD25b'
 contract_abi = [
     {
         "constant": False,
         "inputs": [
-            {
-                "name": "_login",
-                "type": "string"
-            },
-            {
-                "name": "_score",
-                "type": "uint32"
-            }
+            {"name": "_login", "type": "string"},
+            {"name": "_score", "type": "uint32"}
         ],
         "name": "doUser",
         "outputs": [],
@@ -40,74 +32,47 @@ contract_abi = [
     },
     {
         "constant": True,
-        "inputs": [
-            {
-                "name": "_login",
-                "type": "string"
-            }
-        ],
+        "inputs": [{"name": "_login", "type": "string"}],
         "name": "getUserScore",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint32"
-            }
-        ],
+        "outputs": [{"name": "", "type": "uint32"}],
         "payable": False,
         "stateMutability": "view",
         "type": "function"
-    },
-    {
-        "anonymous": False,
-        "inputs": [
-            {
-                "indexed": False,
-                "name": "_login",
-                "type": "string"
-            },
-            {
-                "indexed": False,
-                "name": "_score",
-                "type": "uint32"
-            }
-        ],
-        "name": "newUser",
-        "type": "event"
-    },
-    {
-        "anonymous": False,
-        "inputs": [
-            {
-                "indexed": False,
-                "name": "_login",
-                "type": "string"
-            },
-            {
-                "indexed": False,
-                "name": "_score",
-                "type": "uint32"
-            }
-        ],
-        "name": "scoreUpdate",
-        "type": "event"
     }
 ]
 
-# # Instanciar contrato
-contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+# ESTO ES PARA ESCRIBIR; no gastar ETH pls
+def agregar_o_actualizar_usuario(login, score):
+	
+	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
 
-# # ESTO ES PARA ESCRIBIR; no gastar ETH pls
-# def agregar_o_actualizar_usuario(login, score):
-#     # Llamar a la función doUser del contrato inteligente
-#     tx_hash = contract.functions.doUser(login, score).transact({'from': w3.eth.accounts[0]})
-#     # Esperar la confirmación de la transacción
-#     w3.eth.waitForTransactionReceipt(tx_hash)
+	private_key = "7c..."
+
+	cuenta = w3.eth.account.from_key(private_key).address
+
+	w3.eth.default_account = w3.eth.account.from_key(private_key).address
+
+	contract = w3.eth.contract(address='0x63...', abi=contract_abi)
+
+	nonce = w3.eth.get_transaction_count(w3.eth.default_account)
+
+	txn_dict = contract.functions.doUser(login, score).build_transaction({
+		'from': cuenta,
+        'value': 0,
+        'gas': 1000000,
+        'gasPrice': w3.to_wei('50', 'gwei'),  # Reemplaza '50' con el precio de gas deseado en gwei
+        'nonce': nonce,
+    })
+
+	signed_txn = w3.eth.account.sign_transaction(txn_dict, private_key=private_key)
+	tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+	# Esta ultima no es necesaria, pero la consideran una buena práctica (pero no la he probado aun)
+	# w3.eth.waitForTransactionReceipt(tx_hash)
 
 def obtener_puntaje_usuario(login):
     # Llamar a la función getUserScore del contrato inteligente
     puntaje = contract.functions.getUserScore(login).call()
     return puntaje
-
 
 def torneos_inscripcion_list(request):
 	torneos_mantenimiento2()
@@ -118,10 +83,11 @@ def torneos_inscripcion_list(request):
 	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
 	context = {'torneos': torneos, 'user': request.user, }
 	# AQui mismo hago la prueba de lectura; se activa clicando en inscripcion torneos y printea en el CLI de Django
-	login = "jaja"
-	puntos = obtener_puntaje_usuario(login)
-	print("\npuntos de jaja:\n")
-	print(puntos)
+	# puntos = obtener_puntaje_usuario("jaja")
+	# print("\npuntos de jaja:\n")
+	# print(puntos)
+    	# # Llamar a las funciones para ESCRIBIR del contrato inteligente
+	# agregar_o_actualizar_usuario("MrFunciona", 3)
 	return render(request, 'torneos/torneos_inscripcion_t.html', context)
 
 def update_alias(request):
