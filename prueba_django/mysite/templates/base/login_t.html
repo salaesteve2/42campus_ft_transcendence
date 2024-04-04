@@ -47,16 +47,16 @@
         <!--<h1>{% trans "Login" %}</h1>-->
         <form method="POST">
             {% csrf_token %}
-            <table>
+            <table class="table table-striped">
             {{ form.as_table }}
             </table>
             
             <div class="button-group">
-                <p><button type="submit">{% trans "Login" %}</button></p>
-                <p><button type="reset">clear</button></p>
+                <p><button type="submit" class="rounded-sm">{% trans "Login" %}</button></p>
+                <p><button type="reset" class="rounded-sm">clear</button></p>
             </div>
             <!-- todavia no estamos dados de alta en la bbdd -->
-            <p align = "center"><a href="{% url 'signup' %}">{% trans "I haven't signedup yet" %}</a></p>
+            <p align = "center"><a href="{% url 'signup' %}" class="btn btn-primary links">{% trans "I haven't signedup yet" %}</a></p>
         </form>
     </div>
 </div>

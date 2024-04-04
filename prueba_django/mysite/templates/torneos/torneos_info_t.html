@@ -11,7 +11,7 @@
 
 <h1>{% trans "Tournament information" %}</h1>
 
-<p><a href="{% url 'home' %}">{% trans "Home" %}</a></p>
+<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
 <table>
     {% for torneo in torneos %}
@@ -51,7 +51,7 @@
     {% endfor %}
 </table>
 
-<p><a href="{% url 'home' %}">{% trans "Home" %}</a></p>
+<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
 </body>
 </html>
