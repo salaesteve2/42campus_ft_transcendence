@@ -1,0 +1,79 @@
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "userScore",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "doUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "Users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "tournamentId",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
