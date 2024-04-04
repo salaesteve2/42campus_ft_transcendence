@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y netcat
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
+# creo que no hace falta. Relacionado con Blockchain.
+# RUN pip install --upgrade web3
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
