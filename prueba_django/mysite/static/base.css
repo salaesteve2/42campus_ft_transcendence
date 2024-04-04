@@ -30,6 +30,39 @@ body {
   font-size: 80%; */
 }
 
+.container-text {
+  display: inline-block;
+}
+
+.btn-primary{
+  font-family: "Verdana", sans-serif;
+  background-color: #007bff;
+}
+
+.links {
+  transition: color 0.3s ease, transform 0.3s ease;
+  font-family: "Verdana", sans-serif;
+  color: #000000;
+  display: inline-block;
+}
+
+.links:hover {
+  text-decoration: none;
+  color: #0f21eb;
+  transform: scale(1.1);
+}
+
+.link42 {
+  width: 200px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.link42:hover {
+  transform: scale(1.05);
+}
+
+
 main{
   display: flex;
   /*flex: 1;*/
@@ -42,6 +75,7 @@ main{
   padding: 10px;
   /*box-sizing: border-box;*/
 }
+
 
 .container {
   background-color: #fff;
@@ -101,80 +135,6 @@ footer {
   margin-left: 10px;
   margin-top: 10px;
   width: 94vw;
-}
-
-/* navigation menu */
-.navigation{
-  height: 70px;
-  position: relative;
-  display: flex;
-  border-radius: 10px;
-  background: var(--clr);
-  text-align: left;
-  padding: 10px;
-  width: 99vw;
-}
-
-/* menú sections */
-.navigation ul
-{
-  display: flex;
-  width: 350px;
-}
-
-.navigation ul li
-{
-  position: relative;
-  list-style: none;
-  width: 70px;
-  height: 70px;
-  z-index: 1;
-}
-
-.navigation ul li a
-{
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-  text-align: center;
-  font-weight: 500;
-}
-
-.navigation ul li a .icon
-{
-  position: relative;
-  display: block;
-  line-height: 75px;
-  font-size: 1.5em;
-  text-align: center;
-  transition: 0.5s;
-  color: var(--bkg);
-}
-
-.navigation ul li:hover a .icon
-{
-  transform: translateY(-35px);
-}
-
-.navigation ul li a .text
-{
-  position: absolute;
-  color: var(--bkg);
-  font-weight: 400;
-  font-size: 0.75em;
-  letter-spacing: 0.05em;
-  transition: 0.5s;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.navigation ul li:hover a .text
-{
-  opacity: 1;
-  transform: translateY(10px);
 }
 
 /* languages */

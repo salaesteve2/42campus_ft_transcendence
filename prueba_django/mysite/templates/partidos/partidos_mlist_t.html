@@ -11,7 +11,7 @@
 
 <h1>{% trans "List of my matches" %}</h1>
 
-<p><a href="{% url 'home' %}">{% trans "Home" %}</a></p>
+<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
 <table>
     <tr>
@@ -36,7 +36,7 @@
     {% endfor %}
 </table>
 
-<p><a href="{% url 'home' %}">{% trans "Home" %}</a></p>
+<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
 </body>
 </html>

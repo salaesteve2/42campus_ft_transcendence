@@ -40,7 +40,7 @@
     <tr><td colspan='7'></td></tr>
     {% for torneo in torneos %}
         <tr>
-            <td><a href="torneos_inscripcion?idTorneo={{ torneo.id }}&idUser={{ user.id }}">{% trans "Registration/Cancel" %}</a></td>
+            <td><a href="torneos_inscripcion?idTorneo={{ torneo.id }}&idUser={{ user.id }}" class="btn btn-primary links">{% trans "Registration/Cancel" %}</a></td>
             <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
@@ -56,7 +56,7 @@
     {% endfor %}
 </table>
 
-<p><a href="{% url 'home' %}">{% trans "Home" %}</a></p>
+<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
 </body>
 </html>
