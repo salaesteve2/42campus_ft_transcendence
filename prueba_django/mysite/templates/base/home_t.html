@@ -15,16 +15,6 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
-<body>
-<!-- MENU NAVIGATION BAR -->
-
-  <p>
-    <a href="{% url 'en' %}">English</a>&nbsp;&nbsp;&nbsp;
-    <a href="{% url 'es' %}">Español</a>&nbsp;&nbsp;&nbsp;
-    <a href="{% url 'fr' %}">Français</a>
-  </p>
-</div>
-
 
  <!-- PRIMARY CONTENT SECTION -->
       <!-- en esta seccion se abren diferentes divs para albergar todas las páginas del sitio
@@ -32,7 +22,7 @@
 <main>
   <div id="home" class="page">
     <div class="container">
-<h1>{% trans "Pong game" %}</h1>
+  <h1>{% trans "Pong game" %}</h1>
 
 {% if request.user.is_authenticated %}
   <p>{% trans "User" %}: {{ request.user.username }}</p>
@@ -83,7 +73,6 @@
   <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2Flocalhost%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p>
 </div>
   {% endif %}
-
 </div>
 </div>
 {% if request.user.is_authenticated %}
@@ -127,8 +116,10 @@
   </script>
   {% endif %}
 </main>
-<footer>
-  (c) 42Madrid excentric pong
+<footer class="container-fluid bg-dark text-white py-3 footer">
+  <div class="text-left">
+    <p class="m-0">&copy; 42Madrid excentric pong</p>
+  </div>
 </footer>
 
 
