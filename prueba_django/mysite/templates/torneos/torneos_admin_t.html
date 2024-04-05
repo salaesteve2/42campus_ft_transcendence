@@ -30,7 +30,8 @@
 	    {% for torneo in torneos %}
         <tr>
             <td><a href="torneos_edit?idTorneo={{ torneo.id }}">{{ torneo.id }}</a></td>
-            <td><a href="torneos_delete?idTorneo={{ torneo.id }}">{{ torneo.nombre }}</a></td>
+            <td><a href="torneos_delete?idTorneo={{ torneo.id }}">{% trans "Delete" %}</a></td>
+            <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
             <td>{{ torneo.comienzo_partidos }}</td>
