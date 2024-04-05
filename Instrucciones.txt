@@ -36,3 +36,7 @@ En mysite/base/views.py cambiar en la función def user_login(request):
         form = LoginForm()
     # crear el html para editar o error en form
     return render(request, 'base/login_t.html', {'form': form})
+
+#para conseguir sepoliaEth
+
+https://sepolia-faucet.pk910.de
