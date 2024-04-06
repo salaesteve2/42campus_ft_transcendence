@@ -103,6 +103,21 @@
             }
         </script>
         {% endif %}
+        {% if form3 %}
+        <script>
+            window.onload = function() {
+                mostrartorneos();
+            };
+            function mostrartorneos() {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'torneos_inscripcion_list' %}", function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
+        </script>
+        {% endif %}
     {% endif %}
     {% if username2 %}
         <script>

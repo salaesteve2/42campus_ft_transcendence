@@ -106,12 +106,14 @@ def update_alias(request):
 					user_settings.alias = aa
 					user_settings.save()
 					messages.success(request, "Alias actualizado correctamente.")
-					return redirect('torneos_inscripcion_list')  # Redirige a la página de torneos después de guardar
+					return render(request, 'singlepage/index.html', {'form3': 'form'})
+					#return redirect('torneos_inscripcion_list')  # Redirige a la página de torneos después de guardar
 				else:
 					messages.error(request, "El alias no puede tener más de 50 caracteres.")
 			else:
 				messages.error(request, "El alias solo puede contener letras y números.")
-	return redirect('torneos_inscripcion_list')
+	return render(request, 'singlepage/index.html', {'form3': 'form'})
+	#return redirect('torneos_inscripcion_list')
 
 def torneos_inscripcion(request):
 	if not request.user.is_authenticated:
