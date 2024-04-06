@@ -40,7 +40,7 @@
     <tr><td colspan='7'></td></tr>
     {% for torneo in torneos %}
         <tr>
-            <td><a href="torneos_inscripcion?idTorneo={{ torneo.id }}&idUser={{ user.id }}" class="btn btn-primary links">{% trans "Registration/Cancel" %}</a></td>
+            <td><a href="#" onclick="unsuscription('{{ torneo.id }}', '{{ user.id }}')">{% trans "Registration/Cancel" %}</a></td>
             <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
@@ -55,7 +55,15 @@
         <tr><td colspan='7'></td></tr>
     {% endfor %}
 </table>
-
+<script>
+    function unsuscription(torneo, user) {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_inscripcion' %}?idTorneo=" + torneo + '&idUser=' + user, function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+            });
+        }
+</script>
 <p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
 </body>

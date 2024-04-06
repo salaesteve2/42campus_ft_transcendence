@@ -321,7 +321,7 @@ $(document).ready(function(){
 -->
 
 <p id="tecla">_</p>
-<p><button id="b_volver" onclick="location.href='{% url 'home' %}';">{% trans "back to home" %}</button></p>
+<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 <p id="getPostStatusOk">_</p>
 <p id="getPostStatusErr">_</p>
 <p id="getPostKeyOk">_</p>

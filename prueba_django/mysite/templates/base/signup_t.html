@@ -12,14 +12,30 @@
 <h1>{% trans "Welcome!" %}</h1>
 <h1>{% trans "Signup" %}</h1>
 
-<form method="POST">
+<form method="POST" action="{% url 'signup' %}">
     {% csrf_token %}
     <table>
     {{ form.as_table }}
     </table>
     <p><button type="submit">{% trans "Signup" %}</button></p>
-    <p><a href="{% url 'login' %}" class="btn btn-primary links">{% trans "I have already signedup" %}</a></p>
+    <div id="contenido-dinamico">
+            
+    </div>
+    <div id="contenido-a-eliminar2">
+        <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "I have already signedup" %}</a></p>
+    </div>
 </form>
-
+<script>
+    function mostrarLogin() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'login' %}", function(data) {
+                
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar2").hide();
+            });
+    }
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </body>
 </html>

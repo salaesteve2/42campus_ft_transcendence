@@ -7,6 +7,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="static/pantallaPong.css"/>
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <link rel="stylesheet" href="../../static/base.css">
     <style>
         /* Estilos adicionales si es necesario */
     </style>
@@ -16,137 +17,112 @@
         <!-- Barra de navegación -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
-              <a class="navbar-brand" href="#">Trascendance</a>
-              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="#">Trascendance</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mr-auto">
-                  <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'en' %}">{% trans "English" %}</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'es' %}">{% trans "Español" %}</a>
-                  </li>
-                  <li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'fr' %}">{% trans "Français" %}</a>
-                  </li>
-                  <li class="nav-item">
-                    <button class="nav-link" data-section="home">Home</button>
-                  </li>
+                </li>
                 </ul>
-              </div>
             </div>
-          </nav>
-          
+            </div>
+        </nav>
 
         <!-- Contenido principal -->
         <div id="content" class="mt-3">
             <!-- Contenido cargado desde el servidor se inserta aquí por JavaScript -->
         </div>
-
-        <!-- Bootstrap JS y jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+        <div id="contenido-dinamico">
+            
+        </div>
+        <div id="contenido-a-eliminar">
+            <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "Login" %}</a></p>
+            <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links">{% trans "Signup" %}</a></p>
+            <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2Flocalhost%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p>
+        </div>
+        {% if error %}
+            <script>
+                window.alert("Datos incorrectos");
+                setTimeout(showMessage, 2000);
+                window.location.href = "{% url 'index' %}";
+            </script>
+        {% endif %}
+        {% if request.user.is_authenticated %}
         <script>
-            // Función para cargar secciones desde el servidor
-            function showSection(section) {
-                if (section === 'login') {
-                    // Carga el contenido del formulario de inicio de sesión directamente
-                    document.querySelector('#content').innerHTML = loginFormContent;
-                } else if (section === 'signup') {
-                    // Carga el contenido del formulario de registro directamente
-                    document.querySelector('#content').innerHTML = signupFormContent;
-                // } else if (section === 'partidos') {
-                //     // Carga la lista de partidos mediante fetch
-                //     fetch('/partidos')
-                //         .then(response => response.text())
-                //         .then(text => {
-                //             document.querySelector('#content').innerHTML = text;
-                //         });
-                } else if (section === 'torneos') {
-                    // Carga la lista de torneos mediante fetch
-                    fetch('/torneos')
-                        .then(response => response.text())
-                        .then(text => {
-                            document.querySelector('#content').innerHTML = text;
-                        });
-                }
-                else {
-                    // Para otras secciones, realiza la carga como antes
-                    fetch(`/sections/${section}`)
-                        .then(response => response.text())
-                        .then(text => {
-                            console.log(text);
-                            document.querySelector('#content').innerHTML = text;
-                        });
-                }
-            }
-            // Función para cargar la sección de administración de torneos
-            function loadTorneosAdmin() {
-                fetch('/sections/torneos_admin')
-                    .then(response => response.text())
-                    .then(text => {
-                        document.querySelector('#content').innerHTML = text;
-                    });
-            }
-
-            // Event listener para los botones de navegación
-            document.addEventListener("DOMContentLoaded", function() {
-                document.querySelectorAll('button[data-section]').forEach(button => {
-                    button.addEventListener('click', function() {
-                        showSection(this.dataset.section);
-                    });
+            window.onload = function() {
+                mostrarLoged();
+            };
+            function mostrarLoged() {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'loged' %}", function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
                 });
-
-                // Carga la sección "home" por defecto
-                showSection('home');
-            });
-
-            // Contenido del formulario de inicio de sesión
-            var loginFormContent = `
-                <!-- Contenido del formulario de inicio de sesión -->
-                <div id="login" class="page">
-                    <div class="container">
-                        <h1>Welcome! Login</h1>
-                        <form method="POST">
-                            {% csrf_token %}
-                            <table>
-                                {{ form.as_table }}
-                            </table>
-                            <div class="button-group">
-                                <p><button type="submit">Login</button></p>
-                                <p><button type="reset">Clear</button></p>
-                            </div>
-                            <p align="center"><a href="{% url 'signup' %}">I haven't signed up yet</a></p>
-                        </form>
-                    </div>
-                </div>
-            `;
-
-            // Contenido del formulario de registro
-            var signupFormContent = `
-                <!-- Contenido del formulario de registro -->
-                <div id="signup" class="page">
-                    <div class="container">
-                        <h1>Welcome! Signup</h1>
-                        <form method="POST">
-                            {% csrf_token %}
-                            <table>
-                                {{ form.as_table }}
-                            </table>
-                            <p><button type="submit">Signup</button></p>
-                            <p><a href="{% url 'login' %}">I have already signed up</a></p>
-                        </form>
-                    </div>
-                </div>
-            `;
-
-            // Aquí va el contenido de pantallaPong_t.html
-            // JavaScript y funciones necesarias
-            // ...
+            }
         </script>
+        {%if form %}
+            <meta http-equiv="refresh" content="0; url={% url 'index' %}">
+        {%endif%}
+        {%if form2 %}
+            <script>
+                window.onload = function() {
+                    mostrarTA();
+                };
+                function mostrarTA() {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'torneos_admin' %}", function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
+            </script>
+        {%endif%}
+        {% endif %}
     </div>
+    <script>
+        
+        function mostrarLogin() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'login' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar").hide();
+            });
+        }
+        function mostrarSignup() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'signup' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar").hide();
+            });
+        }
+        function mostrarSignup42() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2Flocalhost%2Fapi&response_type=code", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar").hide();
+            });
+        }
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<footer class="container-fluid bg-dark text-white py-3 footer">
+    <div class="text-left">
+        <p class="m-0">&copy; 42Madrid excentric pong</p>
+    </div>
+</footer>
 </body>
 </html>
