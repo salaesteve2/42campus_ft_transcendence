@@ -88,7 +88,6 @@ def user_signup(request):
         'form': form
     }
     return HttpResponse(template.render(context, request))
-    return render(request, 'base/signup_t.html', {'form': form})
 
 def google_code(request):
     url = request.build_absolute_uri()
@@ -210,7 +209,7 @@ def user_api(request):
                             qr = qrcode.make(otp_url)
                             qr.save(qr_path)
                         else:
-                            return render(request, 'base/google_code_t.html', {'username': username})
+                            return render(request, 'singlepage/index.html', {'username2': username})
                         return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
                     else:
                         login(request, user)
@@ -254,7 +253,7 @@ def user_login(request):
                         qr = qrcode.make(otp_url)
                         qr.save(qr_path)
                         return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
-                    return render(request, 'base/google_code_t.html', {'username': username})
+                    return render(request, 'singlepage/index.html', {'username2': username})
                 else:
                     login(request, user)
                     return render(request, 'singlepage/index.html', {'form': form})
@@ -305,15 +304,19 @@ def doble_factor(request):
             user_settings, created = UserSettings.objects.get_or_create(user=user)
             user_settings.two_factor_auth_enabled = True
             user_settings.save()
-        return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
+        if request.method == 'GET':
+            return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
+        return render(request, 'singlepage/index.html', {'qr_path': qr_path, 'username': user.username})
     else:
         # user_settings, created = UserSettings.objects.get_or_create(user=user)
         # user_settings.two_factor_auth_enabled = True
         # user_settings.save()
         user = request.user
         qr_path = 'static/{}_qr.png'.format(user.username)
-        return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
-    # return JsonResponse({'double_factor_auth_enabled': estado_2fa})
+        print(request.method)
+        if request.method == 'GET':
+            return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
+        return render(request, 'singlepage/index.html', {'qr_path': qr_path, 'username': user.username})
 
 def loged(request):
     return render(request, 'base/loged_t.html')
