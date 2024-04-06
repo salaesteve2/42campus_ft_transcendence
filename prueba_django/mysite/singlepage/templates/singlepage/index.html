@@ -79,15 +79,45 @@
                     mostrarTA();
                 };
                 function mostrarTA() {
+                    // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                    $.get("{% url 'torneos_admin' %}", function(data) {
+                        // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                        $("#contenido-dinamico").html(data);
+                        $("#contenido-a-eliminar").hide();
+                    });
+                }
+            </script>
+        {%endif%}
+        {% if qr_path%}
+        <script>
+            window.onload = function() {
+                mostrar2fa();
+            };
+            function mostrar2fa() {
                 // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-                $.get("{% url 'torneos_admin' %}", function(data) {
+                $.get("{% url 'check' %}", function(data) {
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
                 });
             }
-            </script>
-        {%endif%}
+        </script>
+        {% endif %}
+    {% endif %}
+    {% if username2 %}
+        <script>
+            window.onload = function() {
+                mostrarcode('{{username2}}');
+            };
+            function mostrarcode(username) {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'google_code' %}?username=" + username, function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
+        </script>
         {% endif %}
     </div>
     <script>
