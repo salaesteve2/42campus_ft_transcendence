@@ -10,32 +10,6 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- MENU NAVIGATION BAR -->
-<div class="navigation">
-    <ul>
-      <li class="list">
-        <a href="{% url 'home' %}" onclick="showPage('home')">
-          <span class="icon"><ion-icon name="home"></ion-icon></span>
-          <span class="text">home</span>
-        </a>
-      </li>
-    </ul>
-    <div class="language-container">
-        <ul class="language-list">
-            <li><a href="{% url 'es' %}" class="language-link"><img src="../../static/es-flag.png" alt="Español"> Español</a></li>
-            <li><a href="{% url 'en' %}" class="language-link"><img src="../../static/en-flag.png" alt="English"> English</a></li>
-            <li><a href="{% url 'fr' %}" class="language-link"><img src="../../static/fr-flag.png" alt="English"> Français</a></li>
-        </ul>
-    </div>
-
-   <!-- <p>
-      <a href="{% url 'en' %}">English</a>&nbsp;&nbsp;&nbsp;
-      <a href="{% url 'es' %}">Español</a>&nbsp;&nbsp;&nbsp;
-      <a href="{% url 'fr' %}">Français</a>
-    </p>-->
-  </div>
-  
-  
    <!-- PRIMARY CONTENT SECTION -->
         <!-- en esta seccion se abren diferentes divs para albergar todas las páginas del sitio
              en un site mono página -->
@@ -45,7 +19,7 @@
     <div class="container">
         <h1>{% trans "Welcome!" %} {% trans "Login" %}</h1>
         <!--<h1>{% trans "Login" %}</h1>-->
-        <form method="POST">
+        <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             <table class="table table-striped">
             {{ form.as_table }}
@@ -55,14 +29,28 @@
                 <p><button type="submit" class="rounded-sm">{% trans "Login" %}</button></p>
                 <p><button type="reset" class="rounded-sm">clear</button></p>
             </div>
-            <!-- todavia no estamos dados de alta en la bbdd -->
-            <p align = "center"><a href="{% url 'signup' %}" class="btn btn-primary links">{% trans "I haven't signedup yet" %}</a></p>
         </form>
+        <div id="contenido-dinamico">
+            
+        </div>
+        <!-- todavia no estamos dados de alta en la bbdd -->
+        <div id="contenido-a-eliminar3">
+          <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links">{% trans "I haven't signedup yet" %}</a></p>
+        </div>
+        <script>
+          function mostrarSignup() {
+                  // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                  $.get("{% url 'signup' %}", function(data) {
+                      
+                      // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                      $("#contenido-dinamico").html(data);
+                      $("#contenido-a-eliminar3").hide();
+                  });
+          }
+      </script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </div>
 </div>
 </main>
-<footer>
-  (c) 42Madrid excentric pong
-</footer>
 </body>
 </html>

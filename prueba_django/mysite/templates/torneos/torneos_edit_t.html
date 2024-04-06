@@ -8,18 +8,30 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
-<h1>{% trans "Edit tournement" %}</h1>
-
-<form method="POST">
-    {% csrf_token %}
-    <input type='hidden' name='idTorneo' value='{{idTorneo}}'/>
-    <table>
-    {{ form.as_table }}
-    </table>
-    <p><button type="submit">{% trans "Save" %}</button></p>
-    <p><a href="{% url 'torneos_admin' %}" class="btn btn-primary links">{% trans "Tournament administration" %}</a></p>
-</form>
-
+    <div id="contenido-dinamico">
+            
+    </div>
+    <div id="contenido-a-eliminar5">
+        <h1>{% trans "Edit tournement" %}</h1>
+        <form method="POST" action="{% url 'torneos_edit' %}">
+            {% csrf_token %}
+            <input type='hidden' name='idTorneo' value='{{idTorneo}}'/>
+            <table>
+            {{ form.as_table }}
+            </table>
+            <p><button type="submit">{% trans "Save" %}</button></p>
+            <p><a href="#" onclick="torneosA()" class="btn btn-primary links">{% trans "Tournament administration" %}</a></p>
+        </form>
+    </div>
+<script>
+    function torneosA() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_admin' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar5").hide();
+            });
+        }
+</script>
 </body>
 </html>

@@ -8,12 +8,15 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
+    <div id="contenido-dinamico">
+            
+    </div>
+    <div id="contenido-a-eliminar4">
 <h1>{% trans "Tournament administration" %}</h1>
 
 <p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
-<p><a href="torneos_edit">{% trans "New" %}</a></p>
+<p><a href="#" onclick="editT()" class="btn btn-primary links">{% trans "New" %}</a></p>
             
 <table>
     <tr>
@@ -29,8 +32,8 @@
     <tr><td colspan='8'></td></tr>
 	    {% for torneo in torneos %}
         <tr>
-            <td><a href="torneos_edit?idTorneo={{ torneo.id }}">{{ torneo.id }}</a></td>
-            <td><a href="torneos_delete?idTorneo={{ torneo.id }}">{% trans "Delete" %}</a></td>
+            <td><a href="#" onclick="editT2('{{ torneo.id }}')">{{ torneo.id }}</a></td>
+            <td><a href="#" onclick="editD('{{ torneo.id }}')">{% trans "Delete" %}</a></td>
             <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
@@ -42,6 +45,31 @@
 </table>
 
 <p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
-
+    </div>
+    <script>
+        function editT2(torneo) {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_edit' %}?idTorneo=" + torneo, function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar4").hide();
+            });
+        }
+        function editT() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_edit' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar4").hide();
+            });
+        }
+        function editD(torneo) {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_delete' %}?idTorneo=" + torneo, function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+            });
+        }
+    </script>
 </body>
 </html>

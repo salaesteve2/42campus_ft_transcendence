@@ -20,4 +20,4 @@ def home_section(request):
     context = { 'jugar': jugar, 
                     'proximosTorneos': proximosTorneos, 
                     'hayProximosTorneos': hayProximosTorneos }
-    return render(request, 'base/home_t.html', context)
+    return render(request, 'singlepage/index.html', context)

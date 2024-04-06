@@ -134,7 +134,6 @@ def torneos_admin(request):
 	activate_language(request)
 	if not request.user.is_staff: 
 		return
-	t = datetime.datetime.now()
 	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
 	#torneos = Torneo.objects.filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t).order_by('-comienzo_partidos')
 	context = {'torneos': torneos, }
@@ -146,7 +145,10 @@ def torneos_delete(request):
 	idTorneo = request.GET.get('idTorneo')
 	torneo = Torneo.objects.get(id=idTorneo)
 	torneo.delete()
-	return redirect('torneos_admin')
+	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
+	#torneos = Torneo.objects.filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t).order_by('-comienzo_partidos')
+	context = {'torneos': torneos, }
+	return render(request, 'torneos/torneos_admin_t.html', context)
 	
 def torneos_edit(request):
 	activate_language(request)
@@ -180,7 +182,7 @@ def torneos_edit(request):
 				torneo.minutos_entre_partidos = cd['minutos_entre_partidos']
 				#print("salva nuevo")
 				torneo.save()
-			return redirect('torneos_admin')
+			return render(request, 'singlepage/index.html', {'form2': form})
 	else:
 		# crear el html para editar (comienzo de edición)
 		idTorneo = request.GET.get('idTorneo')

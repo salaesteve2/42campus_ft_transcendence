@@ -26,6 +26,9 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 
+from django.http import HttpResponse
+from django.template import loader
+
 def change_language(request, language):
     request.session['myLanguage'] = language
     if request.user.is_authenticated:
@@ -65,7 +68,7 @@ def home(request):
     context = { 'jugar': jugar, 
                     'proximosTorneos': proximosTorneos, 
                     'hayProximosTorneos': hayProximosTorneos }
-    return render(request, 'base/home_t.html', context)
+    return render(request, 'singlepage/index.html', context)
 
 # signup page
 def user_signup(request):
@@ -80,6 +83,11 @@ def user_signup(request):
         # crear el html para editar (comienzo de edición)
         form = UserCreationForm()
     # crear el html para editar o error en form
+    template = loader.get_template('base/signup_t.html')
+    context = {
+        'form': form
+    }
+    return HttpResponse(template.render(context, request))
     return render(request, 'base/signup_t.html', {'form': form})
 
 def google_code(request):
@@ -207,7 +215,7 @@ def user_api(request):
                     else:
                         login(request, user)
                         return redirect('home')
-    return render(request, 'base/home_t.html')
+    return render(request, 'singlepage/index.html')
 
 # login page
 def user_login(request):
@@ -249,7 +257,9 @@ def user_login(request):
                     return render(request, 'base/google_code_t.html', {'username': username})
                 else:
                     login(request, user)
-                    return redirect('home')
+                    return render(request, 'singlepage/index.html', {'form': form})
+            else:
+                return render(request, 'singlepage/index.html', {'error': True})
     else:
         form = LoginForm()
     # crear el html para editar o error en form
@@ -267,7 +277,7 @@ def generate_jwt_token(user):
 def user_logout(request):
     activate_language(request)
     logout(request)
-    return redirect('home')
+    return render(request, 'singlepage/index.html')
 
 # @login_required
 # def doble_factor(request):
@@ -304,3 +314,6 @@ def doble_factor(request):
         qr_path = 'static/{}_qr.png'.format(user.username)
         return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
     # return JsonResponse({'double_factor_auth_enabled': estado_2fa})
+
+def loged(request):
+    return render(request, 'base/loged_t.html')
