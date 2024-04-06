@@ -17,7 +17,7 @@
     {% csrf_token %}
     <label for="alias">{% trans "New Alias:" %}</label>
     <input type="text" id="alias" name="alias">
-    <button type="submit">{% trans "Update Alias" %}</button>
+    <button type="submit" class="btn btn-primary links">{% trans "Update Alias" %}</button>
   </form>
   {% if messages %}
     <ul class="messages">

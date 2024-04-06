@@ -25,7 +25,7 @@
 			<p><a href="#" onclick="mostrarLogout()" class="btn btn-primary links">{% trans "Logout" %}</a></p>
 			<form id="2faForm" action="{% url 'check' %}" method="post">
 				{% csrf_token %}
-				<button type="submit">{% trans "Show 2FA QR" %}</button>
+				<button type="submit" class="btn btn-primary links">{% trans "Show 2FA QR" %}</button>
 			</form>
 			<table width='250'>
 				<tr><th>{% trans "Quick match" %}</th></tr>
