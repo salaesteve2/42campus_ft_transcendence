@@ -108,14 +108,14 @@ table, th, td {
 }
 
 /* proyect primary buttons */
-
+/*
 .button-group {
   display: flex;
   justify-content: space-between;
 }
 
 .button-group button {
-  width: 48%; /* Ajusta el ancho según tus preferencias */
+  width: 48%;
 }
 
 button {
@@ -132,7 +132,7 @@ button {
 
 button:hover {
   background-color: #18b300;
-}
+}*/
 
 /* languages */
 .language-container{
