@@ -39,7 +39,7 @@ def change_language(request, language):
             request.session['myLanguage'] = user_settings.language
         except UserSettings.DoesNotExist:
             # Si no hay configuración de idioma para el usuario, crea una nueva
-            UserSettings.objects.create(user=request.user, language=language)
+            UserSettings.objects.create(user=request.user, language=language, two_factor_auth_enabled=False, alias="")
     return redirect('home')
 
 def change_en(request):
