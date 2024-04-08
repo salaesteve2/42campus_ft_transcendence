@@ -70,24 +70,25 @@ def home(request):
                     'hayProximosTorneos': hayProximosTorneos }
     return render(request, 'singlepage/index.html', context)
 
-# signup page
+
+
 def user_signup(request):
     activate_language(request)
-    if request.method == 'POST': 
-        # fin edición
+    if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return JsonResponse({'redirect_url': '/'})
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'errors': errors}, status=400)
     else:
-        # crear el html para editar (comienzo de edición)
         form = UserCreationForm()
-    # crear el html para editar o error en form
-    template = loader.get_template('base/signup_t.html')
-    context = {
-        'form': form
-    }
-    return HttpResponse(template.render(context, request))
+        template = loader.get_template('base/signup_t.html')
+        context = {
+            'form': form
+        }
+        return HttpResponse(template.render(context, request))
 
 def google_code(request):
     url = request.build_absolute_uri()
@@ -224,7 +225,7 @@ def user_login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            fa = False
+            fa = None
             user = authenticate(request, username=username, password=password)
             if user:
                 # Verificar si el usuario tiene habilitado 2FA
@@ -240,7 +241,7 @@ def user_login(request):
                 token = generate_jwt_token(user)
                 request.session['token'] = token
                 # 2FA
-                if fa != False:
+                if fa:
                     secret = pyotp.random_base32()
                     qr_path = 'static/{}_qr.png'.format(username)
                     # Si no existe el dispositivo, se crea
