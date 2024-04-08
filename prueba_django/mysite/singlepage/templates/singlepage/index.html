@@ -45,11 +45,13 @@
         <div id="contenido-dinamico">
             
         </div>
+        {% if not form %}
         <div id="contenido-a-eliminar">
             <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "Login" %}</a></p>
             <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links">{% trans "Signup" %}</a></p>
             <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2Flocalhost%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p>
         </div>
+        {%endif%}
         {% if error %}
             <script>
                 window.alert("Datos incorrectos");
@@ -58,21 +60,125 @@
             </script>
         {% endif %}
         {% if request.user.is_authenticated %}
-        <script>
-            window.onload = function() {
-                mostrarLoged();
-            };
-            function mostrarLoged() {
-                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-                $.get("{% url 'loged' %}", function(data) {
-                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                    $("#contenido-dinamico").html(data);
-                    $("#contenido-a-eliminar").hide();
-                });
-            }
-        </script>
+        <div id="home" class="page">
+            <div class="container">
+                <div id="contenido-dinamico">
+                    
+                </div>
+                <div id="contenido-a-eliminar3">
+                    <p>{% trans "User" %}: {{ request.user.username }}</p>
+                    <p><a href="#" onclick="mostrarLogout()" class="btn btn-primary links">{% trans "Logout" %}</a></p>
+                    <form id="2faForm" action="{% url 'check' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary links">{% trans "Show 2FA QR" %}</button>
+                    </form>
+                    <table width='250'>
+                        <tr><th>{% trans "Quick match" %}</th></tr>
+                        <tr>
+                        <td>
+                            <!--<p><a href="#" onclick="mostrarPartido()" class="btn btn-primary links">{% trans "Play" %}</a></p>-->
+                            <p><a href="{% url 'arranque_rapido' %}" class="btn btn-primary links">{% trans "Play" %}</a></p>
+                            <p><a href="#" onclick="mostrarMLista()" class="btn btn-primary links">{% trans "List of my matches" %}</a></p>
+                            <p><a href="#" onclick="mostrarLista()" class="btn btn-primary links">{% trans "List of matches" %}</a></p>
+                        </td>
+                        </tr>
+                    </table>
+                    <table width='250'>
+                        <tr><th>{% trans "Tournaments" %}</th></tr>
+                        <tr>
+                            <td>
+                                <p><a href="#" onclick="mostrarInsLista()" class="btn btn-primary links">{% trans "Tournament registration" %}</a></p>
+                                <p><a href="#" onclick="mostrarInfLista()" class="btn btn-primary links">{% trans "Tournament information" %}</a></p>
+                                {% if jugar %}
+                                    <p><a href="#" onclick="mostrarPT()" class="btn btn-primary links">{% trans "Tournament play" %}</a></p>
+                                {% endif %}
+                                {% if hayProximosTorneos %}
+                                    <p>{% trans "Upcoming tournaments" %}</p>
+                                    <ul>
+                                    {% for t_torneo in proximosTorneos %}
+                                        <li>{{ t_torneo }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                {% if request.user.is_superuser or request.user.is_staff %}
+                                    <p><a href="#" onclick="mostrarTA()" class="btn btn-primary links">{% trans "Tournament administration" %}</a></p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                </div>
+                <script>
+                    function mostrarLogout() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'logout' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            window.location.href = "{% url 'index' %}";
+                            //$("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarPartido() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'arranque_rapido' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarMLista() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'partidos_mlist' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarLista() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'partidos_list' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarInsLista() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'torneos_inscripcion_list' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarInfLista() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'torneos_info_list' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarPT() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'arranque_torneo' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarTA() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'torneos_admin' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                </script>
+            </div>
+        </div>
         {%if form %}
-            <meta http-equiv="refresh" content="0; url={% url 'index' %}">
+            <!--<meta http-equiv="refresh" content="0; url={% url 'index' %}">-->
         {%endif%}
         {%if form2 %}
             <script>
@@ -170,6 +276,5 @@
         <p class="m-0">&copy; 42Madrid excentric pong</p>
     </div>
 </footer>
-<script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

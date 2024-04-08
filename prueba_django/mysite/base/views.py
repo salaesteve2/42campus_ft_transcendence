@@ -252,16 +252,16 @@ def user_login(request):
                         # Generar QR
                         qr = qrcode.make(otp_url)
                         qr.save(qr_path)
-                        return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
-                    return render(request, 'singlepage/index.html', {'username2': username})
+                        return JsonResponse({'redirect_url': '/base/google_t.html', 'qr_path': qr_path, 'username': username})
+                    return JsonResponse({'redirect_url': '/', 'username2': username})
                 else:
                     login(request, user)
-                    return render(request, 'singlepage/index.html', {'form': form})
+                    return JsonResponse({'redirect_url': '/'})
             else:
-                return render(request, 'singlepage/index.html', {'error': True})
+                return JsonResponse({'error': True})
     else:
         form = LoginForm()
-    # crear el html para editar o error en form
+    # Si la solicitud no es POST, simplemente devolver el HTML para el formulario
     return render(request, 'base/login_t.html', {'form': form})
 
 def generate_jwt_token(user):
