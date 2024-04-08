@@ -12,12 +12,15 @@
 <h1>{% trans "Welcome!" %}</h1>
 <h1>{% trans "Signup" %}</h1>
 
-<form method="POST" action="{% url 'signup' %}">
+<form id="miFormulario">
     {% csrf_token %}
-    <table>
-    {{ form.as_table }}
+    <table class="table table-striped">
+        {{ form.as_table }}
     </table>
-    <p><button type="submit" class="btn btn-primary links">{% trans "Signup" %}</button></p>
+    <div class="button-group">
+        <p><button type="submit" class="btn btn-primary links">{% trans "Register" %}</button></p>
+        <p><button type="reset" class="btn btn-primary links">clear</button></p>
+    </div>
     <div id="contenido-dinamico">
             
     </div>
@@ -25,6 +28,32 @@
         <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "I have already signedup" %}</a></p>
     </div>
 </form>
+<script>
+    $(document).ready(function() {
+        $('#miFormulario').submit(function(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
+            var formData = $(this).serialize(); // Serializar los datos del formulario
+            $.post("{% url 'signup' %}", formData)
+                .done(function(response) {
+                    // Manejar la respuesta exitosa
+                    if (response.error) {
+                        // Si hay un error, muestra un mensaje de error en algún lugar del HTML
+                        $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
+                    } else if (response.redirect_url) {
+                        // Si hay una URL de redirección, redirige a esa URL
+                        window.location.href = response.redirect_url;
+                    } else {
+                        // Manejar otro tipo de respuesta, si es necesario
+                        console.log(response);
+                    }
+                })
+                .fail(function(xhr, errmsg, err) {
+                    // Manejar el fallo de la solicitud
+                    console.error('La solicitud falló con un error ' + xhr.status + ': ' + xhr.responseText);
+                });
+        });
+    });
+    </script>
 <script>
     function mostrarLogin() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
