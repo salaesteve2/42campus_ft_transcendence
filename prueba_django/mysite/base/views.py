@@ -198,20 +198,7 @@ def user_api(request):
                     request.session['token'] = token
                     # 2FA
                     if fa:
-                        secret = pyotp.random_base32()
-                        qr_path = 'static/{}_qr.png'.format(username)
-                        # Verificar si el usuario ya tiene un dispositivo TOTP
-                        if not TOTPDevice.objects.filter(user=user).exists():
-                            device = TOTPDevice.objects.create(user=User.objects.get(username=username))
-                            device.key = secret
-                            device.save()
-                            otp_url = pyotp.totp.TOTP(secret).provisioning_uri(username, issuer_name='42')
-                            # Generar QR
-                            qr = qrcode.make(otp_url)
-                            qr.save(qr_path)
-                        else:
-                            return render(request, 'singlepage/index.html', {'username2': username})
-                        return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': username})
+                        return render(request, 'singlepage/index.html', {'username2': username})
                     else:
                         login(request, user)
                         return redirect('home')
@@ -242,18 +229,6 @@ def user_login(request):
                 request.session['token'] = token
                 # 2FA
                 if fa:
-                    secret = pyotp.random_base32()
-                    qr_path = 'static/{}_qr.png'.format(username)
-                    # Si no existe el dispositivo, se crea
-                    if not TOTPDevice.objects.filter(user=user).exists():
-                        device = TOTPDevice.objects.create(user=User.objects.get(username=username))
-                        device.key = secret
-                        device.save()
-                        otp_url = pyotp.totp.TOTP(secret).provisioning_uri(username, issuer_name='42')
-                        # Generar QR
-                        qr = qrcode.make(otp_url)
-                        qr.save(qr_path)
-                        return JsonResponse({'redirect_url': '/base/google_t.html', 'qr_path': qr_path, 'username': username})
                     return JsonResponse({'redirect_url': '/', 'username2': username})
                 else:
                     login(request, user)
