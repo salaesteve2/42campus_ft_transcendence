@@ -98,22 +98,18 @@ def update_alias(request):
 				user_settings, created = UserSettings.objects.get_or_create(user=user)
 				user_settings.alias = aa
 				user_settings.save()
-				messages.success(request, "Alias eliminado correctamente.")
-			elif re.match("^[a-zA-Z0-9]+$", aa):
-				if len(aa) <= 50:
-					user = User.objects.get(username=request.user.username)
-					user_settings, created = UserSettings.objects.get_or_create(user=user)
-					user_settings.alias = aa
-					user_settings.save()
-					messages.success(request, "Alias actualizado correctamente.")
-					return render(request, 'singlepage/index.html', {'form3': 'form'})
-					#return redirect('torneos_inscripcion_list')  # Redirige a la página de torneos después de guardar
-				else:
-					messages.error(request, "El alias no puede tener más de 50 caracteres.")
+				return JsonResponse({'success': True, 'new_alias': aa})
+			elif not re.match("^[a-zA-Z0-9]+$", aa) or len(aa) > 50:
+            # Return JSON with error message
+				return JsonResponse({'success': False, 'error': "El alias solo puede contener letras y números, y no puede tener más de 50 caracteres."})
 			else:
-				messages.error(request, "El alias solo puede contener letras y números.")
-	return render(request, 'singlepage/index.html', {'form3': 'form'})
-	#return redirect('torneos_inscripcion_list')
+				user = User.objects.get(username=request.user.username)
+				user_settings, created = UserSettings.objects.get_or_create(user=user)
+				user_settings.alias = aa
+				user_settings.save()
+            # Return success JSON
+				return JsonResponse({'success': True, 'new_alias': aa})
+	return JsonResponse({'success': False})
 
 def torneos_inscripcion(request):
 	if not request.user.is_authenticated:
