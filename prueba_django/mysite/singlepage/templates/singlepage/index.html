@@ -115,6 +115,7 @@
                             window.location.href = "{% url 'index' %}";
                             //$("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+				history.pushState({ view: "Logout" }, null, "/");
                         });
                     }
                     function mostrarQR() {
@@ -124,6 +125,7 @@
                             //window.location.href = "{% url 'index' %}";
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+				history.pushState({ view: "check" }, null, "/");
                         });
                     }
                     function mostrarPartido() {
@@ -132,6 +134,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+			    history.pushState({ view: "partido" }, null, "/");
                         });
                     }
                     function mostrarMLista() {
@@ -140,6 +143,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+			    history.pushState({ view: "partidos_mlist" }, null, "/");
                         });
                     }
                     function mostrarLista() {
@@ -148,6 +152,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+			    history.pushState({ view: "partidos_list" }, null, "/");
                         });
                     }
                     function mostrarInsLista() {
@@ -156,6 +161,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+			     history.pushState({ view: "torneos_inscripcion_list" }, null, "/");
                         });
                     }
                     function mostrarInfLista() {
@@ -164,6 +170,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+			    history.pushState({ view: "torneos_info_list" }, null, "/");
                         });
                     }
                     function mostrarPT() {
@@ -172,6 +179,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+			    history.pushState({ view: "torneos_play" }, null, "/");
                         });
                     }
                     function mostrarTA() {
@@ -180,8 +188,85 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+				history.pushState({ view: "torneos_admin" }, null, "/");
                         });
                     }
+		
+			function mostrarLogout2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'logout' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            window.location.href = "{% url 'index' %}";
+                            //$("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarQR2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'check' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            //window.location.href = "{% url 'index' %}";
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarPartido2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'arranque_rapido' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarMLista2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'partidos_mlist' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarLista2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'partidos_list' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarInsLista2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'torneos_inscripcion_list' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarInfLista2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'torneos_info_list' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarPT2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'arranque_torneo' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+                    function mostrarTA2() {
+                        // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                        $.get("{% url 'torneos_admin' %}", function(data) {
+                            // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                            $("#contenido-dinamico").html(data);
+                            $("#contenido-a-eliminar").hide();
+                        });
+                    }
+
                 </script>
             </div>
         </div>
@@ -199,8 +284,23 @@
                         // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                         $("#contenido-dinamico").html(data);
                         $("#contenido-a-eliminar").hide();
+			history.pushState({ view: "torneos_admin" }, null, "/");
                     });
                 }
+		</script>
+           <script>
+                window.onload = function() {
+                    mostrarTA2();
+                };
+                function mostrarTA2() {
+                    // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                    $.get("{% url 'torneos_admin' %}", function(data) {
+                        // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                        $("#contenido-dinamico").html(data);
+                        $("#contenido-a-eliminar").hide();
+                    });
+                }
+
             </script>
         {%endif%}
         {% if qr_path%}
@@ -214,9 +314,24 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
+			history.pushState({ view: "check" }, null, "/")
                 });
             }
         </script>
+<script>
+            window.onload = function() {
+                mostrar2fa2();
+            };
+            function mostrar2fa2() {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'check' %}", function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
+        </script>
+
         {% endif %}
         {% if form3 %}
         <script>
@@ -229,9 +344,24 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
+			history.pushState({ view: "torneos_inscripcion_list" }, null, "/")
                 });
             }
         </script>
+        <script>
+            window.onload = function() {
+                mostrartorneos2();
+            };
+            function mostrartorneos2() {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'torneos_inscripcion_list' %}", function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
+        </script>
+
         {% endif %}
     {% endif %}
     {% if username2 %}
@@ -245,9 +375,24 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
+			history.pushState({ view: "google_code" }, null, "/")
                 });
             }
         </script>
+ <script>
+            window.onload = function() {
+                mostrarcode2('{{username2}}');
+            };
+            function mostrarcode2(username) {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'google_code' %}?username=" + username, function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
+        </script>
+
     {% endif %}
     </div>
     <script>
@@ -258,6 +403,8 @@
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
+		history.pushState({ view: "login" }, null, "/");
+		
             });
         }
         function mostrarSignup() {
@@ -266,6 +413,7 @@
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
+		history.pushState({ view: "signup" }, null, "/");
             });
         }
         function mostrarSignup42() {
@@ -274,8 +422,86 @@
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
+         });
+        }
+        function mostrarLogin2() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'login' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar").hide();
             });
         }
+        function mostrarSignup2() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'signup' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar").hide();
+            });
+        }
+function renderView(view) {
+  // Carga la plantilla index.html
+  $.get(`{% url 'index' %}`, function(data) {
+
+    // Mostrar el contenido específico de la vista
+    switch (view) {
+      case "login":
+        mostrarLogin2();
+        break;
+      case "signup":
+        mostrarSignup2();
+        break;
+      case "logout":
+        mostrarLogout2();
+        break;
+      case "check":
+        mostrarQR2();
+        break;
+      case "partido":
+        mostrarPartido2();
+        break;
+      case "partidos_mlist":
+        mostrarMLista2();
+        break;
+      case "partidos_list":
+        mostrarLista2();
+        break;
+      case "torneos_inscripcion_list":
+        mostrarInsLista2();
+        break;
+      case "torneos_info_list":
+        mostrarInfLista2();
+        break;
+      case "torneos_play":
+        mostrarPT2();
+        break;
+      case "torneos_admin":
+        mostrarTA2();
+        break;
+      case "google_code":
+        mostrarcode2('{{username2}}');
+        break;
+      default:
+        break;
+    }
+
+    // Actualizar el historial con el nombre de la vista
+    // history.pushState({ view: view }, null, `/${view}`);
+  });
+}
+
+window.addEventListener('popstate', (event) => {
+  // Check if event.state has a view property (use strict comparison)
+  if (event.state !== null && typeof event.state.view === 'string') {
+    const view = event.state.view;
+    renderView(view);
+  } else {
+    // Render the default view if state.view is missing or not a string
+    renderView('');
+  }
+  // No need to call history.pushState() here
+});
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
