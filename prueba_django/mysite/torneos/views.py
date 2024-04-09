@@ -111,6 +111,7 @@ def update_alias(request):
             # Return success JSON
 				return JsonResponse({'success': True, 'new_alias': aa})
 	return JsonResponse({'success': False})
+	#return redirect('torneos_inscripcion_list')
 
 def torneos_inscripcion(request):
 	if not request.user.is_authenticated:
