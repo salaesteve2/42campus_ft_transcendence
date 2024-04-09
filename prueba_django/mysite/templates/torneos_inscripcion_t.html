@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+{% load i18n %}
+<head>
+<meta charset="UTF-8"/>
+<link rel="stylesheet" href="static/torneos.css"/>
+<link rel="icon" type="image/x-icon" href="static/favicon.ico">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<h1>{% trans "Tournament registration" %}</h1>
+
+<p>{% trans "User" %}: {{ request.user.username }}</p>
+
+<form id="alias-form" method="post" action="{% url 'update_alias' %}">
+    {% csrf_token %}
+    <label for="alias">{% trans "New Alias:" %}</label>
+    <input type="text" id="alias" name="alias">
+    <button type="submit" class="btn btn-primary links" data-url="{% url 'update_alias' %}">{% trans "Update Alias" %}</button>
+</form>
+  {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+  
+<table>
+    <tr>
+        <th>&nbsp;</th>
+        <th>{% trans "Tournament name" %}</th>
+        <th>{% trans "Start of registration" %}</th>
+        <th>{% trans "End of registration" %}</th>
+        <th>{% trans "Start of matches" %}</th>
+        <th>{% trans "Maximum match duration in minutes" %}</th>
+        <th>{% trans "Minutes between matches" %}</th>
+    </tr>
+    <tr><td colspan='7'></td></tr>
+    {% for torneo in torneos %}
+        <tr>
+            <td><a href="#" onclick="unsuscription('{{ torneo.id }}', '{{ user.id }}')">{% trans "Registration/Cancel" %}</a></td>
+            <td>{{ torneo.nombre }}</td>
+            <td>{{ torneo.comienzo_inscripcion }}</td>
+            <td>{{ torneo.fin_inscripcion }}</td>
+            <td>{{ torneo.comienzo_partidos }}</td>
+            <td>{{ torneo.minutos_duracion_maxima_partidos }}</td>
+            <td>{{ torneo.minutos_entre_partidos }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Players registered" %}</th>
+            <td colspan='6'>{{ torneo.jugadores.all|join:", " }}</td>
+        </tr>
+        <tr><td colspan='7'></td></tr>
+    {% endfor %}
+</table>
+<script>
+    $(document).ready(function() {
+        $("#alias-form").on("submit", function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+            var url = $(this).find("[data-url]").data("url");
+
+            $.ajax({
+    type: "POST",
+    url: url,
+    data: formData,
+    success: function(data) {
+        if (data.success) {
+            // Update alias on the page (if new_alias is returned)
+            if (data.new_alias) {
+                $("#alias").val(data.new_alias);
+            }
+            // Show success message
+            if (data.new_alias == "") {
+                alert("Alias eliminated ");
+            }
+            else {
+                alert("Updated alias: " + data.new_alias);
+            }  
+        } else {
+            // Show error message
+            alert("Error updating alias!");
+        }
+    },
+    error: function(xhr, status, error) {
+        alert("Error updating alias!");
+    }
+});
+        });
+    });
+    function unsuscription(torneo, user) {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_inscripcion' %}?idTorneo=" + torneo + '&idUser=' + user, function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+            });
+        }
+</script>
+<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
+
+</body>
+</html>
