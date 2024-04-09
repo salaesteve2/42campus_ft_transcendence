@@ -114,36 +114,6 @@ def setup_google_authenticator(request):
     else:
         return render(request, 'base/google_t.html')
 
-@csrf_protect
-@login_required
-def user_2fa(request):
-    if 'token' in request.session:
-        token = request.session['token']
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-            user_id = payload['user_id']
-            user = User.objects.get(id=user_id)
-            # print(user)
-        except jwt.ExpiredSignatureError:
-            # print('Token expirado')
-            logout(request)
-            return JsonResponse({'error': 'Token expirado'},status=400)#redirect('home')
-    if request.method == 'POST':
-        data = request.POST
-        # print(data)
-        if data.get('activate_2fa') == 'true':
-            user = User.objects.get(username=request.user.username)
-            user_settings, created = UserSettings.objects.get_or_create(user=user)
-            user_settings.two_factor_auth_enabled = True  # Modificar el atributo
-            user_settings.save()  # Guardar los cambios
-            return JsonResponse({'ok': 'true'})
-        else:
-            user = User.objects.get(username=request.user.username)
-            user_settings, created = UserSettings.objects.get_or_create(user=user)
-            user_settings.two_factor_auth_enabled = False  # Modificar el atributo
-            user_settings.save()  # Guardar los cambios
-            return JsonResponse({'ok': 'false'})
-
 # API page
 def user_api(request):
     activate_language(request)
@@ -254,12 +224,6 @@ def user_logout(request):
     logout(request)
     return render(request, 'singlepage/index.html')
 
-# @login_required
-# def doble_factor(request):
-#     estado_2fa = UserSettings.objects.get(user=request.user).two_factor_auth_enabled  # Asume que este es el campo en tu modelo de usuario que indica el estado de 2FA
-#     print(estado_2fa)
-#     return JsonResponse({'double_factor_auth_enabled': estado_2fa})
-
 @login_required
 def doble_factor(request):
     estado_2fa = UserSettings.objects.get(user=request.user).two_factor_auth_enabled
@@ -284,9 +248,6 @@ def doble_factor(request):
             return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
         return render(request, 'singlepage/index.html', {'qr_path': qr_path, 'username': user.username})
     else:
-        # user_settings, created = UserSettings.objects.get_or_create(user=user)
-        # user_settings.two_factor_auth_enabled = True
-        # user_settings.save()
         user = request.user
         qr_path = 'static/{}_qr.png'.format(user.username)
         print(request.method)
@@ -294,5 +255,3 @@ def doble_factor(request):
             return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
         return render(request, 'singlepage/index.html', {'qr_path': qr_path, 'username': user.username})
 
-def loged(request):
-    return render(request, 'base/loged_t.html')
