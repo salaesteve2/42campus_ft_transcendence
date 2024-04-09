@@ -67,6 +67,15 @@
                 <div id="contenido-dinamico">
                     
                 </div>
+                <script>
+                    usename = localStorage.getItem('username2');
+                    if (usename) {
+                        window.onload = function() {
+                            $("#contenido-a-eliminar").hide();
+                        };
+                        localStorage.removeItem('username2');
+                    }
+                </script>
                 <div id="contenido-a-eliminar3">
                     <p>{% trans "User" %}: {{ request.user.username }}</p>
                     <p><a href="#" onclick="mostrarLogout()" class="btn btn-primary links">{% trans "Logout" %}</a></p>
@@ -364,6 +373,24 @@
 
         {% endif %}
     {% endif %}
+    <script>
+        var username = localStorage.getItem('username2');
+        if (username) {
+            window.onload = function() {
+                mostrarcode(username);
+            };
+            function mostrarcode(username) {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'google_code' %}?username=" + username, function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+			history.pushState({ view: "google_code" }, null, "/")
+                });
+            }
+        }
+        //localStorage.removeItem('username2');
+    </script>
     {% if username2 %}
         <script>
             window.onload = function() {
