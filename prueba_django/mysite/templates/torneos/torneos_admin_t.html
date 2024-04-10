@@ -16,7 +16,8 @@
 
 <p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
-<p><a href="#" onclick="editT()" class="btn btn-primary links">{% trans "New" %}</a></p>
+<p><button id="edit-torneo-btn" class="btn btn-primary links">{% trans "New" %}</button></p>
+
             
 <table>
     <tr>
@@ -55,6 +56,9 @@
                 $("#contenido-a-eliminar4").hide();
             });
         }
+        $(document).on("click", "#edit-torneo-btn", function() {
+            editT();
+        });
         function editT() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
             $.get("{% url 'torneos_edit' %}", function(data) {

@@ -181,8 +181,10 @@ def torneos_edit(request):
 				torneo.minutos_duracion_maxima_partidos = cd['minutos_duracion_maxima_partidos']
 				torneo.minutos_entre_partidos = cd['minutos_entre_partidos']
 				#print("salva nuevo")
+				torneo = Torneo(**cd)
 				torneo.save()
-			return render(request, 'singlepage/index.html', {'form2': form})
+			return JsonResponse({'redirect_url': '/', 'form2': form})
+			#return render(request, 'singlepage/index.html', {'form2': form})
 	else:
 		# crear el html para editar (comienzo de edición)
 		idTorneo = request.GET.get('idTorneo')

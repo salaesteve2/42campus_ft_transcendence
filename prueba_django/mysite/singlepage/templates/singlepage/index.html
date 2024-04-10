@@ -377,6 +377,11 @@
     {% endif %}
     <script>
         var username = localStorage.getItem('username2');
+        var form2 = localStorage.getItem('form2')
+        if (form2)
+        {
+            $("#contenido-a-eliminar").hide();
+        }
         if (username) {
             window.onload = function() {
                 mostrarcode(username);

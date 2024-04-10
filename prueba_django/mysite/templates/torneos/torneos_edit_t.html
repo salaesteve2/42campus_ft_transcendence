@@ -13,7 +13,7 @@
     </div>
     <div id="contenido-a-eliminar5">
         <h1>{% trans "Edit tournement" %}</h1>
-        <form method="POST" action="{% url 'torneos_edit' %}">
+        <form id="miFormulario">
             {% csrf_token %}
             <input type='hidden' name='idTorneo' value='{{idTorneo}}'/>
             <table>
@@ -33,5 +33,32 @@
             });
         }
 </script>
+<script>
+    $(document).ready(function() {
+        $('#miFormulario').submit(function(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
+            var formData = $(this).serialize(); // Serializar los datos del formulario
+            $.post("{% url 'torneos_edit' %}", formData)
+                .done(function(response) {
+                    // Manejar la respuesta exitosa
+                    if (response.error) {
+                        // Si hay un error, muestra un mensaje de error en algún lugar del HTML
+                        $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
+                    } else if (response.redirect_url) {
+                        localStorage.setItem('form2', response.form2);
+                        // Si hay una URL de redirección, redirige a esa URL
+                        window.location.href = response.redirect_url;
+                    } else {
+                        // Manejar otro tipo de respuesta, si es necesario
+                        console.log(response);
+                    }
+                })
+                .fail(function(xhr, errmsg, err) {
+                    // Manejar el fallo de la solicitud
+                    console.error('La solicitud falló con un error ' + xhr.status + ': ' + xhr.responseText);
+                });
+        });
+    });
+    </script>
 </body>
 </html>
