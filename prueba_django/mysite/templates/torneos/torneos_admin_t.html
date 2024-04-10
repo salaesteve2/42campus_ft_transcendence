@@ -33,8 +33,8 @@
     <tr><td colspan='8'></td></tr>
 	    {% for torneo in torneos %}
         <tr>
-            <td><button class="edit-torneo-btn2" data-torneo-id="{{ torneo.id }}">{{ torneo.id }}</button></td>
-            <td><button class="delete-torneo-btn" data-torneo-id="{{ torneo.id }}">{% trans "Delete" %}</button></td>
+            <td><button class="edit-torneo-btn2 btn btn-primary links" data-torneo-id="{{ torneo.id }}">{{ torneo.id }}</button></td>
+            <td><button class="delete-torneo-btn btn btn-primary links" data-torneo-id="{{ torneo.id }}">{% trans "Delete" %}</button></td>
             <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>

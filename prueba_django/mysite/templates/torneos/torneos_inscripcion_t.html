@@ -44,7 +44,7 @@
     <tr><td colspan='7'></td></tr>
     {% for torneo in torneos %}
         <tr>
-            <td><button class="edit-torneo-btn2" data-torneo-id="{{ torneo.id }}" data-user-id="{{ user.id }}">{% trans "Registration/Cancel" %}</button></td>
+            <td><button class="edit-torneo-btn2 btn btn-primary links" data-torneo-id="{{ torneo.id }}" data-user-id="{{ user.id }}">{% trans "Registration/Cancel" %}</button></td>
             <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
