@@ -33,8 +33,8 @@
     <tr><td colspan='8'></td></tr>
 	    {% for torneo in torneos %}
         <tr>
-            <td><button class="edit-torneo-btn" data-torneo-id="{{ torneo.id }}">{{ torneo.id }}</button></td>
-            <td><a href="#" onclick="editD('{{ torneo.id }}')">{% trans "Delete" %}</a></td>
+            <td><button class="edit-torneo-btn2" data-torneo-id="{{ torneo.id }}">{{ torneo.id }}</button></td>
+            <td><button class="delete-torneo-btn" data-torneo-id="{{ torneo.id }}">{% trans "Delete" %}</button></td>
             <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
@@ -48,7 +48,7 @@
 <p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
     </div>
     <script>
-        $(document).on("click", ".edit-torneo-btn", function() {
+        $(document).on("click", ".edit-torneo-btn2", function() {
             var torneoId = $(this).data("torneo-id");
             editT2(torneoId);
         });
@@ -74,11 +74,27 @@
                 $("#contenido-a-eliminar4").hide();
             });
         }
-        function editD(torneo) {
-            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-            $.get("{% url 'torneos_delete' %}?idTorneo=" + torneo, function(data) {
-                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                $("#contenido-dinamico").html(data);
+        $(document).on("click", ".delete-torneo-btn", function() {
+            var torneoId = $(this).data("torneo-id");
+            editT2(torneoId);
+        });
+
+        function editT2(torneoId) {
+            $.ajax({
+                url: "{% url 'torneos_delete' %}?idTorneo=" + torneoId,
+                method: "GET",
+                success: function(data) {
+                    // Aquí estableces el HTML devuelto en el contenedor deseado
+                    $("#contenido-dinamico").html(data.html);
+                    if (data.redirect_url) {
+                        localStorage.setItem('redirect_url', data.redirect_url2);
+                        window.location.href = data.redirect_url;
+                    }
+                    $("#contenido-a-eliminar4").hide();
+                },
+                error: function(xhr, status, error) {
+                    // Maneja errores si es necesario
+                }
             });
         }
     </script>
