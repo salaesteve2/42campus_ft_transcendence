@@ -32,6 +32,7 @@ urlpatterns = [
     path('', ba_views.home, name='home'),
     path('login', ba_views.user_login, name='login'),
 	path('setup_google_authenticator', ba_views.setup_google_authenticator, name='setup_google_authenticator'),
+    path('api2', ba_views.user_api2, name='api2'),
     path('api', ba_views.user_api, name='api'),
 	path('check', ba_views.doble_factor, name='check'),
 	path('google_code', ba_views.google_code, name='google_code'),

@@ -50,7 +50,9 @@
         <div id="contenido-a-eliminar">
             <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "Login" %}</a></p>
             <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links">{% trans "Signup" %}</a></p>
-            <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2Flocalhost%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p>
+            <p><a href="#" onclick=" mostrarSignup42()" class="btn btn-primary links">{% trans "Signup42" %}</a></p>
+
+            <!-- <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2F10.12.17.1%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p> -->
         </div>
         {%endif%}
         {%endif%}
@@ -445,11 +447,11 @@
         }
         function mostrarSignup42() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-            $.get("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2Flocalhost%2Fapi&response_type=code", function(data) {
+            localStorage.setItem("hostname", window.location.hostname)
+            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2F"+window.location.hostname+"%2Fapi2&response_type=code";
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
-         });
         }
         function mostrarLogin2() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
