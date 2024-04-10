@@ -1,0 +1,17 @@
+{
+	"ulid": "01HV48BRC6PEMYMXMJNP88G65H",
+	"minTime": 1712750400000,
+	"maxTime": 1712757600000,
+	"stats": {
+		"numSamples": 2069593,
+		"numSeries": 8023,
+		"numChunks": 20968
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01HV48BRC6PEMYMXMJNP88G65H"
+		]
+	},
+	"version": 1
+}
