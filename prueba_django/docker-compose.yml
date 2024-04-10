@@ -14,6 +14,7 @@ services:
 
   web:
     build: ./mysite
+    container_name: django
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./mysite/:/usr/src/mysite/
@@ -21,12 +22,13 @@ services:
         - "8000:80"
     env_file:
       - ./.env.dev
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     restart: unless-stopped
 
   db:
     image: postgres:15.1
+    container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -42,28 +44,19 @@ services:
       - 443:443
       - 80:80
       - 8080:8080
-    depends_on:
-      - web
+    # depends_on:
+    #   - web
     restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4:latest
+    container_name: pgadmin
     ports:
       - "5050:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: "email@trascendence.com"
       PGADMIN_DEFAULT_PASSWORD: "contra123"
     restart: unless-stopped
-
-  solidity-dev:
-    build: ./block
-    volumes:
-      - ./block:/usr/src/app/block
-    ports:
-      - 8545:8545
-    command: bash -c "./start.sh"
-    restart: unless-stopped
-    
 
 ##### monitoring #######
 
@@ -78,8 +71,9 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
     volumes:
-      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
-      - ./data:/prometheus
+      - ./configPrometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./configPrometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
+      - ./dataPrometheus:/prometheus
     restart: unless-stopped
 
   #dashboard
@@ -129,8 +123,8 @@ services:
     ports:
       - "9113:9113"
     command: --nginx.scrape-uri=http://nginx:8080/stub_status
-    depends_on:
-      - nginx
+    # depends_on:
+    #   - nginx
     restart: unless-stopped
   
   #postgres monitoring
@@ -141,6 +135,6 @@ services:
       DATA_SOURCE_NAME: "postgresql://hello_django:hello_django@db:5432/hello_django_dev?sslmode=disable"
     ports:
       - "9187:9187"
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     restart: unless-stopped
