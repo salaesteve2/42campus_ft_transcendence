@@ -114,6 +114,7 @@ def update_alias(request):
 	#return redirect('torneos_inscripcion_list')
 
 def torneos_inscripcion(request):
+	activate_language(request)
 	if not request.user.is_authenticated:
 		return redirect('home')	
 	idTorneo = int(request.GET.get('idTorneo'))
@@ -125,7 +126,11 @@ def torneos_inscripcion(request):
 	else:
 		torneo.jugadores.add(user)
 	torneo.save()
-	return redirect('torneos_inscripcion_list')
+	torneos_mantenimiento2()
+	t = datetime.datetime.now()
+	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
+	form_html = render(request, 'torneos/torneos_inscripcion_t.html', {'torneos': torneos, 'user': user, }).content.decode()
+	return JsonResponse({'redirect_url': '/', 'form_html': form_html})
 
 def torneos_admin(request):
 	torneos_mantenimiento2()
@@ -215,7 +220,6 @@ def torneos_edit(request):
 			}
 			form = TorneoForm(initial=dd)
 			form_html = render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo}).content.decode()
-			print("mano")
 			return JsonResponse({'redirect_url': '/', 'form_html': form_html})
 		else: # nuevo
 			#print("html para añadir nuevo")
@@ -231,7 +235,6 @@ def torneos_edit(request):
 				'minutos_entre_partidos': torneo.minutos_entre_partidos
 			}
 			form = TorneoForm(initial=dd) 
-			print("caca")
 			form_html = render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo}).content.decode()
 			return render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo})
 
