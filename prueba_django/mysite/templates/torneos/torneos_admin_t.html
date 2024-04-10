@@ -50,10 +50,10 @@
     <script>
         $(document).on("click", ".edit-torneo-btn2", function() {
             var torneoId = $(this).data("torneo-id");
-            editT2(torneoId);
+            editT(torneoId);
         });
 
-        function editT2(torneoId) {
+        function editT(torneoId) {
             $.ajax({
                 url: "{% url 'torneos_edit' %}?idTorneo=" + torneoId,
                 method: "GET",
@@ -64,9 +64,9 @@
             });
         }
         $(document).on("click", "#edit-torneo-btn", function() {
-            editT();
+            newT();
         });
-        function editT() {
+        function newT() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
             $.get("{% url 'torneos_edit' %}", function(data) {
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
@@ -76,10 +76,10 @@
         }
         $(document).on("click", ".delete-torneo-btn", function() {
             var torneoId = $(this).data("torneo-id");
-            editT2(torneoId);
+            deleteT(torneoId);
         });
 
-        function editT2(torneoId) {
+        function deleteT(torneoId) {
             $.ajax({
                 url: "{% url 'torneos_delete' %}?idTorneo=" + torneoId,
                 method: "GET",
