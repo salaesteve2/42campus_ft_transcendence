@@ -214,6 +214,8 @@ def torneos_edit(request):
 				'minutos_entre_partidos': torneo.minutos_entre_partidos
 			}
 			form = TorneoForm(initial=dd)
+			#request.session['form5_data'] = form_data_serializable
+			form_html = render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo}).content.decode()
 		else: # nuevo
 			#print("html para añadir nuevo")
 			idTorneo = -1 
@@ -228,7 +230,10 @@ def torneos_edit(request):
 				'minutos_entre_partidos': torneo.minutos_entre_partidos
 			}
 			form = TorneoForm(initial=dd) 
+			#request.session['form5_data'] = form_data_serializable
+			form_html = render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo}).content.decode()
 	# crear el html para editar o error en form
+	return JsonResponse({'redirect_url': '/', 'form_html': form_html})
 	return render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo})
 
 # Python program to sort a list of

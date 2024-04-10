@@ -383,6 +383,8 @@
                 mostrartorneos2();
             };
             function mostrartorneos2() {
+                localStorage.removeItem('form5');
+                localStorage.removeItem('redirect_url');
                 // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
                 $.get("{% url 'torneos_admin' %}", function(data) {
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
@@ -396,6 +398,7 @@
                 mostrarcode(username);
             };
             function mostrarcode(username) {
+                localStorage.removeItem('username');
                 // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
                 $.get("{% url 'google_code' %}?username=" + username, function(data) {
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
