@@ -377,10 +377,19 @@
     {% endif %}
     <script>
         var username = localStorage.getItem('username2');
-        var form2 = localStorage.getItem('form2')
-        if (form2)
-        {
-            $("#contenido-a-eliminar").hide();
+        var form5 = localStorage.getItem('form5');
+        if (form5){
+            window.onload = function() {
+                mostrartorneos2();
+            };
+            function mostrartorneos2() {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'torneos_admin' %}", function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
         }
         if (username) {
             window.onload = function() {

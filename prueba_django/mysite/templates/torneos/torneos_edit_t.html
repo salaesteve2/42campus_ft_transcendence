@@ -45,8 +45,8 @@
                         // Si hay un error, muestra un mensaje de error en algún lugar del HTML
                         $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
                     } else if (response.redirect_url) {
-                        localStorage.setItem('form2', response.form2);
                         // Si hay una URL de redirección, redirige a esa URL
+                        localStorage.setItem('form5', response.form5_data);
                         window.location.href = response.redirect_url;
                     } else {
                         // Manejar otro tipo de respuesta, si es necesario
