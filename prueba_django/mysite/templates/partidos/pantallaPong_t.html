@@ -15,6 +15,30 @@ const idPartido = {{ idPartido }}; // enviado por el servidor al generar el html
 const numJugador = {{ numJugador }}; // 1 o 2 // jugador 1 a la izquierda -- jugador 2 a la derecha
 const myLanguage = "{{ myLanguage }}"; 
 
+const anchoPantalla = window.innerWidth;
+const altoPantalla = window.innerHeight;
+if (altoPantalla > 2000)
+  alto = altoPantalla;
+else if (altoPantalla > 1000)
+  alto = altoPantalla/2;
+else
+  alto = altoPantalla/2;
+if (anchoPantalla > 1750)
+  ancho = anchoPantalla + 2500;
+else if (anchoPantalla > 1500)
+  ancho = anchoPantalla + anchoPantalla - 1400;
+else if (anchoPantalla > 1250)
+  ancho = anchoPantalla;
+else if (anchoPantalla > 1000)
+  ancho = anchoPantalla - 700;
+else if (anchoPantalla > 750)
+  ancho = anchoPantalla/2;
+else if (anchoPantalla > 500)
+  ancho = anchoPantalla/2 - 250;
+else
+  ancho = anchoPantalla/3 + 10;
+
+
 const limiteDuracionPartido = "{{ limiteDuracionPartido }}";
 const limitePuntosPartido = "20";
 
@@ -26,7 +50,7 @@ const sep = 15; // separación del jugador con el fondo de la pista
 const raqueta = { ancho: 10, alto: 80 };
 const pelota = { ancho: 15, alto: 15 };
 
-const margen = { arriba: 150, izq: 15 };
+const margen = { arriba: 165 + alto/4, izq: 30 + ancho/5 };
 const red = { ancho: 15, alto: campo.alto };
 
 const jugador1X0 = 0 - campo.ancho / 2 + sep; // 0 = centro
