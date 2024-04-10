@@ -145,10 +145,11 @@ def torneos_delete(request):
 	idTorneo = request.GET.get('idTorneo')
 	torneo = Torneo.objects.get(id=idTorneo)
 	torneo.delete()
-	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
 	#torneos = Torneo.objects.filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t).order_by('-comienzo_partidos')
-	context = {'torneos': torneos, }
-	return render(request, 'torneos/torneos_admin_t.html', context)
+	redirect_url2 = 'torneos_admin'
+	return JsonResponse({'redirect_url': '/', 'redec': redirect_url2})
+	return JsonResponse({'redirect_url': redirect_url})
+	#return render(request, 'torneos/torneos_admin_t.html', context)
 	
 def torneos_edit(request):
 	activate_language(request)

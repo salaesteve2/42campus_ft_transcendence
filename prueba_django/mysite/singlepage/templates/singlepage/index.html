@@ -377,7 +377,8 @@
     <script>
         var username = localStorage.getItem('username2');
         var form5 = localStorage.getItem('form5');
-        if (form5){
+        var redirect_url2 = localStorage.getItem('redirect_url');
+        if (form5 || redirect_url2) {
             window.onload = function() {
                 mostrartorneos2();
             };
