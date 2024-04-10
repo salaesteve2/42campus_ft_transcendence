@@ -19,7 +19,9 @@
 </main>
 <script>
     window.onload = function() {
-        window.location.href = "{% url 'api' %}";
+        hostname = localStorage.getItem('hostname')
+        console.log(hostname)
+        window.location.href = "{% url 'api' %}?hostname=" + hostname + '&code=' + '{{code}}';
     }
 </script>
 </body>

@@ -115,17 +115,29 @@ def setup_google_authenticator(request):
         return render(request, 'base/google_t.html')
 
 # API page
+def user_api2(request):
+    return render(request, 'base/api_t.html', {'code': request.GET.get('code')})
+
 def user_api(request):
     activate_language(request)
     url = request.build_absolute_uri()
     url_obj = requests.utils.urlparse(url)
 
-    authorization_code = url_obj.query.split("=")[1] if "code" in url_obj.query else None
+    authorization_code = url_obj.query.split("=")[2] if "code" in url_obj.query else None
     # Parámetros necesarios para la solicitud POST
+    print(authorization_code)
+    hostname = url_obj.query.split("=")[1] if "hostname" in url_obj.query else None
+    print(hostname)
+    partes = hostname.split('&')
+    hostname = partes[0]
+    print(hostname)
+
     client_id = os.getenv('ID')
     client_secret = os.getenv('SECRET')
     code =  authorization_code
-    redirect_uri = 'https://localhost/api'  # Tu URL de redirección
+    redirect_uri = 'https://' + str(hostname) + '/api2'  # Tu URL de redirección
+    print("REDIR:\\n")
+    print(redirect_uri)
 
     if code:
         # Realiza la solicitud POST a la URL de token de acceso
@@ -137,6 +149,7 @@ def user_api(request):
             'redirect_uri': redirect_uri
         }
         response = requests.post('https://api.intra.42.fr/oauth/token', data=data)
+        print(response.status_code )
 
         if response.status_code == 200:
 
