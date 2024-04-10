@@ -183,7 +183,19 @@ def torneos_edit(request):
 				#print("salva nuevo")
 				torneo = Torneo(**cd)
 				torneo.save()
-			return JsonResponse({'redirect_url': '/', 'form2': form})
+				form_data_serializable = {
+					'nombre': cd['nombre'],
+					'comienzo_inscripcion': cd['comienzo_inscripcion'].isoformat() if cd['comienzo_inscripcion'] else None,
+					'fin_inscripcion': cd['fin_inscripcion'].isoformat() if cd['fin_inscripcion'] else None,
+					'comienzo_partidos': cd['comienzo_partidos'].isoformat() if cd['comienzo_partidos'] else None,
+					'minutos_duracion_maxima_partidos': cd['minutos_duracion_maxima_partidos'],
+					'minutos_entre_partidos': cd['minutos_entre_partidos']
+				}
+				
+				# Guardar los datos del formulario en la sesión antes de la redirección
+				request.session['form5_data'] = form_data_serializable
+			form_html = render(request, 'torneos/torneos_admin_t.html', {'form5': form}).content.decode()
+			return JsonResponse({'redirect_url': '/', 'form_html': form_html})
 			#return render(request, 'singlepage/index.html', {'form2': form})
 	else:
 		# crear el html para editar (comienzo de edición)
