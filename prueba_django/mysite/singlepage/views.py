@@ -5,7 +5,18 @@ from base.views import torneo_jugar, proximos_torneos
 
 def index(request):
     activate_language(request)
-    return render(request, "singlepage/index.html")
+    jugar = False
+    hayProximosTorneos = False
+    proximosTorneos = []
+    if request.user.is_authenticated:
+        res = torneo_jugar(request.user.id)
+        jugar = res['ok']
+        proximosTorneos = proximos_torneos(request.user.id)
+        hayProximosTorneos = (len(proximosTorneos) > 0)
+    context = { 'jugar': jugar, 
+                    'proximosTorneos': proximosTorneos, 
+                    'hayProximosTorneos': hayProximosTorneos }
+    return render(request, 'singlepage/index.html', context)
 
 def home_section(request):
     activate_language(request)
