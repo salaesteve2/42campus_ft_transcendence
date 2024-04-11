@@ -61,6 +61,7 @@
 </table>
 </div>
 <script>
+    var done = 0;
     $(document).ready(function() {
         $("#alias-form").on("submit", function(e) {
             e.preventDefault();
@@ -99,7 +100,9 @@
     $(document).on("click", ".edit-torneo-btn2", function() {
             var torneoId = $(this).data("torneo-id");
             var user = $(this).data("user-id");
-            editT(torneoId, user);
+            if (done == 0)
+                editT(torneoId, user);
+                done = 1;
         });
 
         function editT(torneoId, user) {
