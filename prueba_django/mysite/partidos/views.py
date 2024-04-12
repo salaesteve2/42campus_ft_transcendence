@@ -400,7 +400,7 @@ def fun_rearranque(request, vTipo): # vTipo: "T" = torneo, "R" = rápida
 	# numJugador: 1 = izq, 2 = der
 	result['response'] = render(request, 'partidos/pantallaPong_t.html', mycontext)
 	# enviar el html-javascript que atiende el partido cambiando: idPartido, numJugador, myLanguage, limiteHoraPartido
-	if partido.empezado == True or partido.desconectado == False:
+	if partido.empezado == True or (partido.desconectado == False and partido.tipo == "R"):
 		result['ok'] = True
 	return result
 
