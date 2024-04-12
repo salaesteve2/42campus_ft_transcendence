@@ -491,6 +491,7 @@
                 $("#contenido-a-eliminar").hide();
             });
         }
+        
 function renderView(view) {
   // Carga la plantilla index.html
   $.get(`{% url 'index' %}`, function(data) {
@@ -533,26 +534,124 @@ function renderView(view) {
       case "google_code":
         mostrarcode2('{{username2}}');
         break;
+      case "home":
+        break;
       default:
         break;
     }
+    // history.pushState({ view: view }, null, `/${view}`);
+    sessionStorage.setItem('currentView', view);
+    // Actualizar el historial con el nombre de la vista
+    // history.pushState({ view: view }, null, `/${view}`);
+  });
+ }
 
+window.onload = function() {
+    // Lógica para inicializar la página cuando se carga por completo
+
+    // Define una función para mostrar la vista específica
+    function renderView(view) {
+  // Carga la plantilla index.html
+  $.get(`{% url 'index' %}`, function(data) {
+
+    // Mostrar el contenido específico de la vista
+    switch (view) {
+      case "login":
+        mostrarLogin2();
+        break;
+      case "signup":
+        mostrarSignup2();
+        break;
+      case "logout":
+        mostrarLogout2();
+        break;
+      case "check":
+        mostrarQR2();
+        break;
+      case "partido":
+        mostrarPartido2();
+        break;
+      case "partidos_mlist":
+        mostrarMLista2();
+        break;
+      case "partidos_list":
+        mostrarLista2();
+        break;
+      case "torneos_inscripcion_list":
+        mostrarInsLista2();
+        break;
+      case "torneos_info_list":
+        mostrarInfLista2();
+        break;
+      case "torneos_play":
+        mostrarPT2();
+        break;
+      case "torneos_admin":
+        mostrarTA2();
+        break;
+      case "google_code":
+        mostrarcode2('{{username2}}');
+        break;
+      case "home":
+        break;
+      default:
+        break;
+    }
+    // history.pushState({ view: view }, null, `/${view}`);
+    sessionStorage.setItem('currentView', view);
     // Actualizar el historial con el nombre de la vista
     // history.pushState({ view: view }, null, `/${view}`);
   });
 }
 
-window.addEventListener('popstate', (event) => {
-  // Check if event.state has a view property (use strict comparison)
-  if (event.state !== null && typeof event.state.view === 'string') {
-    const view = event.state.view;
-    renderView(view);
-  } else {
-    // Render the default view if state.view is missing or not a string
-    renderView('');
-  }
-  // No need to call history.pushState() here
+    // Define una función para manejar el historial de navegación
+    function manejarHistorial(event) {
+        // Verifica si event.state tiene una propiedad view (usando comparación estricta)
+        if (event.state !== null && typeof event.state.view === 'string') {
+            const view = event.state.view;
+            renderView(view);
+        } else {
+            // Si no hay una vista específica en el estado del historial, muestra la vista predeterminada
+            const storedView = localStorage.getItem('currentView');
+            renderView(storedView);
+        }
+        // No es necesario llamar a history.pushState() aquí
+    }
+
+    // Agrega un listener para manejar eventos de historial
+    window.addEventListener('popstate', manejarHistorial);
+
+    var homeLink = document.querySelector("#home-link");
+
+// Agregar un evento de clic al enlace de "Home"
+    homeLink.addEventListener("click", function(event) {
+  // Evitar que el navegador siga el enlace normalmente
+        event.preventDefault();
+
+  // Actualizar el estado del historial
+        history.pushState({ view: "home" }, null, "/");
+
+  // También puedes redirigir a la página de inicio si lo deseas
+  // window.location.href = "/"; // Esto redirigiría a la página de inicio
 });
+const storedView = localStorage.getItem('currentView');
+    renderView(storedView);
+};
+
+    // Define una función para renderizar la vista basada en la URL actual
+function renderizarVistaActual() {
+     let vistaActual = '';
+
+    //     // Obtén la vista actual de la URL
+     const ruta = window.location.pathname;
+     vistaActual = ruta.substring(1); // Elimina el primer "/" de la URL
+
+    //     // Renderiza la vista actual
+     renderView(vistaActual);
+    }
+
+    // // Llama a la función para renderizar la vista actual cuando la página se carga por completo
+    renderizarVistaActual();
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
