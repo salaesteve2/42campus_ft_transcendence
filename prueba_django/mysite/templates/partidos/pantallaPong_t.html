@@ -9,14 +9,14 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <script>
 
-const vDebug = false;
+vDebug = false;
 
-const idPartido = {{ idPartido }}; // enviado por el servidor al generar el html
-const numJugador = {{ numJugador }}; // 1 o 2 // jugador 1 a la izquierda -- jugador 2 a la derecha
-const myLanguage = "{{ myLanguage }}"; 
+idPartido = {{ idPartido }}; // enviado por el servidor al generar el html
+numJugador = {{ numJugador }}; // 1 o 2 // jugador 1 a la izquierda -- jugador 2 a la derecha
+myLanguage = "{{ myLanguage }}"; 
 
-const anchoPantalla = window.innerWidth;
-const altoPantalla = window.innerHeight;
+anchoPantalla = window.innerWidth;
+altoPantalla = window.innerHeight;
 if (altoPantalla > 2000)
   alto = altoPantalla;
 else if (altoPantalla > 1000)
@@ -39,22 +39,22 @@ else
   ancho = anchoPantalla/3 + 10;
 
 
-const limiteDuracionPartido = "{{ limiteDuracionPartido }}";
-const limitePuntosPartido = "20";
+limiteDuracionPartido = "{{ limiteDuracionPartido }}";
+limitePuntosPartido = "20";
 
-const aj_keys = "aj_keys";
-const aj_status = "aj_status";
+aj_keys = "aj_keys";
+aj_status = "aj_status";
 
-const campo = { ancho: 800, alto: 400  };
-const sep = 15; // separación del jugador con el fondo de la pista
-const raqueta = { ancho: 10, alto: 80 };
-const pelota = { ancho: 15, alto: 15 };
+campo = { ancho: 800, alto: 400  };
+sep = 15; // separación del jugador con el fondo de la pista
+raqueta = { ancho: 10, alto: 80 };
+pelota = { ancho: 15, alto: 15 };
 
-const margen = { arriba: 165 + alto/4, izq: 30 + ancho/5 };
-const red = { ancho: 15, alto: campo.alto };
+margen = { arriba: 165 + alto/4, izq: 30 + ancho/5 };
+red = { ancho: 15, alto: campo.alto };
 
-const jugador1X0 = 0 - campo.ancho / 2 + sep; // 0 = centro
-const jugador2X0 = 0 + campo.ancho / 2 - sep; // 0 = centro
+jugador1X0 = 0 - campo.ancho / 2 + sep; // 0 = centro
+jugador2X0 = 0 + campo.ancho / 2 - sep; // 0 = centro
 var jugador1Y0 = 0; // 0 = centro
 var jugador2Y0 = 0; // 0 = centro
 
