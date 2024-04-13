@@ -18,14 +18,26 @@
         {{ form.as_table }}
     </table>
     <div class="button-group">
-        <p><button type="submit" class="btn btn-primary links">{% trans "Register" %}</button></p>
-        <p><button type="reset" class="btn btn-primary links">clear</button></p>
+        <p>
+            <button type="submit" class="btn btn-primary links">
+                <i class="bi bi-person-plus"></i> {% trans "Register" %}
+            </button>
+        </p>
+        <p>
+            <button type="reset" class="btn btn-primary links">
+                <i class="bi bi-x-circle"></i> Clear
+            </button>
+        </p>
     </div>
     <div id="contenido-dinamico">
             
     </div>
     <div id="contenido-a-eliminar2">
-        <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "I have already signedup" %}</a></p>
+        <p>
+            <a href="#" onclick="mostrarLogin()" class="btn btn-primary links">
+                <i class="bi bi-box-arrow-in-right"></i> {% trans "I have already signed up" %}
+            </a>
+        </p>
     </div>
 </form>
 <script>

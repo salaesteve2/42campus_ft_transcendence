@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="static/torneos.css"/>
 <link rel="icon" type="image/x-icon" href="static/favicon.ico">
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
     <div id="contenido-dinamico">
@@ -19,7 +20,7 @@
             <table>
             {{ form.as_table }}
             </table>
-            <p><button type="submit" class="btn btn-primary links">{% trans "Save" %}</button></p>
+            <p><button type="submit" class="btn btn-primary links"><i class="bi bi-save"></i> {% trans "Save" %}</button></p>
             <p><a href="#" onclick="torneosA()" class="btn btn-primary links">{% trans "Tournament administration" %}</a></p>
         </form>
     </div>

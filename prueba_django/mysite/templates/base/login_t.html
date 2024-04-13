@@ -20,17 +20,25 @@
         <h1>{% trans "Welcome!" %} {% trans "Login" %}</h1>
         <!--<h1>{% trans "Login" %}</h1>-->
         <form id="miFormulario">
-          {% csrf_token %}
-          <table class="table table-striped">
-              {{ form.as_table }}
-          </table>
-          
-          <div class="button-group">
-              <p><button type="submit" class="btn btn-primary links">{% trans "Login" %}</button></p>
-              <p><button type="reset" class="btn btn-primary links">clear</button></p>
-          </div>
-      </form>
-      <script>
+            {% csrf_token %}
+            <table class="table table-striped">
+                {{ form.as_table }}
+            </table>
+
+                <div class="button-group">
+                    <p>
+                        <button type="submit" class="btn btn-primary links">
+                            <i class="bi bi-person"></i> {% trans "Login" %}
+                        </button>
+                    </p>
+                    <p>
+                        <button type="reset" class="btn btn-primary links">
+                            <i class="bi bi-x-circle"></i> Clear
+                        </button>
+                    </p>
+                </div>
+        </form>
+        <script>
         $(document).ready(function() {
             $('#miFormulario').submit(function(event) {
                 event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
@@ -62,7 +70,11 @@
         </div>
         <!-- todavia no estamos dados de alta en la bbdd -->
         <div id="contenido-a-eliminar3">
-          <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links">{% trans "I haven't signedup yet" %}</a></p>
+            <p>
+                <a href="#" onclick="mostrarSignup()" class="btn btn-primary links">
+                    <i class="bi bi-person-plus"></i> {% trans "I haven't signed up yet" %}
+                </a>
+            </p>
         </div>
         <script>
           function mostrarSignup() {

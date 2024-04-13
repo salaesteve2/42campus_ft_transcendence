@@ -5,6 +5,7 @@
     <title>Trascendance</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="static/pantallaPong.css"/>
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
     <link rel="stylesheet" href="../../static/base.css">
@@ -17,26 +18,27 @@
     <div class="container">
         <!-- Barra de navegación -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-            <a class="navbar-brand" href="#">Trascendance</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'en' %}">{% trans "English" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'es' %}">{% trans "Español" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'fr' %}">{% trans "Français" %}</a>
-                </li>
-                </ul>
-            </div>
+            <div class="container justify-content-center"> <!-- Añadir la clase justify-content-center -->
+                <a class="navbar-brand" href="{% url 'home' %}">Trascendance</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'en' %}">{% trans "English" %}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'es' %}">{% trans "Español" %}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'fr' %}">{% trans "Français" %}</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
+        
 
         <!-- Contenido principal -->
         <div id="content" class="mt-3">
@@ -48,9 +50,9 @@
         {% if not form %}
         {% if not request.user.is_authenticated %}
         <div id="contenido-a-eliminar">
-            <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "Login" %}</a></p>
-            <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links">{% trans "Signup" %}</a></p>
-            <p><a href="#" onclick=" mostrarSignup42()" class="btn btn-primary links">{% trans "Signup42" %}</a></p>
+            <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links"><i class="bi bi-person"></i> {% trans "Login" %}</a></p>
+            <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links"><i class="bi bi-person-plus"></i> {% trans "Signup" %}</a></p>
+            <p><a href="#" onclick="mostrarSignup42()"><img src="../../static/42login.png" class="link42"></a></p>
 
             <!-- <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2F10.12.17.1%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p> -->
         </div>
@@ -80,15 +82,35 @@
                 </script>
                 <div id="contenido-a-eliminar3">
                     <p>{% trans "User" %}: {{ request.user.username }}</p>
-                    <p><a href="#" onclick="mostrarLogout()" class="btn btn-primary links">{% trans "Logout" %}</a></p>
-                    <p><a href="#" onclick="mostrarQR()" class="btn btn-primary links">{% trans "Show 2FA QR" %}</a></p>
+                    <p>
+                        <a href="#" onclick="mostrarLogout()" class="btn btn-primary links">
+                            <i class="bi bi-box-arrow-left"></i> {% trans "Logout" %}
+                        </a>
+                    </p>
+                    <p>
+                        <a href="#" onclick="mostrarQR()" class="btn btn-primary links">
+                            <i class="bi bi-qr-code"></i> {% trans "Show 2FA QR" %}
+                        </a>
+                    </p>
                     <table width='250'>
                         <tr><th>{% trans "Quick match" %}</th></tr>
                         <tr>
                         <td>
-                            <p><a href="#" onclick="mostrarPartido()" class="btn btn-primary links">{% trans "Play" %}</a></p>
-                            <p><a href="#" onclick="mostrarMLista()" class="btn btn-primary links">{% trans "List of my matches" %}</a></p>
-                            <p><a href="#" onclick="mostrarLista()" class="btn btn-primary links">{% trans "List of matches" %}</a></p>
+                            <p>
+                                <a href="#" onclick="mostrarPartido()" class="btn btn-primary links">
+                                    <i class="bi bi-joystick"></i> {% trans "Play" %}
+                                </a>
+                            </p>
+                            <p>
+                                <a href="#" onclick="mostrarMLista()" class="btn btn-primary links">
+                                    <i class="bi bi-list-ul"></i> {% trans "List of my matches" %}
+                                </a>
+                            </p>
+                            <p>
+                                <a href="#" onclick="mostrarLista()" class="btn btn-primary links">
+                                    <i class="bi bi-list-ul"></i> {% trans "List of matches" %}
+                                </a>
+                            </p>
                         </td>
                         </tr>
                     </table>
@@ -96,22 +118,44 @@
                         <tr><th>{% trans "Tournaments" %}</th></tr>
                         <tr>
                             <td>
-                                <p><a href="#" onclick="mostrarInsLista()" class="btn btn-primary links">{% trans "Tournament registration" %}</a></p>
-                                <p><a href="#" onclick="mostrarInfLista()" class="btn btn-primary links">{% trans "Tournament information" %}</a></p>
+                                <p>
+                                    <a href="#" onclick="mostrarInsLista()" class="btn btn-primary links">
+                                        <i class="bi bi-person-plus"></i> {% trans "Tournament registration" %}
+                                    </a>
+                                </p>
+                                <p>
+                                    <a href="#" onclick="mostrarInfLista()" class="btn btn-primary links">
+                                        <i class="bi bi-info-circle"></i> {% trans "Tournament information" %}
+                                    </a>
+                                </p>
                                 {% if jugar %}
-                                    <p><a href="#" onclick="mostrarPT()" class="btn btn-primary links">{% trans "Tournament play" %}</a></p>
-                                {% endif %}
-                                {% if hayProximosTorneos %}
-                                    <p>{% trans "Upcoming tournaments" %}</p>
-                                    <ul>
-                                    {% for t_torneo in proximosTorneos %}
-                                        <li>{{ t_torneo }}</li>
-                                    {% endfor %}
-                                    </ul>
+                                <p>
+                                    <a href="#" onclick="mostrarPT()" class="btn btn-primary links">
+                                        <i class="bi bi-play-circle-fill"></i> {% trans "Tournament play" %}
+                                    </a>
+                                </p>
                                 {% endif %}
                                 {% if request.user.is_superuser or request.user.is_staff %}
-                                    <p><a href="#" onclick="mostrarTA()" class="btn btn-primary links">{% trans "Tournament administration" %}</a></p>
+                                    <p>
+                                        <a href="#" onclick="mostrarTA()" class="btn btn-primary links">
+                                            <i class="bi bi-tools"></i> {% trans "Tournament administration" %}
+                                        </a>
+                                    </p>
                                 {% endif %}
+                                {% if hayProximosTorneos %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{% trans "Upcoming tournaments" %}</h5>
+                                        <ul class="list-group list-group-flush">
+                                            {% for t_torneo in proximosTorneos %}
+                                                <li class="list-group-item">{{ t_torneo }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                
                             </td>
                         </tr>
                     </table>

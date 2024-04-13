@@ -6,12 +6,13 @@
 <link rel="stylesheet" href="static/partidos.css"/>
 <link rel="icon" type="image/x-icon" href="static/favicon.ico">
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
 
 <h1>{% trans "List of my matches" %}</h1>
 
-<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
+
 
 <table>
     <tr>
@@ -35,8 +36,6 @@
         </tr>
     {% endfor %}
 </table>
-
-<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
-
+<p><a href="{% url 'home' %}" class="btn btn-primary links"><i class="bi bi-house-door"></i> {% trans "Home" %}</a></p>
 </body>
 </html>
