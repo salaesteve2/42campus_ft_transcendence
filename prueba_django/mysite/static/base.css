@@ -40,13 +40,12 @@ body {
 .links {
   transition: color 0.3s ease, transform 0.3s ease;
   font-family: "Verdana", sans-serif;
-  color: #000000;
+  color: #ffffff;
   display: inline-block;
 }
 
 .links:hover {
   text-decoration: none;
-  color: #0f21eb;
   transform: scale(1.1);
 }
 

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="static/torneos.css"/>
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
     <div id="contenido-dinamico">
@@ -14,38 +15,51 @@
     <div id="contenido-a-eliminar4">
 <h1>{% trans "Tournament administration" %}</h1>
 
-<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
 
-<p><button id="edit-torneo-btn" class="btn btn-primary links">{% trans "New" %}</button></p>
+<p>
+    <button id="edit-torneo-btn" class="btn btn-success links">
+      <i class="bi bi-plus"></i> {% trans "New" %}
+    </button>
+  </p>
+  
 
             
 <table>
     <tr>
-        <th>{% trans "Edit" %}</th>
-        <th>{% trans "Delete" %}</th>
+        <th>{% trans "ID" %}</th>
         <th>{% trans "Tournament name" %}</th>
         <th>{% trans "Start of registration" %}</th>
         <th>{% trans "End of registration" %}</th>
         <th>{% trans "Start of matches" %}</th>
         <th>{% trans "Maximum match duration in minutes" %}</th>
         <th>{% trans "Minutes between matches" %}</th>
+        <th>{% trans "Settings" %}</th>
     </tr>
     <tr><td colspan='8'></td></tr>
 	    {% for torneo in torneos %}
         <tr>
-            <td><button class="edit-torneo-btn2 btn btn-primary links" data-torneo-id="{{ torneo.id }}">{{ torneo.id }}</button></td>
-            <td><button class="delete-torneo-btn btn btn-primary links" data-torneo-id="{{ torneo.id }}">{% trans "Delete" %}</button></td>
+            <td>{{ torneo.id }}</td>
             <td>{{ torneo.nombre }}</td>
             <td>{{ torneo.comienzo_inscripcion }}</td>
             <td>{{ torneo.fin_inscripcion }}</td>
             <td>{{ torneo.comienzo_partidos }}</td>
             <td>{{ torneo.minutos_duracion_maxima_partidos }}</td>
             <td>{{ torneo.minutos_entre_partidos }}</td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <button class="edit-torneo-btn2 btn btn-primary btn-sm links d-inline-block" data-torneo-id="{{ torneo.id }}">
+                        <i class="bi bi-pencil-fill"></i>
+                    </button>
+                    <button class="delete-torneo-btn btn btn-danger btn-sm links d-inline-block" data-torneo-id="{{ torneo.id }}">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </div>
+            </td>
         </tr>
     {% endfor %}
 </table>
 
-<p><a href="{% url 'home' %}" class="btn btn-primary links">{% trans "Home" %}</a></p>
+<p><a href="{% url 'home' %}" class="btn btn-primary links"><i class="bi bi-house-door"></i> {% trans "Home" %}</a></p>
     </div>
     <script>
         $(document).on("click", ".edit-torneo-btn2", function() {
