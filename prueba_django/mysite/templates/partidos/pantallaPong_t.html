@@ -12,8 +12,8 @@
 
 vDebug = false;
 
-idPartido = {{ idPartido }}; // enviado por el servidor al generar el html
-numJugador = {{ numJugador }}; // 1 o 2 // jugador 1 a la izquierda -- jugador 2 a la derecha
+idPartido = '{{ idPartido }}'; // enviado por el servidor al generar el html
+numJugador = '{{ numJugador }}'; // 1 o 2 // jugador 1 a la izquierda -- jugador 2 a la derecha
 myLanguage = "{{ myLanguage }}"; 
 
 anchoPantalla = window.innerWidth;
@@ -309,23 +309,58 @@ function loop2() {
 
 $(document).ready(function(){
     // al final se preparan lo eventos  cuando el documento está listo >>
+    $(window).on('resize', function(){
+        actualizarPosiciones();
+    });
+    $(document).on('DOMContentLoaded', function(){
+        actualizarPosiciones();
+    });
+    function actualizarPosiciones() {
+        // Recalcular las dimensiones del campo
+        anchoPantalla = window.innerWidth;
+        altoPantalla = window.innerHeight;
+        // Recalcula las dimensiones del campo de juego
+        if (altoPantalla > 2000)
+            alto = altoPantalla;
+        else if (altoPantalla > 1000)
+            alto = altoPantalla/2;
+        else
+            alto = altoPantalla/2;
+        if (anchoPantalla > 1750)
+            ancho = anchoPantalla + 2500;
+        else if (anchoPantalla > 1500)
+            ancho = anchoPantalla + anchoPantalla - 1400;
+        else if (anchoPantalla > 1250)
+            ancho = anchoPantalla;
+        else if (anchoPantalla > 1000)
+            ancho = anchoPantalla - 700;
+        else if (anchoPantalla > 750)
+            ancho = anchoPantalla/2;
+        else if (anchoPantalla > 500)
+            ancho = anchoPantalla/2 - 250;
+        else
+            ancho = anchoPantalla/3 + 10;
+        campo = { ancho: 800, alto: 400  };
+        sep = 15; // separación del jugador con el fondo de la pista
+        raqueta = { ancho: 10, alto: 80 };
+        pelota = { ancho: 15, alto: 15 };
+
+        margen = { arriba: 165 + alto/4, izq: 30 + ancho/5 };
+        red = { ancho: 15, alto: campo.alto };
+
+        jugador1X0 = 0 - campo.ancho / 2 + sep; // 0 = centro
+        jugador2X0 = 0 + campo.ancho / 2 - sep; // 0 = centro
+        var jugador1Y0 = 0; // 0 = centro
+        var jugador2Y0 = 0; // 0 = centro
+        // Recalcula las posiciones de los elementos
+        coloca();
+    }
     setKeydown();
     setKeyup();    
     $("#b_volver").hide();
-    /*
-    $("#b_comandos").click(function(){
-        var comandos0 = $("#t_comandos").val();
-        var comandos = comandos0.replaceAll(" ","");
-        processCommands(comandos);
-    });
-    */
-    // se coloca todo >>
     coloca();
-    //
-    // start the game
-    // requestAnimationFrame(loop); // old !!!!!!!!!!!!
-    loop2(); // new
-}); // << fin documento listo
+    loop2();
+});
 
 </script>
 </head>
