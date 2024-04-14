@@ -5,7 +5,6 @@
     <title>Trascendance</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="static/pantallaPong.css"/>
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
     <link rel="stylesheet" href="../../static/base.css">
@@ -18,41 +17,40 @@
     <div class="container">
         <!-- Barra de navegación -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container justify-content-center"> <!-- Añadir la clase justify-content-center -->
-                <a class="navbar-brand" href="{% url 'home' %}">Trascendance</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'en' %}">{% trans "English" %}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'es' %}">{% trans "Español" %}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'fr' %}">{% trans "Français" %}</a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="container">
+            <a class="navbar-brand" href="#">Trascendance</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'en' %}">{% trans "English" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'es' %}">{% trans "Español" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'fr' %}">{% trans "Français" %}</a>
+                </li>
+                </ul>
+            </div>
             </div>
         </nav>
-        
 
         <!-- Contenido principal -->
         <div id="content" class="mt-3">
             <!-- Contenido cargado desde el servidor se inserta aquí por JavaScript -->
         </div>
         <div id="contenido-dinamico">
-            
+
         </div>
         {% if not form %}
         {% if not request.user.is_authenticated %}
         <div id="contenido-a-eliminar">
-            <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links"><i class="bi bi-person"></i> {% trans "Login" %}</a></p>
-            <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links"><i class="bi bi-person-plus"></i> {% trans "Signup" %}</a></p>
-            <p><a href="#" onclick="mostrarSignup42()"><img src="../../static/42login.png" class="link42"></a></p>
+            <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links">{% trans "Login" %}</a></p>
+            <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links">{% trans "Signup" %}</a></p>
+            <p><a href="#" onclick=" mostrarSignup42()" class="btn btn-primary links">{% trans "Signup42" %}</a></p>
 
             <!-- <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2F10.12.17.1%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p> -->
         </div>
@@ -69,7 +67,7 @@
         <div id="home" class="page">
             <div class="container">
                 <div id="contenido-dinamico">
-                    
+
                 </div>
                 <script>
                     usename = localStorage.getItem('username2');
@@ -82,35 +80,15 @@
                 </script>
                 <div id="contenido-a-eliminar3">
                     <p>{% trans "User" %}: {{ request.user.username }}</p>
-                    <p>
-                        <a href="#" onclick="mostrarLogout()" class="btn btn-primary links">
-                            <i class="bi bi-box-arrow-left"></i> {% trans "Logout" %}
-                        </a>
-                    </p>
-                    <p>
-                        <a href="#" onclick="mostrarQR()" class="btn btn-primary links">
-                            <i class="bi bi-qr-code"></i> {% trans "Show 2FA QR" %}
-                        </a>
-                    </p>
+                    <p><a href="#" onclick="mostrarLogout()" class="btn btn-primary links">{% trans "Logout" %}</a></p>
+                    <p><a href="#" onclick="mostrarQR()" class="btn btn-primary links">{% trans "Show 2FA QR" %}</a></p>
                     <table width='250'>
                         <tr><th>{% trans "Quick match" %}</th></tr>
                         <tr>
                         <td>
-                            <p>
-                                <a href="#" onclick="mostrarPartido()" class="btn btn-primary links">
-                                    <i class="bi bi-joystick"></i> {% trans "Play" %}
-                                </a>
-                            </p>
-                            <p>
-                                <a href="#" onclick="mostrarMLista()" class="btn btn-primary links">
-                                    <i class="bi bi-list-ul"></i> {% trans "List of my matches" %}
-                                </a>
-                            </p>
-                            <p>
-                                <a href="#" onclick="mostrarLista()" class="btn btn-primary links">
-                                    <i class="bi bi-list-ul"></i> {% trans "List of matches" %}
-                                </a>
-                            </p>
+                            <p><a href="#" onclick="mostrarPartido()" class="btn btn-primary links">{% trans "Play" %}</a></p>
+                            <p><a href="#" onclick="mostrarMLista()" class="btn btn-primary links">{% trans "List of my matches" %}</a></p>
+                            <p><a href="#" onclick="mostrarLista()" class="btn btn-primary links">{% trans "List of matches" %}</a></p>
                         </td>
                         </tr>
                     </table>
@@ -118,44 +96,22 @@
                         <tr><th>{% trans "Tournaments" %}</th></tr>
                         <tr>
                             <td>
-                                <p>
-                                    <a href="#" onclick="mostrarInsLista()" class="btn btn-primary links">
-                                        <i class="bi bi-person-plus"></i> {% trans "Tournament registration" %}
-                                    </a>
-                                </p>
-                                <p>
-                                    <a href="#" onclick="mostrarInfLista()" class="btn btn-primary links">
-                                        <i class="bi bi-info-circle"></i> {% trans "Tournament information" %}
-                                    </a>
-                                </p>
+                                <p><a href="#" onclick="mostrarInsLista()" class="btn btn-primary links">{% trans "Tournament registration" %}</a></p>
+                                <p><a href="#" onclick="mostrarInfLista()" class="btn btn-primary links">{% trans "Tournament information" %}</a></p>
                                 {% if jugar %}
-                                <p>
-                                    <a href="#" onclick="mostrarPT()" class="btn btn-primary links">
-                                        <i class="bi bi-play-circle-fill"></i> {% trans "Tournament play" %}
-                                    </a>
-                                </p>
-                                {% endif %}
-                                {% if request.user.is_superuser or request.user.is_staff %}
-                                    <p>
-                                        <a href="#" onclick="mostrarTA()" class="btn btn-primary links">
-                                            <i class="bi bi-tools"></i> {% trans "Tournament administration" %}
-                                        </a>
-                                    </p>
+                                    <p><a href="#" onclick="mostrarPT()" class="btn btn-primary links">{% trans "Tournament play" %}</a></p>
                                 {% endif %}
                                 {% if hayProximosTorneos %}
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{% trans "Upcoming tournaments" %}</h5>
-                                        <ul class="list-group list-group-flush">
-                                            {% for t_torneo in proximosTorneos %}
-                                                <li class="list-group-item">{{ t_torneo }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
+                                    <p>{% trans "Upcoming tournaments" %}</p>
+                                    <ul>
+                                    {% for t_torneo in proximosTorneos %}
+                                        <li>{{ t_torneo }}</li>
+                                    {% endfor %}
+                                    </ul>
                                 {% endif %}
-
-                                
+                                {% if request.user.is_superuser or request.user.is_staff %}
+                                    <p><a href="#" onclick="mostrarTA()" class="btn btn-primary links">{% trans "Tournament administration" %}</a></p>
+                                {% endif %}
                             </td>
                         </tr>
                     </table>
@@ -206,7 +162,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-			    history.pushState({ view: "partidos_list" }, null, "/");
+			                history.pushState({ view: "partidos_list" }, null, "/");
                         });
                     }
                     function mostrarInsLista() {
@@ -224,6 +180,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
+                     
 			    history.pushState({ view: "torneos_info_list" }, null, "/");
                         });
                     }
@@ -245,7 +202,7 @@
 				history.pushState({ view: "torneos_admin" }, null, "/");
                         });
                     }
-		
+
 			function mostrarLogout2() {
                         // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
                         $.get("{% url 'logout' %}", function(data) {
@@ -342,20 +299,6 @@
                     });
                 }
 		</script>
-           <script>
-                window.onload = function() {
-                    mostrarTA2();
-                };
-                function mostrarTA2() {
-                    // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-                    $.get("{% url 'torneos_admin' %}", function(data) {
-                        // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                        $("#contenido-dinamico").html(data);
-                        $("#contenido-a-eliminar").hide();
-                    });
-                }
-
-            </script>
         {%endif%}
         {% if qr_path%}
         <script>
@@ -369,19 +312,6 @@
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
 			history.pushState({ view: "check" }, null, "/")
-                });
-            }
-        </script>
-<script>
-            window.onload = function() {
-                mostrar2fa2();
-            };
-            function mostrar2fa2() {
-                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-                $.get("{% url 'check' %}", function(data) {
-                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                    $("#contenido-dinamico").html(data);
-                    $("#contenido-a-eliminar").hide();
                 });
             }
         </script>
@@ -402,45 +332,27 @@
                 });
             }
         </script>
-        <script>
-            window.onload = function() {
-                mostrartorneos2();
-            };
-            function mostrartorneos2() {
-                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-                $.get("{% url 'torneos_inscripcion_list' %}", function(data) {
-                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                    $("#contenido-dinamico").html(data);
-                    $("#contenido-a-eliminar").hide();
-                });
-            }
-        </script>
-
         {% endif %}
     {% endif %}
     <script>
-        var username = localStorage.getItem('username2');
-        var form5 = localStorage.getItem('form5');
-        var redirect_url2 = localStorage.getItem('redirect_url');
-        if (form5 || redirect_url2) {
-            window.onload = function() {
-                mostrartorneos2();
-            };
-            function mostrartorneos2() {
-                localStorage.removeItem('form5');
-                localStorage.removeItem('redirect_url');
-                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-                $.get("{% url 'torneos_admin' %}", function(data) {
-                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                    $("#contenido-dinamico").html(data);
-                    $("#contenido-a-eliminar").hide();
-                });
-            }
-        }
-        if (username) {
-            window.onload = function() {
-                mostrarcode(username);
-            };
+        // var username = localStorage.getItem('username2');
+        // var form5 = localStorage.getItem('form5');
+        // var redirect_url2 = localStorage.getItem('redirect_url');
+        //     function mostrartorneos2() {
+        //         localStorage.removeItem('form5');
+        //         localStorage.removeItem('redirect_url');
+        //         // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+        //         $.get("{% url 'torneos_admin' %}", function(data) {
+        //             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+        //             $("#contenido-dinamico").html(data);
+        //             $("#contenido-a-eliminar").hide();
+        //         });
+        //     }
+
+        // if (username) {
+        //     window.onload = function() {
+        //         mostrarcode(username);
+        //     };
             function mostrarcode(username) {
                 localStorage.removeItem('username');
                 // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
@@ -451,28 +363,7 @@
 			history.pushState({ view: "google_code" }, null, "/")
                 });
             }
-        }
         //localStorage.removeItem('username2');
-    </script>
-    {% if username2 %}
-        <script>
-            window.onload = function() {
-                mostrarcode('{{username2}}');
-            };
-            function mostrarcode(username) {
-                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-                $.get("{% url 'google_code' %}?username=" + username, function(data) {
-                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                    $("#contenido-dinamico").html(data);
-                    $("#contenido-a-eliminar").hide();
-			history.pushState({ view: "google_code" }, null, "/")
-                });
-            }
-        </script>
- <script>
-            window.onload = function() {
-                mostrarcode2('{{username2}}');
-            };
             function mostrarcode2(username) {
                 // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
                 $.get("{% url 'google_code' %}?username=" + username, function(data) {
@@ -482,8 +373,6 @@
                 });
             }
         </script>
-
-    {% endif %}
     <footer class="container-fluid bg-dark text-white py-3 footer">
         <div class="text-left">
             <p class="m-0">&copy; 42Madrid excentric pong</p>
@@ -491,7 +380,11 @@
     </footer>
     </div>
     <script>
+
+    function pushStateFunction() {
+        history.pushState({ view: "home" }, null, "/");
         
+    }
         function mostrarLogin() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
             $.get("{% url 'login' %}", function(data) {
@@ -499,7 +392,7 @@
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
 		history.pushState({ view: "login" }, null, "/");
-		
+
             });
         }
         function mostrarSignup() {
@@ -535,7 +428,34 @@
                 $("#contenido-a-eliminar").hide();
             });
         }
-        
+
+                function mostrarTA2() {
+                    // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                    $.get("{% url 'torneos_admin' %}", function(data) {
+                        // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                        $("#contenido-dinamico").html(data);
+                        $("#contenido-a-eliminar").hide();
+                    });
+                }
+                function mostrar2fa2() {
+                // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'check' %}", function(data) {
+                    // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+            }
+
+            // function mostrartorneos2() {
+            //     // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            //     $.get("{% url 'torneos_inscripcion_list' %}", function(data) {
+            //         // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+            //         $("#contenido-dinamico").html(data);
+            //         $("#contenido-a-eliminar").hide();
+            //     });
+            // }
+
+
 function renderView(view) {
   // Carga la plantilla index.html
   $.get(`{% url 'index' %}`, function(data) {
@@ -579,123 +499,26 @@ function renderView(view) {
         mostrarcode2('{{username2}}');
         break;
       case "home":
+      // $("#contenido-dinamico").html();
+      console.log("AUguFAGF\n\n")
+      location.reload();
         break;
       default:
         break;
     }
-    // history.pushState({ view: view }, null, `/${view}`);
-    sessionStorage.setItem('currentView', view);
-    // Actualizar el historial con el nombre de la vista
-    // history.pushState({ view: view }, null, `/${view}`);
-  });
- }
-
-window.onload = function() {
-    // Lógica para inicializar la página cuando se carga por completo
-
-    // Define una función para mostrar la vista específica
-    function renderView(view) {
-  // Carga la plantilla index.html
-  $.get(`{% url 'index' %}`, function(data) {
-
-    // Mostrar el contenido específico de la vista
-    switch (view) {
-      case "login":
-        mostrarLogin2();
-        break;
-      case "signup":
-        mostrarSignup2();
-        break;
-      case "logout":
-        mostrarLogout2();
-        break;
-      case "check":
-        mostrarQR2();
-        break;
-      case "partido":
-        mostrarPartido2();
-        break;
-      case "partidos_mlist":
-        mostrarMLista2();
-        break;
-      case "partidos_list":
-        mostrarLista2();
-        break;
-      case "torneos_inscripcion_list":
-        mostrarInsLista2();
-        break;
-      case "torneos_info_list":
-        mostrarInfLista2();
-        break;
-      case "torneos_play":
-        mostrarPT2();
-        break;
-      case "torneos_admin":
-        mostrarTA2();
-        break;
-      case "google_code":
-        mostrarcode2('{{username2}}');
-        break;
-      case "home":
-        break;
-      default:
-        break;
-    }
-    // history.pushState({ view: view }, null, `/${view}`);
-    sessionStorage.setItem('currentView', view);
-    // Actualizar el historial con el nombre de la vista
     // history.pushState({ view: view }, null, `/${view}`);
   });
 }
+window.addEventListener('popstate', (event) => {
 
-    // Define una función para manejar el historial de navegación
-    function manejarHistorial(event) {
-        // Verifica si event.state tiene una propiedad view (usando comparación estricta)
-        if (event.state !== null && typeof event.state.view === 'string') {
-            const view = event.state.view;
-            renderView(view);
-        } else {
-            // Si no hay una vista específica en el estado del historial, muestra la vista predeterminada
-            const storedView = localStorage.getItem('currentView');
-            renderView(storedView);
-        }
-        // No es necesario llamar a history.pushState() aquí
+  // Check if event.state has a view property (use strict comparison)
+   if (event.state !== null && typeof event.state.view === 'string') {
+        const view = event.state.view;
+        renderView(view);
     }
 
-    // Agrega un listener para manejar eventos de historial
-    window.addEventListener('popstate', manejarHistorial);
-
-    var homeLink = document.querySelector("#home-link");
-
-// Agregar un evento de clic al enlace de "Home"
-    homeLink.addEventListener("click", function(event) {
-  // Evitar que el navegador siga el enlace normalmente
-        event.preventDefault();
-
-  // Actualizar el estado del historial
-        history.pushState({ view: "home" }, null, "/");
-
-  // También puedes redirigir a la página de inicio si lo deseas
-  // window.location.href = "/"; // Esto redirigiría a la página de inicio
 });
-const storedView = localStorage.getItem('currentView');
-    renderView(storedView);
-};
 
-    // Define una función para renderizar la vista basada en la URL actual
-function renderizarVistaActual() {
-     let vistaActual = '';
-
-    //     // Obtén la vista actual de la URL
-     const ruta = window.location.pathname;
-     vistaActual = ruta.substring(1); // Elimina el primer "/" de la URL
-
-    //     // Renderiza la vista actual
-     renderView(vistaActual);
-    }
-
-    // // Llama a la función para renderizar la vista actual cuando la página se carga por completo
-    renderizarVistaActual();
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
