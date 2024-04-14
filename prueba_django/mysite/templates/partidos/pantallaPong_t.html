@@ -381,7 +381,7 @@ $(document).ready(function(){
 -->
 
 <p id="tecla">_</p>
-<p><a href="{% url 'home' %}" class="btn btn-primary links"><i class="bi bi-house-door"></i> {% trans "Home" %}</a></p>
+<a href="{% url 'home' %}" class="btn btn-primary links" onclick="pushStateFunction()">{% trans "Home" %}</a>
 <p id="getPostStatusOk">_</p>
 <p id="getPostStatusErr">_</p>
 <p id="getPostKeyOk">_</p>
