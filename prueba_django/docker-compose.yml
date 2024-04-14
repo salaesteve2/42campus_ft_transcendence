@@ -2,6 +2,8 @@ version: '3.8'
 # networks:
 #   monitoring:
 #     driver: bridge
+#   services:
+#     driver: bridge
 
 volumes:
   prometheus-data:
@@ -24,6 +26,8 @@ services:
       - ./.env.dev
     # depends_on:
     #   - db
+    # networks:
+    #   - services
     restart: unless-stopped
 
   db:
@@ -35,6 +39,8 @@ services:
       - POSTGRES_USER=hello_django
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
+    # networks:
+    #   - services
     restart: unless-stopped
 
   nginx:
@@ -44,8 +50,8 @@ services:
       - 443:443
       - 80:80
       - 8080:8080
-    # depends_on:
-    #   - web
+    # networks:
+    #   - services
     restart: unless-stopped
 
   pgadmin:
@@ -56,6 +62,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "email@trascendence.com"
       PGADMIN_DEFAULT_PASSWORD: "contra123"
+    # networks:
+    #   - services
     restart: unless-stopped
 
 ##### monitoring #######
@@ -74,6 +82,8 @@ services:
       - ./configPrometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - ./configPrometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
       - ./dataPrometheus:/prometheus
+    # networks:
+    #   - monitoring
     restart: unless-stopped
 
   #dashboard
@@ -86,6 +96,8 @@ services:
       - '3000:3000'
     volumes:
       - ./grafana-data:/var/lib/grafana
+    # networks:
+    #   - monitoring
     restart: unless-stopped
 
   #os level metrics
@@ -98,22 +110,29 @@ services:
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys/:ro
+    # networks:
+    #   - monitoring
 
   #container monitoring
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    image: google/cadvisor:latest
     container_name: cadvisor
     command:
       - '-port=8098'
     volumes:
       - /:/rootfs:ro
+      # - /var/run:/var/run:rw
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     devices:
       - /dev/kmsg
-    privileged: false
+    ports:
+      - "8098:8098"
+    privileged: true
+    # networks:
+    #   - monitoring
     restart: unless-stopped
 
   #nginx monitoring
@@ -123,8 +142,8 @@ services:
     ports:
       - "9113:9113"
     command: --nginx.scrape-uri=http://nginx:8080/stub_status
-    # depends_on:
-    #   - nginx
+    # networks:
+    #   - monitoring
     restart: unless-stopped
   
   #postgres monitoring
@@ -135,6 +154,6 @@ services:
       DATA_SOURCE_NAME: "postgresql://hello_django:hello_django@db:5432/hello_django_dev?sslmode=disable"
     ports:
       - "9187:9187"
-    # depends_on:
-    #   - db
+    # networks:
+    #   - monitoring
     restart: unless-stopped
