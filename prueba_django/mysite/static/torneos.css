@@ -21,5 +21,7 @@ table, th, td {
 
 h1 {
     color: #ffc107 !important;/* Color azul oscuro, cambia esto por el color que prefieras */
-    font-family: 'Roboto Condensed', sans-serif !important; /* Asegúrate de que la fuente esté importada o disponible */
+    font-family: 'Roboto Condensed', sans-serif !important;
+    background-color: #2a2a2a;
+    display: inline-block;
 }
