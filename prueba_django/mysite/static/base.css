@@ -141,6 +141,16 @@ table, th, td {
   margin: 2px;
 }
 
+.btn-primary .bi-joystick {
+  transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.btn-primary:hover .bi-joystick {
+  color: #ff0000;  /* Cambia el color a rojo */
+  transform: rotate(360deg); /* Rota el ícono 360 grados */
+}
+
+
 /* proyect primary buttons */
 /*
 .button-group {
