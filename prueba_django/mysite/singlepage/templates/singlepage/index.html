@@ -24,19 +24,17 @@
             localStorage.setItem('miEstado', JSON.stringify(estado));
         }
 
-
         function recuperarYRestaurarEstado() {
-                const estadoGuardado = JSON.parse(localStorage.getItem('miEstado'));
-                if (estadoGuardado) {
-                    if (estadoGuardado.html) {
-                     document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
-                    }
-                    else
-                        localStorage.removeItem('miEstado');
-                window.scrollTo(0, estadoGuardado.scrollPosition); // Restaura la posición de scroll
+            const estadoGuardado = JSON.parse(localStorage.getItem('miEstado'));
+            if (estadoGuardado) {
+                if (estadoGuardado.html) {
+                    document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
                 }
-                
+                else
+                    localStorage.removeItem('miEstado');
+                window.scrollTo(0, estadoGuardado.scrollPosition); // Restaura la posición de scroll
             }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             recuperarYRestaurarEstado();
         });
@@ -462,13 +460,13 @@
                 });
             }
         </script>
-        
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="col-md-4 d-flex align-items-center">
+                <span class="mb-3 mb-md-0 text-body-secondary">&copy; 42Madrid excentric pong</span>
+            </div>
+        </footer>
     </div>
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <div class="col-md-4 d-flex align-items-center">
-            <span class="mb-3 mb-md-0 text-body-secondary">&copy; 42Madrid excentric pong</span>
-        </div>
-    </footer>
+    
     <script>
 
     function guardarEstadoHome() {
