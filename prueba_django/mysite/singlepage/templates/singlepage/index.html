@@ -25,15 +25,17 @@
 
 
         function recuperarYRestaurarEstado() {
-            const estadoGuardado = JSON.parse(localStorage.getItem('miEstado'));
-            if (estadoGuardado) {
-                if (estadoGuardado.html) {
-                    document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
-                }
+                const estadoGuardado = JSON.parse(localStorage.getItem('miEstado'));
+                if (estadoGuardado) {
+                    if (estadoGuardado.html) {
+                     document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
+                    }
+                    else
+                        localStorage.removeItem('miEstado');
                 window.scrollTo(0, estadoGuardado.scrollPosition); // Restaura la posición de scroll
+                }
+                
             }
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             recuperarYRestaurarEstado();
         });
@@ -462,9 +464,15 @@
     </div>
     <script>
 
+    function guardarEstadoHome() {
+            const contenidoDinamico = document.getElementById('contenido-dinamico').innerHTML; // Asegúrate que este ID corresponde al contenedor de tu contenido dinámico
+            const estado = null;
+            localStorage.setItem('miEstado', JSON.stringify(estado));
+        }
     function pushStateFunction() {
+        window.onbeforeunload = guardarEstadoHome();
         history.pushState({ view: "home" }, null, "/");
-        
+        // history.pushState({ view: "home" }, null, "/");
     }
         function limpiarDatosDeSesion() {
             localStorage.clear();  // Elimina todos los datos de localStorage
@@ -587,10 +595,11 @@ function renderView(view) {
         break;
       case "home":
       // $("#contenido-dinamico").html();
-      location.reload();
+        window.onbeforeunload = guardarEstadoHome();
+        location.reload();
         break;
       default:
-        $("#")
+        // $("#")
         break;
     }
     // history.pushState({ view: view }, null, `/${view}`);
