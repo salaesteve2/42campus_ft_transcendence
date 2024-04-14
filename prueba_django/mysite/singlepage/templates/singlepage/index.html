@@ -125,7 +125,7 @@
                             window.location.href = "{% url 'index' %}";
                             //$("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-				history.pushState({ view: "Logout" }, null, "/");
+                            history.replaceState({ view: "Logout" }, null, "/");
                         });
                     }
                     function mostrarQR() {
@@ -135,7 +135,7 @@
                             //window.location.href = "{% url 'index' %}";
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-				history.pushState({ view: "check" }, null, "/");
+                            history.replaceState({ view: "check" }, null, "/");
                         });
                     }
                     function mostrarPartido() {
@@ -144,7 +144,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-			    history.pushState({ view: "partido" }, null, "/");
+                            history.replaceState({ view: "partido" }, null, "/");
                         });
                     }
                     function mostrarMLista() {
@@ -153,7 +153,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-			    history.pushState({ view: "partidos_mlist" }, null, "/");
+                            history.replaceState({ view: "partidos_mlist" }, null, "/");
                         });
                     }
                     function mostrarLista() {
@@ -162,7 +162,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-			                history.pushState({ view: "partidos_list" }, null, "/");
+			                history.replaceState({ view: "partidos_list" }, null, "/");
                         });
                     }
                     function mostrarInsLista() {
@@ -171,7 +171,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-			     history.pushState({ view: "torneos_inscripcion_list" }, null, "/");
+                            history.replaceState({ view: "torneos_inscripcion_list" }, null, "/");
                         });
                     }
                     function mostrarInfLista() {
@@ -181,7 +181,7 @@
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
                      
-			    history.pushState({ view: "torneos_info_list" }, null, "/");
+                            history.replaceState({ view: "torneos_info_list" }, null, "/");
                         });
                     }
                     function mostrarPT() {
@@ -190,7 +190,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-			    history.pushState({ view: "torneos_play" }, null, "/");
+                            history.replaceState({ view: "torneos_play" }, null, "/");
                         });
                     }
                     function mostrarTA() {
@@ -199,7 +199,8 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-				history.pushState({ view: "torneos_admin" }, null, "/");
+                            history.replaceState({ view: "torneos_admin" }, null, "/"); 
+				// history.pushState({ view: "torneos_admin" }, null, "/");
                         });
                     }
 
@@ -295,7 +296,7 @@
                         // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                         $("#contenido-dinamico").html(data);
                         $("#contenido-a-eliminar").hide();
-			history.pushState({ view: "torneos_admin" }, null, "/");
+                        history.replaceState({ view: "torneos_admin" }, null, "/");
                     });
                 }
 		</script>
@@ -311,7 +312,7 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
-			history.pushState({ view: "check" }, null, "/")
+                    history.replaceState({ view: "check" }, null, "/")
                 });
             }
         </script>
@@ -328,7 +329,7 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
-			history.pushState({ view: "torneos_inscripcion_list" }, null, "/")
+                    history.replaceState({ view: "torneos_inscripcion_list" }, null, "/")
                 });
             }
         </script>
@@ -360,7 +361,7 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
-			history.pushState({ view: "google_code" }, null, "/")
+                    history.replaceState({ view: "google_code" }, null, "/")
                 });
             }
         //localStorage.removeItem('username2');
@@ -391,7 +392,7 @@
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
-		history.pushState({ view: "login" }, null, "/");
+                history.replaceState({ view: "login" }, null, "/");
 
             });
         }
@@ -401,7 +402,7 @@
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
-		history.pushState({ view: "signup" }, null, "/");
+                history.replaceState({ view: "signup" }, null, "/");
             });
         }
         function mostrarSignup42() {
@@ -504,6 +505,7 @@ function renderView(view) {
       location.reload();
         break;
       default:
+        $("#")
         break;
     }
     // history.pushState({ view: view }, null, `/${view}`);
@@ -518,6 +520,17 @@ window.addEventListener('popstate', (event) => {
     }
 
 });
+// window.addEventListener('beforeunload', (event) => {
+//     // Cancela el evento de descarga para mostrar un mensaje personalizado
+//      // event.preventDefault();
+
+//     // Ejecuta la acción deseada en lugar de recargar la página
+//     // Por ejemplo, redirige a otra página
+//     window.location.href = window.location.hostname + '/#';
+//     window.location.href.reload();
+
+//     // Mensaje que se mostrará al usuario
+// });
 
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
