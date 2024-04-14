@@ -206,7 +206,7 @@ def torneos_edit(request):
 	else:
 		# crear el html para editar (comienzo de edición)
 		idTorneo = request.GET.get('idTorneo')
-		if not (idTorneo is None):  # modificar
+		if (idTorneo):  # modificar
 			#print("html para modificar")
 			idTorneo = int(idTorneo)
 			torneo = Torneo.objects.get(id=idTorneo)
@@ -235,7 +235,6 @@ def torneos_edit(request):
 				'minutos_entre_partidos': torneo.minutos_entre_partidos
 			}
 			form = TorneoForm(initial=dd) 
-			form_html = render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo}).content.decode()
 			return render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo})
 
 # Python program to sort a list of

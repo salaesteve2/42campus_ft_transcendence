@@ -9,46 +9,79 @@
     <link rel="stylesheet" href="static/pantallaPong.css"/>
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
     <link rel="stylesheet" href="../../static/base.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% if request.user.is_authenticated %}
+    <script>
+        // Funciones de manejo de estado
+        function guardarEstado() {
+            const contenidoDinamico = document.getElementById('contenido-dinamico').innerHTML; // Asegúrate que este ID corresponde al contenedor de tu contenido dinámico
+            const estado = {
+                html: contenidoDinamico,
+                url: window.location.href, // Puedes guardar también la URL si afecta al contenido dinámico
+                scrollPosition: window.scrollY
+            };
+            localStorage.setItem('miEstado', JSON.stringify(estado));
+        }
+
+
+        function recuperarYRestaurarEstado() {
+            const estadoGuardado = JSON.parse(localStorage.getItem('miEstado'));
+            if (estadoGuardado) {
+                if (estadoGuardado.html) {
+                    document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
+                }
+                window.scrollTo(0, estadoGuardado.scrollPosition); // Restaura la posición de scroll
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            recuperarYRestaurarEstado();
+        });
+
+        window.onbeforeunload = guardarEstado;
+    </script>
+    {% endif %}
     <style>
         /* Estilos adicionales si es necesario */
     </style>
 {% load static %}
 </head>
 <body>
-    <div class="container justify-content-center"> <!-- Añadir la clase justify-content-center -->
-        <a class="navbar-brand" href="{% url 'home' %}">Trascendance</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'en' %}">{% trans "English" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'es' %}">{% trans "Español" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'fr' %}">{% trans "Français" %}</a>
-                </li>
-            </ul>
-        </div>
+    <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container justify-content-center"> <!-- Añadir la clase justify-content-center -->
+            <a class="navbar-brand" href="{% url 'home' %}">Trascendance</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'en' %}">{% trans "English" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'es' %}">{% trans "Español" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'fr' %}">{% trans "Français" %}</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </div>
+    </nav>
 
         <!-- Contenido principal -->
         <div id="content" class="mt-3">
             <!-- Contenido cargado desde el servidor se inserta aquí por JavaScript -->
         </div>
         <div id="contenido-dinamico">
-
         </div>
         {% if not form %}
         {% if not request.user.is_authenticated %}
         <div id="contenido-a-eliminar">
-            <p><a href="#" onclick="mostrarLogin()" class="btn btn-primary links"><i class="bi bi-person"></i> {% trans "Login" %}</a></p>
-            <p><a href="#" onclick="mostrarSignup()" class="btn btn-primary links"><i class="bi bi-person-plus"></i> {% trans "Signup" %}</a></p>
-            <p><a href="#" onclick="mostrarSignup42()"><img src="../../static/42login.png" class="link42"></a></p>
+            <p><a href="#1" onclick="mostrarLogin()" class="btn btn-primary links"><i class="bi bi-person"></i> {% trans "Login" %}</a></p>
+            <p><a href="#2" onclick="mostrarSignup()" class="btn btn-primary links"><i class="bi bi-person-plus"></i> {% trans "Signup" %}</a></p>
+            <p><a href="#3" onclick="mostrarSignup42()"><img src="../../static/42login.png" class="link42"></a></p>
 
             <!-- <p><a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2F10.12.17.1%2Fapi&response_type=code"><img src="../../static/42login.png" class="link42"></a></p> -->
         </div>
@@ -64,9 +97,6 @@
         {% if request.user.is_authenticated %}
         <div id="home" class="page">
             <div class="container">
-                <div id="contenido-dinamico">
-
-                </div>
                 <script>
                     usename = localStorage.getItem('username2');
                     if (usename) {
@@ -79,12 +109,12 @@
                 <div id="contenido-a-eliminar3">
                     <p>{% trans "User" %}: {{ request.user.username }}</p>
                     <p>
-                        <a href="#" onclick="mostrarLogout()" class="btn btn-primary links">
+                        <a href="#4" onclick="mostrarLogout()" class="btn btn-primary links">
                             <i class="bi bi-box-arrow-left"></i> {% trans "Logout" %}
                         </a>
                     </p>
                     <p>
-                        <a href="#" onclick="mostrarQR()" class="btn btn-primary links">
+                        <a href="#5" onclick="mostrarQR()" class="btn btn-primary links">
                             <i class="bi bi-qr-code"></i> {% trans "Show 2FA QR" %}
                         </a>
                     </p>
@@ -93,17 +123,17 @@
                         <tr>
                         <td>
                             <p>
-                                <a href="#" onclick="mostrarPartido()" class="btn btn-primary links">
+                                <a href="#6" onclick="mostrarPartido()" class="btn btn-primary links">
                                     <i class="bi bi-joystick"></i> {% trans "Play" %}
                                 </a>
                             </p>
                             <p>
-                                <a href="#" onclick="mostrarMLista()" class="btn btn-primary links">
+                                <a href="#7" onclick="mostrarMLista()" class="btn btn-primary links">
                                     <i class="bi bi-list-ul"></i> {% trans "List of my matches" %}
                                 </a>
                             </p>
                             <p>
-                                <a href="#" onclick="mostrarLista()" class="btn btn-primary links">
+                                <a href="#8" onclick="mostrarLista()" class="btn btn-primary links">
                                     <i class="bi bi-list-ul"></i> {% trans "List of matches" %}
                                 </a>
                             </p>
@@ -115,25 +145,25 @@
                         <tr>
                             <td>
                                 <p>
-                                    <a href="#" onclick="mostrarInsLista()" class="btn btn-primary links">
+                                    <a href="#9" onclick="mostrarInsLista()" class="btn btn-primary links">
                                         <i class="bi bi-person-plus"></i> {% trans "Tournament registration" %}
                                     </a>
                                 </p>
                                 <p>
-                                    <a href="#" onclick="mostrarInfLista()" class="btn btn-primary links">
+                                    <a href="#10" onclick="mostrarInfLista()" class="btn btn-primary links">
                                         <i class="bi bi-info-circle"></i> {% trans "Tournament information" %}
                                     </a>
                                 </p>
                                 {% if jugar %}
                                 <p>
-                                    <a href="#" onclick="mostrarPT()" class="btn btn-primary links">
+                                    <a href="#11" onclick="mostrarPT()" class="btn btn-primary links">
                                         <i class="bi bi-play-circle-fill"></i> {% trans "Tournament play" %}
                                     </a>
                                 </p>
                                 {% endif %}
                                 {% if request.user.is_superuser or request.user.is_staff %}
                                 <p>
-                                    <a href="#" onclick="mostrarTA()" class="btn btn-primary links">
+                                    <a href="#12" onclick="mostrarTA()" class="btn btn-primary links">
                                         <i class="bi bi-tools"></i> {% trans "Tournament administration" %}
                                     </a>
                                 </p>
@@ -157,7 +187,13 @@
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 </div>
                 <script>
+                    function limpiarDatosDeSesion() {
+                        localStorage.clear();  // Elimina todos los datos de localStorage
+                        sessionStorage.clear();  // Elimina todos los datos de sessionStorage
+                        // Aquí puedes añadir más limpieza si usas otros métodos de almacenamiento
+                    }
                     function mostrarLogout() {
+                        limpiarDatosDeSesion();
                         // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
                         $.get("{% url 'logout' %}", function(data) {
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
@@ -375,26 +411,31 @@
         {% endif %}
     {% endif %}
     <script>
-        // var username = localStorage.getItem('username2');
-        // var form5 = localStorage.getItem('form5');
-        // var redirect_url2 = localStorage.getItem('redirect_url');
-        //     function mostrartorneos2() {
-        //         localStorage.removeItem('form5');
-        //         localStorage.removeItem('redirect_url');
-        //         // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-        //         $.get("{% url 'torneos_admin' %}", function(data) {
-        //             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-        //             $("#contenido-dinamico").html(data);
-        //             $("#contenido-a-eliminar").hide();
-        //         });
-        //     }
-
-        // if (username) {
-        //     window.onload = function() {
-        //         mostrarcode(username);
-        //     };
+        var username = localStorage.getItem('username2');
+        var form5 = localStorage.getItem('form5');
+        var redirect_url2 = localStorage.getItem('redirect_url');
+        if (form5 || redirect_url2) {
+            window.onload = function() {
+                mostrartorneos2();
+            };
+        }
+        function mostrartorneos2() {
+                localStorage.removeItem('form5');
+                localStorage.removeItem('redirect_url');
+                 // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                $.get("{% url 'torneos_admin' %}", function(data) {
+                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                    $("#contenido-dinamico").html(data);
+                    $("#contenido-a-eliminar").hide();
+                });
+        }
+        if (username) {
+            window.onload = function() {
+                mostrarcode(username);
+            };
+        }
             function mostrarcode(username) {
-                localStorage.removeItem('username');
+                localStorage.removeItem('username2');
                 // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
                 $.get("{% url 'google_code' %}?username=" + username, function(data) {
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
@@ -425,7 +466,13 @@
         history.pushState({ view: "home" }, null, "/");
         
     }
+        function limpiarDatosDeSesion() {
+            localStorage.clear();  // Elimina todos los datos de localStorage
+            sessionStorage.clear();  // Elimina todos los datos de sessionStorage
+            // Aquí puedes añadir más limpieza si usas otros métodos de almacenamiento
+        }
         function mostrarLogin() {
+            limpiarDatosDeSesion();
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
             $.get("{% url 'login' %}", function(data) {
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
