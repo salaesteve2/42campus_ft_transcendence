@@ -15,8 +15,8 @@
 <div class="container-fluid">
     <div class="table-responsive">
         <table class="table table-hover">
-            <thead class="thead-dark">
             {% for torneo in torneos %}
+            <thead class="thead-dark">
                 <tr>
                     <!--<th rowspan='3'>{% trans "Phase" %}</th>-->
                     <th>{% trans "Tournament name" %}</th>
@@ -37,23 +37,23 @@
                     <td>{{ torneo.copy.minutos_entre_partidos }}</td>
                 </tr>
             </thead>
-                <thead class="thead-dark">
-                    <tr>
-                        <th>{% trans "Players registered" %}</th>
-                        <td colspan='5'>{{ torneo.copy.jugadores.all|join:", " }}</td>
-                    </tr>
-                </thead>
-                {% for faseTorneo in torneo.fases %}
+            <thead class="thead-dark">
                 <tr>
-                    <td rowspan='2' valign='top'>{{ faseTorneo.fase }}</td>
-                    <th>{% trans "Matches and results" %}</th>
-                    <td colspan='5'>{{ faseTorneo.lista_partidos_resultados }}</td>
+                    <th>{% trans "Players registered" %}</th>
+                    <td colspan='5'>{{ torneo.copy.jugadores.all|join:", " }}</td>
                 </tr>
-                <tr>
-                    <th>{% trans "Winners" %}</th>
-                    <td colspan='5'>{{ faseTorneo.ganadores.all|join:", " }}</td>
-                </tr>
-                {% endfor %}        
+            </thead>
+            {% for faseTorneo in torneo.fases %}
+            <tr>
+                <td rowspan='2' valign='top'>{{ faseTorneo.fase }}</td>
+                <th>{% trans "Matches and results" %}</th>
+                <td colspan='5'>{{ faseTorneo.lista_partidos_resultados }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Winners" %}</th>
+                <td colspan='5'>{{ faseTorneo.ganadores.all|join:", " }}</td>
+            </tr>
+            {% endfor %}        
             {% endfor %}
         </table>
     </div>

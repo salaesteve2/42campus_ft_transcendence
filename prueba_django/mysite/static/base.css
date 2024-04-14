@@ -17,6 +17,9 @@
 
 /* hasta aqui el código nuevo */
 body {
+  background-image: url('wallpaper.webp');
+  background-size: cover;
+  background-position: center;
   font-family: verdana;
   margin: 0;
   padding: 0;
@@ -24,7 +27,7 @@ body {
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  background-color: #f4f4f4;
+  background-color: #000000;
   font-size: 80%;
 }
 
@@ -118,7 +121,7 @@ main {
 
 
 .container {
-  background-color: #fff;
+  background-color: #ffffffd2;
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.185);
