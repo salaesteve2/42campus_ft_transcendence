@@ -33,36 +33,43 @@
         {% endfor %}
     </ul>
 {% endif %}
-  
-<table>
-    <tr>
-        <th>&nbsp;</th>
-        <th>{% trans "Tournament name" %}</th>
-        <th>{% trans "Start of registration" %}</th>
-        <th>{% trans "End of registration" %}</th>
-        <th>{% trans "Start of matches" %}</th>
-        <th>{% trans "Maximum match duration in minutes" %}</th>
-        <th>{% trans "Minutes between matches" %}</th>
-    </tr>
-    <tr><td colspan='7'></td></tr>
-    {% for torneo in torneos %}
-        <tr>
-            <td><button class="edit-torneo-btn2 btn btn-primary links" data-torneo-id="{{ torneo.id }}" data-user-id="{{ user.id }}"><i class="bi bi-person-plus"></i></button></td>
 
-            <td>{{ torneo.nombre }}</td>
-            <td>{{ torneo.comienzo_inscripcion }}</td>
-            <td>{{ torneo.fin_inscripcion }}</td>
-            <td>{{ torneo.comienzo_partidos }}</td>
-            <td>{{ torneo.minutos_duracion_maxima_partidos }}</td>
-            <td>{{ torneo.minutos_entre_partidos }}</td>
-        </tr>
-        <tr>
-            <th>{% trans "Players registered" %}</th>
-            <td colspan='6'>{{ torneo.jugadores.all|join:", " }}</td>
-        </tr>
-        <tr><td colspan='7'></td></tr>
-    {% endfor %}
-</table>
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>{% trans "Tournament name" %}</th>
+                        <th>{% trans "Start of registration" %}</th>
+                        <th>{% trans "End of registration" %}</th>
+                        <th>{% trans "Start of matches" %}</th>
+                        <th>{% trans "Maximum match duration in minutes" %}</th>
+                        <th>{% trans "Minutes between matches" %}</th>
+                    </tr>
+                </thead>
+                {% for torneo in torneos %}
+                <thead class="thead-dark">
+                    <tr>
+                        <td><button class="edit-torneo-btn2 btn btn-primary links" data-torneo-id="{{ torneo.id }}" data-user-id="{{ user.id }}"><i class="bi bi-person-plus"></i></button></td>
+                        <td>{{ torneo.nombre }}</td>
+                        <td>{{ torneo.comienzo_inscripcion }}</td>
+                        <td>{{ torneo.fin_inscripcion }}</td>
+                        <td>{{ torneo.comienzo_partidos }}</td>
+                        <td>{{ torneo.minutos_duracion_maxima_partidos }}</td>
+                        <td>{{ torneo.minutos_entre_partidos }}</td>
+                    </tr>
+                </thead>
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>{% trans "Players registered" %}</th>
+                        <td colspan='6'>{{ torneo.jugadores.all|join:", " }}</td>
+                    </tr>
+                    </thead>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 </div>
 <script>
     var done = 0;
