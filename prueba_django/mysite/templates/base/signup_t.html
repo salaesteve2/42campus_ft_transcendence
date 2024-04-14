@@ -14,9 +14,18 @@
 
 <form id="miFormulario">
     {% csrf_token %}
-    <table class="table table-striped">
-        {{ form.as_table }}
-    </table>
+    <div class="mb-3">
+        <label for="username" class="form-label">{% trans "Username" %}</label>
+        <input type="text" class="form-control" id="username" name="username">
+    </div>
+    <div class="mb-3">
+        <label for="password1" class="form-label">{% trans "Password" %}</label>
+        <input type="password" class="form-control" id="password1" name="password1">
+    </div>
+    <div class="mb-3">
+        <label for="password2" class="form-label">{% trans "Confirm Password" %}</label>
+        <input type="password" class="form-control" id="password2" name="password2">
+    </div>
     <div class="button-group">
         <p>
             <button type="submit" class="btn btn-primary links">
@@ -25,7 +34,7 @@
         </p>
         <p>
             <button type="reset" class="btn btn-primary links">
-                <i class="bi bi-x-circle"></i> Clear
+                <i class="bi bi-x-circle"></i> {% trans "Clear" %}
             </button>
         </p>
     </div>
@@ -40,32 +49,55 @@
         </p>
     </div>
 </form>
+
+<div id="mensajeError" style="color: red;"></div>
+
 <script>
     $(document).ready(function() {
-        $('#miFormulario').submit(function(event) {
-            event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
-            var formData = $(this).serialize(); // Serializar los datos del formulario
-            $.post("{% url 'signup' %}", formData)
-                .done(function(response) {
-                    // Manejar la respuesta exitosa
-                    if (response.error) {
-                        // Si hay un error, muestra un mensaje de error en algún lugar del HTML
-                        $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
-                    } else if (response.redirect_url) {
-                        // Si hay una URL de redirección, redirige a esa URL
-                        window.location.href = response.redirect_url;
-                    } else {
-                        // Manejar otro tipo de respuesta, si es necesario
-                        console.log(response);
-                    }
-                })
-                .fail(function(xhr, errmsg, err) {
-                    // Manejar el fallo de la solicitud
-                    console.error('La solicitud falló con un error ' + xhr.status + ': ' + xhr.responseText);
-                });
-        });
+    $('#miFormulario').submit(function(event) {
+        event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
+        var formData = $(this).serialize(); // Serializar los datos del formulario
+        $.post("{% url 'signup' %}", formData)
+            .done(function(response) {
+                // Manejar la respuesta exitosa
+                if (response.error) {
+                    // Si hay un error, muestra un mensaje de error en algún lugar del HTML
+                    $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
+                } else if (response.redirect_url) {
+                    // Si hay una URL de redirección, redirige a esa URL
+                    window.location.href = response.redirect_url;
+                } else {
+                    // Manejar otro tipo de respuesta, si es necesario
+                    console.log(response);
+                }
+            })
+            .fail(function(xhr, errmsg, err) {
+                // Manejar el fallo de la solicitud
+                var errorMessage = obtenerMensajeError(xhr.responseText); // Obtener el mensaje de error relevante
+                $('#mensajeError').text(errorMessage); // Mostrar el mensaje de error al usuario
+                console.error('La solicitud falló con un error ' + xhr.status + ': ' + errorMessage);
+            });
     });
-    </script>
+});
+
+function obtenerMensajeError(responseText) {
+    try {
+        const jsonResponse = JSON.parse(responseText);
+        // Verifica si la respuesta contiene la clave "errors"
+        if (jsonResponse && jsonResponse.errors) {
+            const errorMessages = Object.values(JSON.parse(jsonResponse.errors))
+                                    .flatMap(fieldErrors => fieldErrors.map(error => error.message));
+            // Devuelve solo el último mensaje de error
+            return errorMessages[errorMessages.length - 1];
+        }
+    } catch (error) {
+        // Si no se puede analizar la respuesta como JSON, o no contiene la estructura esperada, devuelve la respuesta completa
+        return responseText;
+    }
+    // Si no se encontraron mensajes de error, devuelve un mensaje genérico
+    return "Ha ocurrido un error al procesar el formulario.";
+}
+</script>
 <script>
     function mostrarLogin() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
