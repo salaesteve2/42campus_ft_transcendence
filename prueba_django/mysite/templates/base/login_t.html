@@ -57,6 +57,7 @@
                     localStorage.setItem('username2', response.username2);
                     // Si hay una URL de redirección, redirige a esa URL
                     window.location.href = response.redirect_url;
+                    pushStateFunction();
                 } else {
                     // Manejar otro tipo de respuesta, si es necesario
                     console.log(response);
