@@ -217,7 +217,9 @@ def user_login(request):
                     login(request, user)
                     return JsonResponse({'redirect_url': '/'})
             else:
-                return JsonResponse({'error': True})
+                errors = form.errors.as_json()
+                return JsonResponse({'errors': errors}, status=400)
+                
     else:
         form = LoginForm()
     # Si la solicitud no es POST, simplemente devolver el HTML para el formulario
