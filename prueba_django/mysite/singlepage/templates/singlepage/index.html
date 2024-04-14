@@ -501,7 +501,6 @@ function renderView(view) {
         break;
       case "home":
       // $("#contenido-dinamico").html();
-      console.log("AUguFAGF\n\n")
       location.reload();
         break;
       default:
@@ -520,17 +519,19 @@ window.addEventListener('popstate', (event) => {
     }
 
 });
-// window.addEventListener('beforeunload', (event) => {
-//     // Cancela el evento de descarga para mostrar un mensaje personalizado
-//      // event.preventDefault();
 
-//     // Ejecuta la acción deseada en lugar de recargar la página
-//     // Por ejemplo, redirige a otra página
-//     window.location.href = window.location.hostname + '/#';
-//     window.location.href.reload();
+//AQUI ES POSIBLE HACER ALGO ANTES DEL REFRESH; pero probablemente te va a dar igual porque cargamos index puro...
+//window.addEventListener('beforeunload', (event) => {
+    // Cancela el evento de descarga para mostrar un mensaje personalizado
+    // event.preventDefault();
 
-//     // Mensaje que se mostrará al usuario
-// });
+    // Realiza la acción deseada en lugar de recargar la página
+    // Por ejemplo, redirige a otra página
+    // const view = event.state.view;
+    // window.location.href = "https://localhost" + renderView(view);
+
+    // No es necesario recargar la página después de la redirección, ya que el navegador manejará la nueva URL automáticamente
+//});
 
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
