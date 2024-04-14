@@ -1,99 +1,131 @@
 groups:
 - name: docker-containers
   rules:
-
-  - alert: djangoDown
-    expr: absent(container_memory_usage_bytes{name="django"})
-    for: 1s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Django container is down"
-
-  - alert: postgresDown
-    expr: absent(container_memory_usage_bytes{name="postgres"})
-    for: 1s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Postgres container is down"
-
-  - alert: nginxDown
-    expr: absent(container_memory_usage_bytes{name="nginx"})
-    for: 1s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Nginx container is down"
-
-  - alert: pgAdminDown
-    expr: absent(container_memory_usage_bytes{name="pgadmin"})
-    for: 1s
+  - alert: ContainerNotSeen
+    expr: time() - container_last_seen > 60
     labels:
       severity: warning
     annotations:
-      summary: "pgAdmin container is down"
+      summary: "Container {{ $labels.instance }} not seen by cAdvisor"
+      description: "The container {{ $labels.instance }} has not been seen by cAdvisor for more than 60 seconds."
 
-  - alert: nodeExporterDown
-    expr: absent(container_memory_usage_bytes{name="node_exporter"})
-    for: 1s
-    labels:
-      severity: warning
-    annotations:
-      summary: "node_exporter container is down"
+# - alert: HighCPUUsage
+#     expr: (100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 85
+#     for: 5m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: "High CPU usage on {{ $labels.instance }}"
+#       description: "{{ $labels.instance }} has had >85% CPU usage for more than 5 minutes."
 
-  - alert: nginxExporterDown
-    expr: absent(container_memory_usage_bytes{name="nginx-exporter"})
-    for: 1s
-    labels:
-      severity: warning
-    annotations:
-      summary: "nginx-exporter container is down"
+# - alert: HighRAMUsage
+#     expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+#     for: 5m
+#     labels:
+#       severity: warning
+#     annotations:
+#       summary: "High RAM usage on {{ $labels.instance }}"
+#       description: "{{ $labels.instance }} has had an average RAM usage of >85% for the last 5 minutes."
 
 
-  - alert: postgresExporterDown
-    expr: absent(container_memory_usage_bytes{name="postgres_exporter"})
-    for: 1s
-    labels:
-      severity: warning
-    annotations:
-      summary: "postgres_exporter container is down"
 
-  - alert: highCPUUsage
-    expr: (sum(rate(container_cpu_usage_seconds_total{name=~".+"}[1m])) / sum(container_spec_cpu_quota{name=~".+"})) * 100 > 90
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: "High CPU usage detected"
-      description: "CPU usage on {{ $labels.name }} is above 90% for the last 5 minutes."
+  # - alert: djangoDown
+  #   expr: absent(container_memory_usage_bytes{name="django"})
+  #   for: 1s
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Django container is down"
 
-  - alert: memoryExhaustion
-    expr: (sum(container_memory_working_set_bytes{name=~".+"}) / sum(container_spec_memory_limit_bytes{name=~".+"})) * 100 > 90
-    for: 5m
-    labels:
-      severity: critical
-    annotations:
-      summary: "Memory exhaustion detected"
-      description: "Memory usage on {{ $labels.name }} is above 90% for the last 5 minutes."
+  # - alert: postgresDown
+  #   expr: absent(container_memory_usage_bytes{name="postgres"})
+  #   for: 1s
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Postgres container is down"
+
+  # - alert: nginxDown
+  #   expr: absent(container_memory_usage_bytes{name="nginx"})
+  #   for: 1s
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Nginx container is down"
+
+  # - alert: pgAdminDown
+  #   expr: absent(container_memory_usage_bytes{name="pgadmin"})
+  #   for: 1s
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "pgAdmin container is down"
+
+  # - alert: nodeExporterDown
+  #   expr: absent(container_memory_usage_bytes{name="node_exporter"})
+  #   for: 1s
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "node_exporter container is down"
+
+  # - alert: nginxExporterDown
+  #   expr: absent(container_memory_usage_bytes{name="nginx-exporter"})
+  #   for: 1s
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "nginx-exporter container is down"
+
+
+  # - alert: postgresExporterDown
+  #   expr: absent(container_memory_usage_bytes{name="postgres_exporter"})
+  #   for: 1s
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "postgres_exporter container is down"
+
+
+###################################################
+
+
+
+  # - alert: highCPUUsage
+  #   expr: (sum(rate(container_cpu_usage_seconds_total{name=~".+"}[1m])) / sum(container_spec_cpu_quota{name=~".+"})) * 100 > 90
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "High CPU usage detected"
+  #     description: "CPU usage on {{ $labels.name }} is above 90% for the last 5 minutes."
+
+  # - alert: memoryExhaustion
+  #   expr: (sum(container_memory_working_set_bytes{name=~".+"}) / sum(container_spec_memory_limit_bytes{name=~".+"})) * 100 > 90
+  #   for: 5m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Memory exhaustion detected"
+  #     description: "Memory usage on {{ $labels.name }} is above 90% for the last 5 minutes."
   
-  - alert: swapExhaustion
-    expr: (sum(container_memory_swap_bytes{name=~".+"}) / sum(container_spec_memory_limit_bytes{name=~".+"})) * 100 > 90
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: "Swap exhaustion detected"
-      description: "Swap usage on {{ $labels.name }} is above 90% for the last 5 minutes."
+  # - alert: swapExhaustion
+  #   expr: (sum(container_memory_swap_bytes{name=~".+"}) / sum(container_spec_memory_limit_bytes{name=~".+"})) * 100 > 90
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Swap exhaustion detected"
+  #     description: "Swap usage on {{ $labels.name }} is above 90% for the last 5 minutes."
   
-  - alert: diskSpaceUsageHigh
-    expr: (node_filesystem_free_bytes / node_filesystem_size_bytes) * 100 == 00
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: "Disk space usage high"
-      description: "Disk space usage on {{ $labels.mountpoint }} is below 10% for the last 5 minutes."
+  # - alert: diskSpaceUsageHigh
+  #   expr: (node_filesystem_free_bytes / node_filesystem_size_bytes) * 100 == 00
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Disk space usage high"
+  #     description: "Disk space usage on {{ $labels.mountpoint }} is below 10% for the last 5 minutes."
 
 
 
