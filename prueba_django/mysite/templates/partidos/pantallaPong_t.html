@@ -21,11 +21,11 @@ altoPantalla = window.innerHeight;
 if (altoPantalla > 2000)
   alto = altoPantalla;
 else if (altoPantalla > 1000)
-  alto = altoPantalla/2;
+  alto = altoPantalla/2 - 200;
 else
   alto = altoPantalla/2;
 if (anchoPantalla > 1750)
-  ancho = anchoPantalla + 1500;
+  ancho = anchoPantalla + 1600;
 else if (anchoPantalla > 1500)
   ancho = anchoPantalla + anchoPantalla - 1400;
 else if (anchoPantalla > 1250)
@@ -87,7 +87,7 @@ function setX(obj, x) {
 
 function coloca() {
   var oTabla = $("#tabla");
-  setX(oTabla, campo.ancho / 2  -  105);
+  setX(oTabla, campo.ancho / 2);
   //
   var oSepara = $("#separa");
   setSize(oSepara, 1, campo.alto);
@@ -121,12 +121,9 @@ function coloca() {
       $("#marca2").text("*");
   //    
   var oInfo = $("#info");
-  setPosition(oInfo, sep, sep);
+  setX(oInfo, campo.ancho / 2 - 20)
   $("#limitePuntosPartido").text(limitePuntosPartido);
-  if (limiteDuracionPartido == "")
-    $("#limiteDuracionPartidoRow").hide();
-  else 
-    $("#limiteDuracionPartido").text(limiteDuracionPartido);
+  $("#limiteDuracionPartido").text(limiteDuracionPartido);
 }
 
 var nOk = 0;
@@ -321,25 +318,25 @@ $(document).ready(function(){
         altoPantalla = window.innerHeight;
         // Recalcula las dimensiones del campo de juego
         if (altoPantalla > 2000)
-            alto = altoPantalla;
+          alto = altoPantalla;
         else if (altoPantalla > 1000)
-            alto = altoPantalla/2;
+          alto = altoPantalla/2 - 200;
         else
-            alto = altoPantalla/2;
+          alto = altoPantalla/2;
         if (anchoPantalla > 1750)
-            ancho = anchoPantalla + 1500;
+          ancho = anchoPantalla + 1600;
         else if (anchoPantalla > 1500)
-            ancho = anchoPantalla + anchoPantalla - 1400;
+          ancho = anchoPantalla + anchoPantalla - 1400;
         else if (anchoPantalla > 1250)
-            ancho = anchoPantalla;
+          ancho = anchoPantalla;
         else if (anchoPantalla > 1000)
-            ancho = anchoPantalla - 700;
+          ancho = anchoPantalla - 700;
         else if (anchoPantalla > 750)
-            ancho = anchoPantalla/2;
+          ancho = anchoPantalla/2;
         else if (anchoPantalla > 500)
-            ancho = anchoPantalla/2 - 250;
+          ancho = anchoPantalla/2 - 250;
         else
-            ancho = anchoPantalla/3 + 10;
+          ancho = anchoPantalla/3 + 10;
         campo = { ancho: 800, alto: 400  };
         sep = 15; // separación del jugador con el fondo de la pista
         raqueta = { ancho: 10, alto: 80 };
@@ -380,12 +377,7 @@ $(document).ready(function(){
 <button id="b_comandos">hacer comandos</button>
 -->
 
-<p id="tecla">_</p>
 <a href="{% url 'home' %}" class="btn btn-primary links" onclick="pushStateFunction()">{% trans "Home" %}</a>
-<p id="getPostStatusOk">_</p>
-<p id="getPostStatusErr">_</p>
-<p id="getPostKeyOk">_</p>
-<p id="getPostKeyErr">_</p>
 
 <!--
 <p>
@@ -414,10 +406,13 @@ Ejemplo: pcxy,55,-88; j1cy,77; j2cy,-99; j1m,5; j2m,3; j1n,Pepe; j2n,Luis; e,Jug
 <img src="static/img_pg.png" id="pelota"/>
 
 <div id="info">
-<table>
-<tr id="limiteDuracionPartidoRow"><th>{% trans "Match duration limit" %}</th><td id="limiteDuracionPartido"></td></tr>
-<tr><th>{% trans "Match point limit" %}</th><td id="limitePuntosPartido"></td></tr>
-</table>
+  <table>
+  <tr id="limiteDuracionPartidoRow"><th>{% trans "Match duration limit" %}</th><td id="limiteDuracionPartido"></td>
+  </tr>
+  <tr>
+    <th>{% trans "Match point limit" %}</th><td id="limitePuntosPartido"></td>
+  </tr>
+  </table>
 </div>
 
 </body>
