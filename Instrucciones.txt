@@ -40,3 +40,11 @@ En mysite/base/views.py cambiar en la función def user_login(request):
 #para conseguir sepoliaEth
 
 https://sepolia-faucet.pk910.de
+
+Reset grafana pass:
+
+inside the container run
+
+cd /usr/share/grafana
+
+grafana-cli admin reset-admin-password <newPass>
