@@ -152,7 +152,6 @@ def torneos_inscripcion(request):
     torneos_mantenimiento2()
     t = datetime.datetime.now()
     torneos_con_alias = {}
-
     torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
     for torneo in torneos:
         idTorneo = torneo.id
@@ -175,11 +174,11 @@ def torneos_inscripcion(request):
             'copy': torneo,
             'alias_jugadores': jugadores_con_alias
         }
-
+	
     context = {'torneos_con_alias': torneos_con_alias, 'user': request.user}
     form_html = render(request, 'torneos/torneos_inscripcion_t.html', context).content.decode()
     return JsonResponse({'redirect_url': '/', 'form_html': form_html})
-
+	
 def torneos_admin(request):
 	torneos_mantenimiento2()
 	if not request.user.is_authenticated:
