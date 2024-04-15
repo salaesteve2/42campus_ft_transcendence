@@ -40,7 +40,12 @@
             <thead class="thead-dark">
                 <tr>
                     <th>{% trans "Players registered" %}</th>
-                    <td colspan='5'>{{ torneo.copy.jugadores.all|join:", " }}</td>
+                    <td colspan='5'>
+                        {% for jugador in torneo.jugadores %}
+                            {{ jugador.alias|default:jugador.username }}
+                            {% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
                 </tr>
             </thead>
             {% for faseTorneo in torneo.fases %}
