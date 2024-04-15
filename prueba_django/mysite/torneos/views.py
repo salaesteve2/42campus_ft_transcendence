@@ -83,7 +83,7 @@ def torneos_inscripcion_list(request):
 	t = datetime.datetime.now()
 	torneos2 = []
 	torneo2 = {}
-	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
+	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
 	for torneo in torneos:
 		idTorneo = torneo.id
 		fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
@@ -155,7 +155,7 @@ def torneos_inscripcion(request):
 	t = datetime.datetime.now()
 	torneos2 = []
 	torneo2 = {}
-	torneos = Torneo.objects.all().order_by('-comienzo_partidos')
+	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
 	for torneo in torneos:
 		idTorneow = torneo.id
 		fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneow).order_by('fase')
