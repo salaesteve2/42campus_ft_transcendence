@@ -76,45 +76,40 @@ def obtener_puntaje_usuario(login):
     return puntaje
 
 def torneos_inscripcion_list(request):
-	torneos_mantenimiento2()
-	activate_language(request)
-	if not request.user.is_authenticated:
-		return redirect('home')
-	t = datetime.datetime.now()
-	torneos2 = []
-	torneo2 = {}
-	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
-	for torneo in torneos:
-		idTorneo = torneo.id
-		fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
-		for faseTorneo in fasesTorneo:
-			lpr1 = faseTorneo.lista_partidos_resultados
-			lpr2 = re.sub( "{[0-9]+}", "", lpr1)
-			faseTorneo.lista_partidos_resultados = lpr2
-		torneo2 = {}
-		torneo2['copy'] = torneo
-		torneo2['fases'] = fasesTorneo
-		jugadores_actualizados = []
-		for jugador in torneo.jugadores.all():
-			user_settings, created = UserSettings.objects.get_or_create(user=jugador)
-			alias = user_settings.alias
-			if alias and alias != "":
-				jugador_con_alias = jugador
-				jugador_con_alias.alias = alias
-				jugadores_actualizados.append(jugador_con_alias)
-			else:
-				jugadores_actualizados.append(jugador)
-    # Asignar la lista de jugadores actualizados a torneo2
-		torneo2['jugadores'] = jugadores_actualizados
-		torneos2.append(torneo2)
-	context = {'torneos': torneos, 'user': request.user, 'alias': torneos2}
-	# AQui mismo hago la prueba de lectura; se activa clicando en inscripcion torneos y printea en el CLI de Django
-	# puntos = obtener_puntaje_usuario("jaja")
-	# print("\npuntos de jaja:\n")
-	# print(puntos)
-    	# # Llamar a las funciones para ESCRIBIR del contrato inteligente
-	# agregar_o_actualizar_usuario("MrFunciona", 3)
-	return render(request, 'torneos/torneos_inscripcion_t.html', context)
+    torneos_mantenimiento2()
+    activate_language(request)
+    if not request.user.is_authenticated:
+        return redirect('home')
+    
+    t = datetime.datetime.now()
+    torneos_con_alias = {}
+
+    torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
+    for torneo in torneos:
+        idTorneo = torneo.id
+        fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
+        for faseTorneo in fasesTorneo:
+            lpr1 = faseTorneo.lista_partidos_resultados
+            lpr2 = re.sub( "{[0-9]+}", "", lpr1)
+            faseTorneo.lista_partidos_resultados = lpr2
+        
+        jugadores_con_alias = []
+        for jugador in torneo.jugadores.all():
+            user_settings, created = UserSettings.objects.get_or_create(user=jugador)
+            alias = user_settings.alias
+            if alias and alias != "":
+                jugadores_con_alias.append(alias)
+            else:
+                jugadores_con_alias.append(jugador.username)
+        
+        # Guarda una copia de torneo junto con los alias de los jugadores
+        torneos_con_alias[torneo] = {
+            'copy': torneo,
+            'alias_jugadores': jugadores_con_alias
+        }
+
+    context = {'torneos_con_alias': torneos_con_alias, 'user': request.user}
+    return render(request, 'torneos/torneos_inscripcion_t.html', context)
 
 def update_alias(request):
 	if request.method == 'POST':
@@ -139,50 +134,51 @@ def update_alias(request):
 	#return redirect('torneos_inscripcion_list')
 
 def torneos_inscripcion(request):
-	activate_language(request)
-	if not request.user.is_authenticated:
-		return redirect('home')	
-	idTorneo = int(request.GET.get('idTorneo'))
-	idUser = int(request.GET.get('idUser'))
-	torneo = Torneo.objects.get(id=idTorneo)
-	user = User.objects.get(id=idUser)
-	if torneo.jugadores.filter(id=idUser).exists():
-		torneo.jugadores.remove(user)
-	else:
-		torneo.jugadores.add(user)
-	torneo.save()
-	torneos_mantenimiento2()
-	t = datetime.datetime.now()
-	torneos2 = []
-	torneo2 = {}
-	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
-	for torneo in torneos:
-		idTorneow = torneo.id
-		fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneow).order_by('fase')
-		for faseTorneo in fasesTorneo:
-			lpr1 = faseTorneo.lista_partidos_resultados
-			lpr2 = re.sub( "{[0-9]+}", "", lpr1)
-			faseTorneo.lista_partidos_resultados = lpr2
-		torneo2 = {}
-		torneo2['copy'] = torneo
-		torneo2['fases'] = fasesTorneo
-		jugadores_actualizados = []
-		for jugador in torneo.jugadores.all():
-			user_settings, created = UserSettings.objects.get_or_create(user=jugador)
-			alias = user_settings.alias
-			if alias and alias != "":
-				jugador_con_alias = jugador
-				jugador_con_alias.alias = alias
-				jugadores_actualizados.append(jugador_con_alias)
-			else:
-            # Si no hay alias definido, mantener el jugador original
-				jugadores_actualizados.append(jugador)
-    # Asignar la lista de jugadores actualizados a torneo2
-		torneo2['jugadores'] = jugadores_actualizados
-		torneos2.append(torneo2)
-	context = {'torneos': torneos, 'user': request.user, 'alias': torneos2}
-	form_html = render(request, 'torneos/torneos_inscripcion_t.html', context).content.decode()
-	return JsonResponse({'redirect_url': '/', 'form_html': form_html})
+    activate_language(request)
+    if not request.user.is_authenticated:
+        return redirect('home')
+
+    idTorneo = int(request.GET.get('idTorneo'))
+    idUser = (request.GET.get('idUser'))
+    torneo = Torneo.objects.get(id=idTorneo)
+    user = User.objects.get(id=idUser)
+
+    if torneo.jugadores.filter(id=idUser).exists():
+        torneo.jugadores.remove(user)
+    else:
+        torneo.jugadores.add(user)
+
+    torneo.save()
+    torneos_mantenimiento2()
+    t = datetime.datetime.now()
+    torneos_con_alias = {}
+
+    torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
+    for torneo in torneos:
+        idTorneo = torneo.id
+        fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
+        for faseTorneo in fasesTorneo:
+            lpr1 = faseTorneo.lista_partidos_resultados
+            lpr2 = re.sub( "{[0-9]+}", "", lpr1)
+            faseTorneo.lista_partidos_resultados = lpr2
+
+        jugadores_con_alias = []
+        for jugador in torneo.jugadores.all():
+            user_settings, created = UserSettings.objects.get_or_create(user=jugador)
+            alias = user_settings.alias
+            if alias and alias != "":
+                jugadores_con_alias.append(alias)
+            else:
+                jugadores_con_alias.append(jugador.username)
+
+        torneos_con_alias[torneo] = {
+            'copy': torneo,
+            'alias_jugadores': jugadores_con_alias
+        }
+
+    context = {'torneos_con_alias': torneos_con_alias, 'user': request.user}
+    form_html = render(request, 'torneos/torneos_inscripcion_t.html', context).content.decode()
+    return JsonResponse({'redirect_url': '/', 'form_html': form_html})
 
 def torneos_admin(request):
 	torneos_mantenimiento2()
