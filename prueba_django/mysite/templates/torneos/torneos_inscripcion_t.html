@@ -63,12 +63,16 @@
                     <thead class="thead-dark">
                     <tr>
                         <th>{% trans "Players registered" %}</th>
-                        <td colspan='5'>
-                        {% for jugador in torneo.jugadores %}
-                            {{ jugador.alias|default:jugador.username }}
-                            {% if not forloop.last %}, {% endif %}
+                        <td colspan='6'>
+                        {% for torneo in alias %}
+                            {% if torneo == torneo %}
+                                {% for jugador in torneo.jugadores %}
+                                {{ jugador.alias|default:jugador.username }}
+                                {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
-                    </td>
+                        </td>
                     </tr>
                     </thead>
                 {% endfor %}
