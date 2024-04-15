@@ -390,6 +390,19 @@ def torneos_info_list(request):
 		torneo2 = {}
 		torneo2['copy'] = torneo
 		torneo2['fases'] = fasesTorneo
+		jugadores_actualizados = []
+		for jugador in torneo.jugadores.all():
+			user_settings, created = UserSettings.objects.get_or_create(user=jugador)
+			alias = user_settings.alias
+			if alias and alias != "":
+				jugador_con_alias = jugador
+				jugador_con_alias.alias = alias
+				jugadores_actualizados.append(jugador_con_alias)
+			else:
+            # Si no hay alias definido, mantener el jugador original
+				jugadores_actualizados.append(jugador)
+    # Asignar la lista de jugadores actualizados a torneo2
+		torneo2['jugadores'] = jugadores_actualizados
 		torneos2.append(torneo2)
 	return render(request, 'torneos/torneos_info_t.html',  {'torneos': torneos2})
 
