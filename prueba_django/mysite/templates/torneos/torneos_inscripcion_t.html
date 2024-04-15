@@ -48,34 +48,30 @@
                         <th>{% trans "Minutes between matches" %}</th>
                     </tr>
                 </thead>
-                {% for torneo in torneos %}
-                <thead class="thead-dark">
-                    <tr>
-                        <td><button class="edit-torneo-btn2 btn btn-primary links" data-torneo-id="{{ torneo.id }}" data-user-id="{{ user.id }}"><i class="bi bi-person-plus"></i></button></td>
-                        <td>{{ torneo.nombre }}</td>
-                        <td>{{ torneo.comienzo_inscripcion }}</td>
-                        <td>{{ torneo.fin_inscripcion }}</td>
-                        <td>{{ torneo.comienzo_partidos }}</td>
-                        <td>{{ torneo.minutos_duracion_maxima_partidos }}</td>
-                        <td>{{ torneo.minutos_entre_partidos }}</td>
-                    </tr>
-                </thead>
-                    <thead class="thead-dark">
-                    <tr>
-                        <th>{% trans "Players registered" %}</th>
-                        <td colspan='6'>
-                        {% for torneo in alias %}
-                            {% if torneo == torneo %}
-                                {% for jugador in torneo.jugadores %}
-                                {{ jugador.alias|default:jugador.username }}
-                                {% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                        </td>
-                    </tr>
-                    </thead>
+                {% for torneo, data_torneo in torneos_con_alias.items %}
+    <thead class="thead-dark">
+        <tr>
+            <td><button class="edit-torneo-btn2 btn btn-primary links" data-torneo-id="{{ data_torneo.copy.id }}" data-user-id="{{ user.id }}"><i class="bi bi-person-plus"></i></button></td>
+            <td>{{ data_torneo.copy.nombre }}</td>
+            <td>{{ data_torneo.copy.comienzo_inscripcion }}</td>
+            <td>{{ data_torneo.copy.fin_inscripcion }}</td>
+            <td>{{ data_torneo.copy.comienzo_partidos }}</td>
+            <td>{{ data_torneo.copy.minutos_duracion_maxima_partidos }}</td>
+            <td>{{ data_torneo.copy.minutos_entre_partidos }}</td>
+        </tr>
+    </thead>
+    <thead class="thead-dark">
+        <tr>
+            <th>{% trans "Players registered" %}</th>
+            <td colspan='6'>
+                {% for alias_jugador in data_torneo.alias_jugadores %}
+                    {{ alias_jugador }}
+                    {% if not forloop.last %}, {% endif %}
                 {% endfor %}
+            </td>
+        </tr>
+    </thead>
+{% endfor %}
             </table>
         </div>
     </div>
