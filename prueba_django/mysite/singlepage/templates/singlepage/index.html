@@ -510,8 +510,9 @@
             localStorage.setItem("hostname", window.location.hostname)
             window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-22fb4fcdf0439caa173afadfabf30acd4f9721420251db03960f190416055657&redirect_uri=https%3A%2F%2F"+window.location.hostname+"%2Fapi2&response_type=code";
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                $("#contenido-dinamico").html(data);
-                $("#contenido-a-eliminar").hide();
+		// SILENCIO 2 líneas A CONTINUACION PARA EVITAR ERROR SI ENTRAS API Y DAS ATRÁS (parece funcionar igual)
+                // $("#contenido-dinamico").html(data);
+                // $("#contenido-a-eliminar").hide();
         }
         function mostrarLogin2() {
             // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
