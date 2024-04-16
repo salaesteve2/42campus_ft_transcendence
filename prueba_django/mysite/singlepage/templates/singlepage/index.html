@@ -742,6 +742,43 @@ window.addEventListener('popstate', (event) => {
             });
         }
     </script>
+	<script>
+    function torneosA() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_admin' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar5").hide();
+            });
+        }
+</script>
+<script>
+    $(document).ready(function() {
+        $('#miFormulario').submit(function(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
+            var formData = $(this).serialize(); // Serializar los datos del formulario
+            $.post("{% url 'torneos_edit' %}", formData)
+                .done(function(response) {
+                    // Manejar la respuesta exitosa
+                    if (response.error) {
+                        // Si hay un error, muestra un mensaje de error en algún lugar del HTML
+                        $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
+                    } else if (response.redirect_url) {
+                        // Si hay una URL de redirección, redirige a esa URL
+                        localStorage.setItem('form5', response.form5_data);
+                        window.location.href = response.redirect_url;
+                    } else {
+                        // Manejar otro tipo de respuesta, si es necesario
+                        console.log(response);
+                    }
+                })
+                .fail(function(xhr, errmsg, err) {
+                    // Manejar el fallo de la solicitud
+                    console.error('La solicitud falló con un error ' + xhr.status + ': ' + xhr.responseText);
+                });
+        });
+    });
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
