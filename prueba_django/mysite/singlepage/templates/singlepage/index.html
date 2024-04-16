@@ -635,6 +635,62 @@ window.addEventListener('popstate', (event) => {
 //});
 
     </script>
+	<script>
+    var done = 0;
+    $(document).ready(function() {
+        $("#alias-form").on("submit", function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+            var url = $(this).find("[data-url]").data("url");
+
+            $.ajax({
+    type: "POST",
+    url: url,
+    data: formData,
+    success: function(data) {
+        if (data.success) {
+            // Update alias on the page (if new_alias is returned)
+            if (data.new_alias) {
+                $("#alias").val(data.new_alias);
+            }
+            // Show success message
+            if (data.new_alias == "") {
+                alert("Alias eliminated ");
+            }
+            else {
+                alert("Updated alias: " + data.new_alias);
+            } 
+        } else {
+            // Show error message
+            alert("Error updating alias!");
+        }
+    },
+    error: function(xhr, status, error) {
+        alert("Error updating alias!");
+    }
+});
+        });
+    });
+    $(document).on("click", ".edit-torneo-btn2", function() {
+            var torneoId = $(this).data("torneo-id");
+            var user = $(this).data("user-id");
+            if (done == 0)
+                editT(torneoId, user);
+                done = 1;
+        });
+
+        function editT(torneoId, user) {
+            $.ajax({
+                url: "{% url 'torneos_inscripcion' %}?idTorneo=" + torneoId + '&idUser=' + user,
+                method: "GET",
+                success: function(data) {
+                    $("#contenido-dinamico").html(data.form_html);
+                    $("#contenido-a-eliminar4").hide();
+                }
+            });
+        }
+</script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
