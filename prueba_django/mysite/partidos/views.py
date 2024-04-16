@@ -22,7 +22,7 @@ import math
 
 campo = { "ancho": 800, "alto": 400 }
 sep = 15 # separacion del jugador con el fondo de la pista
-raqueta = { "ancho": 10, "alto": 80 }
+raqueta = { "ancho": 10, "alto": 90 }
 pelota = { "ancho": 15, "alto": 15 }
 
 jugador1_x = 0 - campo["ancho"] / 2 + sep # 0 = centro
