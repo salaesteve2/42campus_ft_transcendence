@@ -29,6 +29,9 @@
             if (estadoGuardado) {
                 if (estadoGuardado.html) {
                     document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
+		    if (estadoGuardado.html.startsWith("<!-- mostrarPartido2() -->")) {
+                        mostrarPartido2();
+                    }
                 }
                 // else
                     // localStorage.removeItem('miEstado');
