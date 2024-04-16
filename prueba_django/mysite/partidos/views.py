@@ -14,6 +14,7 @@ from django.db import IntegrityError
 from .models import Partido_enJuego, Partido_historia
 from torneos.views import torneo_jugar, torneo_result
 from general.views import activate_language
+from general.models import UserSettings
 import datetime
 import math
 
@@ -318,8 +319,16 @@ def fEnviarStatus(mensajeStatus):
 	if not partido.empezado:
 		status =	status + "e," +	_("Waiting player 2") + ";"
 		if partido.tipo == "T":
-			status = status + "j1n," + partido.jugador1.username + ";"
-			status = status + "j2n," + partido.jugador2.username + ";"
+			user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador1)
+			alias1 = user_settings.alias
+			if alias1 == "":
+				alias1 = partido.jugador1.username
+			user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador2)
+			alias2 = user_settings.alias
+			if alias2 == "":
+				alias2 = partido.jugador2.username
+			status = status + "j1n," + alias1 + ";"
+			status = status + "j2n," + alias2 + ";"
 		else: # "R"
 			status = status + "j1n," + partido.jugador1.username + ";"
 	else:
@@ -330,8 +339,20 @@ def fEnviarStatus(mensajeStatus):
 		s = diffTimeSec(t1, t2)
 		if s<2:
 			# los nombre sirven especialmente para la vista del jugador que acaba de entrar
-			status =	status + "j1n," + partido.jugador1.username + ";"
-			status =	status + "j2n," + partido.jugador2.username + ";"
+			if partido.tipo == "T":
+				user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador1)
+				alias1 = user_settings.alias
+				if alias1 == "":
+					alias1 = partido.jugador1.username
+				user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador2)
+				alias2 = user_settings.alias
+				if alias2 == "":
+					alias2 = partido.jugador2.username
+				status = status + "j1n," + alias1 + ";"
+				status = status + "j2n," + alias2 + ";"
+			else:
+				status =	status + "j1n," + partido.jugador1.username + ";"
+				status =	status + "j2n," + partido.jugador2.username + ";"
 			status = status + "e," + _("Playing") + ";"
 	if partido.terminado:
 		status =	status + "j1m," + str(partido.jugador1_marcador) + ";"
