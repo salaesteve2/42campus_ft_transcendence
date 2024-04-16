@@ -691,6 +691,57 @@ window.addEventListener('popstate', (event) => {
             });
         }
 </script>
+	<script>
+        $(document).on("click", ".edit-torneo-btn2", function() {
+            var torneoId = $(this).data("torneo-id");
+            editT(torneoId);
+        });
+
+        function editT(torneoId) {
+            $.ajax({
+                url: "{% url 'torneos_edit' %}?idTorneo=" + torneoId,
+                method: "GET",
+                success: function(data) {
+                    $("#contenido-dinamico").html(data.form_html);
+                    $("#contenido-a-eliminar4").hide();
+                }
+            });
+        }
+        $(document).on("click", "#edit-torneo-btn", function() {
+            newT();
+        });
+        function newT() {
+            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+            $.get("{% url 'torneos_edit' %}", function(data) {
+                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                $("#contenido-dinamico").html(data);
+                $("#contenido-a-eliminar4").hide();
+            });
+        }
+        $(document).on("click", ".delete-torneo-btn", function() {
+            var torneoId = $(this).data("torneo-id");
+            deleteT(torneoId);
+        });
+
+        function deleteT(torneoId) {
+            $.ajax({
+                url: "{% url 'torneos_delete' %}?idTorneo=" + torneoId,
+                method: "GET",
+                success: function(data) {
+                    // Aquí estableces el HTML devuelto en el contenedor deseado
+                    $("#contenido-dinamico").html(data.html);
+                    if (data.redirect_url) {
+                        localStorage.setItem('redirect_url', data.redirect_url2);
+                        window.location.href = data.redirect_url;
+                    }
+                    $("#contenido-a-eliminar4").hide();
+                },
+                error: function(xhr, status, error) {
+                    // Maneja errores si es necesario
+                }
+            });
+        }
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
