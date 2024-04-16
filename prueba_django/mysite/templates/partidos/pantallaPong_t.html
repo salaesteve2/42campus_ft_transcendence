@@ -318,6 +318,25 @@ function loop2() {
 
 $(document).ready(function(){
     // al final se preparan lo eventos  cuando el documento está listo >>
+    var jugadorNum = parseInt('{{ numJugador }}'); // Asegúrate de que numJugador se pasa correctamente al JavaScript
+
+    // Selector para determinar cuál pala controlar
+    var selectorPala = (jugadorNum === 1) ? '.jugador1' : '.jugador2';
+
+    $(selectorPala).on('touchmove', function(e) {
+        var touchLocation = e.targetTouches[0];
+        var pala = $(this); // Referencia a la pala que el jugador controla
+        var nuevaPosicionY = touchLocation.pageY - $(window).scrollTop() - pala.height() / 2;
+
+        // Limita el movimiento dentro del área del juego
+        var limiteSuperior = $('#campo').position().top;
+        var limiteInferior = limiteSuperior + $('#campo').height() - pala.height();
+
+        nuevaPosicionY = Math.max(limiteSuperior, Math.min(nuevaPosicionY, limiteInferior));
+
+        pala.css('top', nuevaPosicionY + 'px');
+        e.preventDefault();
+    });
     $(window).on('resize', function(){
         actualizarPosiciones();
     });
@@ -409,10 +428,10 @@ Ejemplo: pcxy,55,-88; j1cy,77; j2cy,-99; j1m,5; j2m,3; j1n,Pepe; j2n,Luis; e,Jug
 <img src="static/img_y.png" id="red"/>
 
 <!-- jugador 1 azul-->
-<img src="static/img_b.png" id="jugador1"/>
+<img src="static/img_b.png" id="jugador1" class="paddle jugador1"/>
 
 <!-- jugador 2 rojo-->
-<img src="static/img_r.png" id="jugador2"/>
+<img src="static/img_r.png" id="jugador2" class="paddle jugador2"/>
 
 <!-- pelota -->
 <img src="static/img_pg.png" id="pelota"/>
