@@ -29,10 +29,14 @@
             if (estadoGuardado) {
                 if (estadoGuardado.html) {
                     document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
-		    if (estadoGuardado.html.startsWith("<!-- mostrarPartido2() -->")) {
-                        mostrarPartido2();
+                    if (estadoGuardado.html.startsWith("<!-- mostrarPartido2() -->")) {
+                        if (estadoGuardado.html.includes("limiteDuracionPartido = \"\";")) {
+                            mostrarPartido2();
+                        }
+                        else {
+                            mostrarPT2();
+                        }
                     }
-                }
                 // else
                     // localStorage.removeItem('miEstado');
                 window.scrollTo(0, estadoGuardado.scrollPosition); // Restaura la posición de scroll
