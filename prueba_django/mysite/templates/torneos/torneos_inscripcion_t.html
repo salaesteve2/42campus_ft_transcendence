@@ -117,11 +117,11 @@
             var torneoId = $(this).data("torneo-id");
             var user = $(this).data("user-id");
             if (done == 0)
-                editT(torneoId, user);
+                editT2(torneoId, user);
                 done = 1;
         });
 
-        function editT(torneoId, user) {
+        function editT2(torneoId, user) {
             $.ajax({
                 url: "{% url 'torneos_inscripcion' %}?idTorneo=" + torneoId + '&idUser=' + user,
                 method: "GET",
