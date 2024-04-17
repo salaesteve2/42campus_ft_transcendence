@@ -46,10 +46,10 @@ dist_y = (raqueta["alto"] + pelota["alto"]) / 2 # distancia y para choque de raq
 jugador1_rebote_raqueta = jugador1_x + raqueta["ancho"] / 2
 jugador2_rebote_raqueta = jugador2_x - raqueta["ancho"] / 2
 
-max_puntuacion = 20
+max_puntuacion = 3
 
 jugador_velocidad = 140
-pelota_velocidad_c = 150
+pelota_velocidad_c = 300
 pelota_velocidad_m = pelota_velocidad_c * math.sqrt(2) 
 
 def agregar_o_actualizar_usuario(login, score, tournamentId):
@@ -144,37 +144,37 @@ def agregar_o_actualizar_usuario(login, score, tournamentId):
 	print(contract_address)
 	print(private_key)
 
-	# cuenta = w3.eth.account.from_key(private_key).address
+	cuenta = w3.eth.account.from_key(private_key).address
 
-	# w3.eth.default_account = w3.eth.account.from_key(private_key).address
+	w3.eth.default_account = w3.eth.account.from_key(private_key).address
 
-	# contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
 
-	# nonce = w3.eth.get_transaction_count(w3.eth.default_account)
+	nonce = w3.eth.get_transaction_count(w3.eth.default_account)
 
-	# txn_dict = contract.functions.doUser(login, score, tournamentId).build_transaction({
-	# 	'from': cuenta,
-    #     'value': 0,
-    #     'gas': 1000000,
-    #     'gasPrice': w3.to_wei('50', 'gwei'),  # Reemplaza '50' con el precio de gas deseado en gwei
-    #     'nonce': nonce,
-    # })
+	txn_dict = contract.functions.doUser(login, score, tournamentId).build_transaction({
+	 	'from': cuenta,
+        'value': 0,
+        'gas': 1000000,
+        'gasPrice': w3.to_wei('50', 'gwei'),  # Reemplaza '50' con el precio de gas deseado en gwei
+        'nonce': nonce,
+    })
 
-	# signed_txn = w3.eth.account.sign_transaction(txn_dict, private_key=private_key)
-	# tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+	signed_txn = w3.eth.account.sign_transaction(txn_dict, private_key=private_key)
+	tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 	# Esta ultima no es necesaria, pero la consideran una buena práctica (pero no la he probado aun)
-	# w3.eth.waitForTransactionReceipt(tx_hash)
+	#w3.eth.waitForTransactionReceipt(tx_hash)
 
 def BlockPartido(partido):
 	if partido.terminado == False:
 		if partido.jugador1_marcador >= partido.jugador2_marcador:
-			agregar_o_actualizar_usuario(partido.jugador2.username, partido.nFaseTorneo - 1, partido.idTorneo)
+			#agregar_o_actualizar_usuario(partido.jugador2.username, partido.nFaseTorneo - 1, partido.idTorneo)
 			print("JUGADOR fuera!\n\n")
 			print(partido.jugador2.username)
 			print(partido.nFaseTorneo)
 			print(partido.idTorneo)
 		else:
-			agregar_o_actualizar_usuario(partido.jugador1.username, partido.nFaseTorneo - 1, partido.idTorneo)
+			#agregar_o_actualizar_usuario(partido.jugador1.username, partido.nFaseTorneo - 1, partido.idTorneo)
 			print("JUGADOR fuera!\n\n")
 			print(partido.jugador1.username)
 			print(partido.nFaseTorneo)

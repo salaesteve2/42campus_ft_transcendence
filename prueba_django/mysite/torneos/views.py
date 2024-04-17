@@ -378,7 +378,7 @@ def torneos_mantenimiento2():
 					print(ganador.username)
 					print(torneo.fase_actual)
 					print(torneo.id)
-					# agregar_o_actualizar_usuario(ganador, torneo.fase_actual, torneo.id)
+					#agregar_o_actualizar_usuario(ganador, torneo.fase_actual, torneo.id)
 
 # para cuando no se han presentado ninguno de los jugadores
 def cierre_fase(torneo): # probar ???
