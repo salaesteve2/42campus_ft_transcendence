@@ -15,10 +15,17 @@ from .models import Partido_enJuego, Partido_historia
 from torneos.views import torneo_jugar, torneo_result
 from general.views import activate_language
 from general.models import UserSettings
+from web3 import Web3
+from web3.contract import Contract
+from web3.auto import w3
+from eth_account import Account
+import os
 import datetime
 import math
 
 # constantes globales
+
+patata = 1
 
 campo = { "ancho": 800, "alto": 400 }
 sep = 15 # separacion del jugador con el fondo de la pista
@@ -207,12 +214,19 @@ def fPartidoAnotarResultado(partido):
 	
 def fMoverPelota(partido):
 	t2 = datetime.datetime.now()
+	global patata
 	if partido.tipo == "T" and partido.limiteTiempoTorneo < t2:
+		if patata != 0:
+			patata = 0
+			BlockPartido(partido)
 		partido.terminado = True
 		partido.fin = t2
 		fPartidoAnotarResultado(partido)
 		return
-	if partido.tipo == "T" and (partido.estadoTorneo == "1" or partido.estadoTorneo == "2") and partido.limiteTiempoConUnJugador < t2: 
+	if partido.tipo == "T" and (partido.estadoTorneo == "1" or partido.estadoTorneo == "2") and partido.limiteTiempoConUnJugador < t2:
+		if patata != 0:
+			patata = 0
+			BlockPartido(partido)
 		partido.terminado = True
 		partido.fin = t2
 		if partido.estadoTorneo == "1":
@@ -262,6 +276,9 @@ def fMoverPelota(partido):
 		partido.pelota_velocidad_x = fSigno(partido.pelota_velocidad_x) * pelota_velocidad_c
 		partido.pelota_velocidad_y = fSigno(partido.pelota_velocidad_y) * pelota_velocidad_c
 		if partido.jugador1_marcador >= max_puntuacion:
+			if patata != 0:
+				patata = 0
+				BlockPartido(partido)
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
@@ -278,6 +295,9 @@ def fMoverPelota(partido):
 		partido.pelota_velocidad_x = fSigno(partido.pelota_velocidad_x) * pelota_velocidad_c
 		partido.pelota_velocidad_y = fSigno(partido.pelota_velocidad_y) * pelota_velocidad_c
 		if partido.jugador2_marcador >= max_puntuacion:
+			if patata != 0:
+				patata = 0
+				BlockPartido(partido)
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
