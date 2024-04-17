@@ -245,6 +245,16 @@ def user_logout(request):
 
 @login_required
 def doble_factor(request):
+    if 'token' in request.session:
+        token = request.session['token']
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+            user = User.objects.get(id=user_id)
+            print(user)
+        except jwt.ExpiredSignatureError:
+            print('Token expirado')
+            return JsonResponse({'error': 'Token expirado'},status=400)
     estado_2fa = UserSettings.objects.get(user=request.user).two_factor_auth_enabled
     if not estado_2fa:
         # Si 2FA no está habilitado, mostrar el QR directamente
