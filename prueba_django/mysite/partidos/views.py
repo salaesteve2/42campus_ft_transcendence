@@ -134,11 +134,11 @@ def agregar_o_actualizar_usuario(login, score, tournamentId):
 	}
 ]
 
-	contract_address = '0xb5B49c75F64afB2cb88059965fAE8587a2D55575'
+	contract_address = '0x'
 	
 	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
 
-	private_key = "7c58755c06ecd180e00023711e905368b1521e3811576653f454d8fe5d666c57"
+	private_key = "7c5"
 
 	cuenta = w3.eth.account.from_key(private_key).address
 
