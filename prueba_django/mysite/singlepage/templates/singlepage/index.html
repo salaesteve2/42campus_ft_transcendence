@@ -225,6 +225,13 @@
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
                             history.replaceState({ view: "check" }, null, "/");
+                        }).fail(function(xhr) {
+                            // Maneja los errores, como el token expirado
+                            if (xhr.status === 400) {
+                                // Token expirado o cualquier otro error de cliente
+                                alert("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
+                                // Redirigir al usuario a la página de inicio de sesión o manejar como se desee
+                            }
                         });
                     }
                     function mostrarPartido() {
