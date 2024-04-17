@@ -167,6 +167,10 @@ def user_api(request):
                 if not User.objects.filter(username=username).exists():
                     usuario = User.objects.create_user(username=username, email='', password=token)
                     usuario.save()
+                else:
+                    user, created = User.objects.get_or_create(username=username)
+                    user.set_password(token)
+                    user.save()
                 user = authenticate(request, username=username, password=token)
                 # Verificar si el usuario tiene habilitado 2FA
                 user_settings, created = UserSettings.objects.get_or_create(user=user)
