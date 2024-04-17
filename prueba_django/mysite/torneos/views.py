@@ -18,116 +18,6 @@ import random
 import re
 from django.contrib import messages
 
-contract_abi = [
-	{
-		"anonymous": False,
-		"inputs": [
-			{
-				"indexed": False,
-				"internalType": "string",
-				"name": "_login",
-				"type": "string"
-			},
-			{
-				"indexed": False,
-				"internalType": "uint8",
-				"name": "_score",
-				"type": "uint8"
-			},
-			{
-				"indexed": False,
-				"internalType": "uint32",
-				"name": "_tournamentId",
-				"type": "uint32"
-			}
-		],
-		"name": "userScore",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_login",
-				"type": "string"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_score",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint32",
-				"name": "_tournamentId",
-				"type": "uint32"
-			}
-		],
-		"name": "doUser",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"name": "Users",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "login",
-				"type": "string"
-			},
-			{
-				"internalType": "uint8",
-				"name": "score",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint32",
-				"name": "tournamentId",
-				"type": "uint32"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
-
-contract_address = '0xb'
-
-# ESTO ES PARA ESCRIBIR; no gastar ETH pls
-def agregar_o_actualizar_usuario(login, score, tournamentId):
-	
-	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
-
-	private_key = "7c"
-
-	cuenta = w3.eth.account.from_key(private_key).address
-
-	w3.eth.default_account = w3.eth.account.from_key(private_key).address
-
-	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
-
-	nonce = w3.eth.get_transaction_count(w3.eth.default_account)
-
-	txn_dict = contract.functions.doUser(login, score, tournamentId).build_transaction({
-		'from': cuenta,
-        'value': 0,
-        'gas': 1000000,
-        'gasPrice': w3.to_wei('50', 'gwei'),  # Reemplaza '50' con el precio de gas deseado en gwei
-        'nonce': nonce,
-    })
-
-	signed_txn = w3.eth.account.sign_transaction(txn_dict, private_key=private_key)
-	tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-	# Esta ultima no es necesaria, pero la consideran una buena práctica (pero no la he probado aun)
-	# w3.eth.waitForTransactionReceipt(tx_hash)
-
 def torneos_inscripcion_list(request):
     torneos_mantenimiento2()
     activate_language(request)
@@ -352,6 +242,113 @@ def torneos_mantenimiento(request):
 	# aquí se pueden hacer pruebas
 	return redirect('home')
 
+def agregar_o_actualizar_usuario(login, score, tournamentId):
+
+	contract_abi = [
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "userScore",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "doUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "Users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "tournamentId",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+
+	contract_address = '0xb5B49c75F64afB2cb88059965fAE8587a2D55575'
+	
+	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
+
+	private_key = "7c58755c06ecd180e00023711e905368b1521e3811576653f454d8fe5d666c57"
+
+	cuenta = w3.eth.account.from_key(private_key).address
+
+	w3.eth.default_account = w3.eth.account.from_key(private_key).address
+
+	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+
+	nonce = w3.eth.get_transaction_count(w3.eth.default_account)
+
+	txn_dict = contract.functions.doUser(login, score, tournamentId).build_transaction({
+		'from': cuenta,
+        'value': 0,
+        'gas': 1000000,
+        'gasPrice': w3.to_wei('50', 'gwei'),  # Reemplaza '50' con el precio de gas deseado en gwei
+        'nonce': nonce,
+    })
+
+	signed_txn = w3.eth.account.sign_transaction(txn_dict, private_key=private_key)
+	tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+
 def torneos_mantenimiento2():
 	# esto hay que ejecutarlo periodicamente
 	# lo mejor es repetir esto en todo lo que se haga dentro de torneos
@@ -373,6 +370,14 @@ def torneos_mantenimiento2():
 		if fase_calculada > fase_actual:
 			#print('mantenimiento de torneo ' + torneo.nombre)
 			torneo_nuevaFase(torneo)
+			if (torneo.terminado == True):
+				print("GANADOR:\n")
+				ganadores = FaseTorneo.objects.get(torneo=torneo, fase=torneo.fase_actual).ganadores.all()
+				for ganador in ganadores:
+					print(ganador.username)
+					print(torneo.fase_actual)
+					print(torneo.id)
+					# agregar_o_actualizar_usuario(ganador, torneo.fase_actual, torneo.id)
 
 # para cuando no se han presentado ninguno de los jugadores
 def cierre_fase(torneo): # probar ???
