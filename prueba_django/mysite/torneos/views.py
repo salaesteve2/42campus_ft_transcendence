@@ -13,6 +13,7 @@ from web3.contract import Contract
 from web3.auto import w3
 from eth_account import Account
 from django.http import JsonResponse
+import os
 import datetime
 import random
 import re
@@ -324,11 +325,11 @@ def agregar_o_actualizar_usuario(login, score, tournamentId):
 	}
 ]
 
-	contract_address = '0x'
+	contract_address = os.environ.get("COADDR")
 	
 	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
 
-	private_key = "7c5"
+	private_key = os.environ.get("PRKEY")
 
 	cuenta = w3.eth.account.from_key(private_key).address
 
