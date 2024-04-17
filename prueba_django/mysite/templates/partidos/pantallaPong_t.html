@@ -323,7 +323,11 @@ $(document).ready(function(){
       var selectorPala = (jugadorNum === 1) ? '.jugador1' : '.jugador2';
       var ultimaPosicionY = $(selectorPala).offset().top; // Guardar la última posición Y para comparar
 
+      $(selectorPala).on('touchstart', function(e) {
+          e.preventDefault(); // Prevenir cualquier comportamiento por defecto al iniciar el toque
+      });
       $(selectorPala).on('touchmove', function(e) {
+        e.preventDefault();
         var touchLocation = e.targetTouches[0];
         var pala = $(this);
         var nuevaPosicionY = touchLocation.pageY - $(window).scrollTop() - pala.height() / 2;
@@ -350,7 +354,7 @@ $(document).ready(function(){
             sendInfoToServer(tecla);
         }
 
-        e.preventDefault(); // Prevenir el comportamiento por defecto del touchmove
+         // Prevenir el comportamiento por defecto del touchmove
     });
 
     $(window).on('resize', function(){
