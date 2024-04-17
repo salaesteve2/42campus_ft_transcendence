@@ -317,26 +317,42 @@ function loop2() {
 }
 
 $(document).ready(function(){
-    // al final se preparan lo eventos  cuando el documento está listo >>
-    var jugadorNum = parseInt('{{ numJugador }}'); // Asegúrate de que numJugador se pasa correctamente al JavaScript
+      var jugadorNum = parseInt('{{ numJugador }}'); // Asegúrate de que numJugador se pasa correctamente al JavaScript
 
-    // Selector para determinar cuál pala controlar
-    var selectorPala = (jugadorNum === 1) ? '.jugador1' : '.jugador2';
+      // Selector para determinar cuál pala controlar
+      var selectorPala = (jugadorNum === 1) ? '.jugador1' : '.jugador2';
+      var ultimaPosicionY = $(selectorPala).offset().top; // Guardar la última posición Y para comparar
 
-    $(selectorPala).on('touchmove', function(e) {
+      $(selectorPala).on('touchmove', function(e) {
         var touchLocation = e.targetTouches[0];
-        var pala = $(this); // Referencia a la pala que el jugador controla
+        var pala = $(this);
         var nuevaPosicionY = touchLocation.pageY - $(window).scrollTop() - pala.height() / 2;
 
         // Limita el movimiento dentro del área del juego
         var limiteSuperior = $('#campo').position().top;
         var limiteInferior = limiteSuperior + $('#campo').height() - pala.height();
-
         nuevaPosicionY = Math.max(limiteSuperior, Math.min(nuevaPosicionY, limiteInferior));
 
+        // Simula tecla arriba o abajo basado en el movimiento
+        var tecla = '';
+        if (nuevaPosicionY < ultimaPosicionY) {
+            tecla = 'up_begin';
+        } else if (nuevaPosicionY > ultimaPosicionY) {
+            tecla = 'down_begin';
+        }
+
+        // Actualizar la posición visual de la pala
         pala.css('top', nuevaPosicionY + 'px');
-        e.preventDefault();
+        ultimaPosicionY = nuevaPosicionY; // Actualiza la última posición conocida
+
+        // Si se detectó un movimiento relevante, enviar la tecla al servidor
+        if (tecla !== '') {
+            sendInfoToServer(tecla);
+        }
+
+        e.preventDefault(); // Prevenir el comportamiento por defecto del touchmove
     });
+
     $(window).on('resize', function(){
         actualizarPosiciones();
     });
