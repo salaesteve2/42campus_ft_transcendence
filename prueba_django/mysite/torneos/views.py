@@ -463,6 +463,7 @@ def torneo_nuevaFase(torneo):
 	if pasaUltimoJugador:
 		s1 = "{" +  str(user.id) + "}"
 		lp1 = lp.replace(s1, "*")
+		faseTorneo.save() #por comprobar motivo
 		faseTorneo.ganadores.add(user)	
 	lp2 = re.sub( "{[0-9]+}", "", lp)
 	faseTorneo.lista_jugadores = lista_jugadores

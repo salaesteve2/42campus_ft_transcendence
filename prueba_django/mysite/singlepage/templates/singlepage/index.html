@@ -61,6 +61,12 @@
 {% load static %}
 </head>
 <body>
+    <script>
+        document.addEventListener('touchmove', function(e) {
+          e.preventDefault();
+        }, { passive: false });
+      </script>
+      
     <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container justify-content-center"> <!-- Añadir la clase justify-content-center -->
