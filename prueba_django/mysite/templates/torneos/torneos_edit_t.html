@@ -40,16 +40,6 @@
         
     </div>
 <script>
-    function torneosA() {
-            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-            $.get("{% url 'torneos_admin' %}", function(data) {
-                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                $("#contenido-dinamico").html(data);
-                $("#contenido-a-eliminar5").hide();
-            });
-        }
-</script>
-<script>
     $(document).ready(function() {
         $('#miFormulario').submit(function(event) {
             event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
