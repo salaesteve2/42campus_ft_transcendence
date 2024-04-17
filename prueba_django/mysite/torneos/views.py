@@ -422,7 +422,7 @@ def torneo_nuevaFase(torneo):
 		jugadores = torneo.jugadores
 	else:
 		faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
-		jugadores = faseTorneo.ganadores.all()
+		jugadores = FaseTorneo.object.filter(torneo=torneo.id, fase=fase_actual).ganadores
 		lista_partidos_resultados = faseTorneo.lista_partidos_resultados
 		#print(lista_partidos_resultados)
 		if "{" in lista_partidos_resultados:
