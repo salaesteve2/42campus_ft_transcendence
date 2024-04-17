@@ -15,10 +15,16 @@ from .models import Partido_enJuego, Partido_historia
 from torneos.views import torneo_jugar, torneo_result
 from general.views import activate_language
 from general.models import UserSettings
+from web3 import Web3
+from web3.contract import Contract
+from web3.auto import w3
+from eth_account import Account
 import datetime
 import math
 
 # constantes globales
+
+patata = 1
 
 campo = { "ancho": 800, "alto": 400 }
 sep = 15 # separacion del jugador con el fondo de la pista
@@ -43,7 +49,132 @@ max_puntuacion = 20
 
 jugador_velocidad = 120
 pelota_velocidad_c = 90
-pelota_velocidad_m = pelota_velocidad_c * math.sqrt(2) 
+pelota_velocidad_m = pelota_velocidad_c * math.sqrt(2)
+
+# ESTO ES PARA ESCRIBIR; no gastar ETH pls
+def agregar_o_actualizar_usuario(login, score, tournamentId):
+
+	contract_abi = [
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "userScore",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "doUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "Users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "tournamentId",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+
+	contract_address = '0xb5B49c75F64afB2cb88059965fAE8587a2D55575'
+	
+	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
+
+	private_key = "7c58755c06ecd180e00023711e905368b1521e3811576653f454d8fe5d666c57"
+
+	cuenta = w3.eth.account.from_key(private_key).address
+
+	w3.eth.default_account = w3.eth.account.from_key(private_key).address
+
+	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+
+	nonce = w3.eth.get_transaction_count(w3.eth.default_account)
+
+	txn_dict = contract.functions.doUser(login, score, tournamentId).build_transaction({
+		'from': cuenta,
+        'value': 0,
+        'gas': 1000000,
+        'gasPrice': w3.to_wei('50', 'gwei'),  # Reemplaza '50' con el precio de gas deseado en gwei
+        'nonce': nonce,
+    })
+
+	signed_txn = w3.eth.account.sign_transaction(txn_dict, private_key=private_key)
+	tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+	# Esta ultima no es necesaria, pero la consideran una buena práctica (pero no la he probado aun)
+	# w3.eth.waitForTransactionReceipt(tx_hash)
+
+def BlockPartido(partido):
+	if partido.terminado == False:
+		if partido.jugador1_marcador >= partido.jugador2_marcador:
+			# agregar_o_actualizar_usuario(partido.jugador2.username, partido.nFaseTorneo - 1, partido.idTorneo)
+			print("JUGADOR fuera!\n\n")
+			print(partido.jugador2.username)
+			print(partido.nFaseTorneo)
+			print(partido.idTorneo)
+		else:
+			# agregar_o_actualizar_usuario(partido.jugador1.username, partido.nFaseTorneo - 1, partido.idTorneo)
+			print("JUGADOR fuera!\n\n")
+			print(partido.jugador1.username)
+			print(partido.nFaseTorneo)
+			print(partido.idTorneo)
 
 def ajusta_velocidad_pelota(vx, vy):
 	v_m = math.sqrt(vx*vx + vy*vy)
@@ -190,12 +321,19 @@ def fPartidoAnotarResultado(partido):
 	
 def fMoverPelota(partido):
 	t2 = datetime.datetime.now()
+	global patata
 	if partido.tipo == "T" and partido.limiteTiempoTorneo < t2:
+		if patata != 0:
+			patata = 0
+			BlockPartido(partido)
 		partido.terminado = True
 		partido.fin = t2
 		fPartidoAnotarResultado(partido)
 		return
-	if partido.tipo == "T" and (partido.estadoTorneo == "1" or partido.estadoTorneo == "2") and partido.limiteTiempoConUnJugador < t2: 
+	if partido.tipo == "T" and (partido.estadoTorneo == "1" or partido.estadoTorneo == "2") and partido.limiteTiempoConUnJugador < t2:
+		if patata != 0:
+			patata = 0
+			BlockPartido(partido)
 		partido.terminado = True
 		partido.fin = t2
 		if partido.estadoTorneo == "1":
@@ -245,6 +383,9 @@ def fMoverPelota(partido):
 		partido.pelota_velocidad_x = fSigno(partido.pelota_velocidad_x) * pelota_velocidad_c
 		partido.pelota_velocidad_y = fSigno(partido.pelota_velocidad_y) * pelota_velocidad_c
 		if partido.jugador1_marcador >= max_puntuacion:
+			if patata != 0:
+				patata = 0
+				BlockPartido(partido)
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
@@ -261,6 +402,9 @@ def fMoverPelota(partido):
 		partido.pelota_velocidad_x = fSigno(partido.pelota_velocidad_x) * pelota_velocidad_c
 		partido.pelota_velocidad_y = fSigno(partido.pelota_velocidad_y) * pelota_velocidad_c
 		if partido.jugador2_marcador >= max_puntuacion:
+			if patata != 0:
+				patata = 0
+				BlockPartido(partido)
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
