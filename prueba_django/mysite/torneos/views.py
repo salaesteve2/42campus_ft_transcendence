@@ -19,45 +19,103 @@ import re
 from django.contrib import messages
 
 contract_abi = [
-    {
-        "constant": False,
-        "inputs": [
-            {"name": "_login", "type": "string"},
-            {"name": "_score", "type": "uint32"}
-        ],
-        "name": "doUser",
-        "outputs": [],
-        "payable": False,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": True,
-        "inputs": [{"name": "_login", "type": "string"}],
-        "name": "getUserScore",
-        "outputs": [{"name": "", "type": "uint32"}],
-        "payable": False,
-        "stateMutability": "view",
-        "type": "function"
-    }
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "userScore",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "doUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "Users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "tournamentId",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
 ]
 
+contract_address = '0xb'
+
 # ESTO ES PARA ESCRIBIR; no gastar ETH pls
-def agregar_o_actualizar_usuario(login, score):
+def agregar_o_actualizar_usuario(login, score, tournamentId):
 	
 	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
 
-	private_key = "7c..."
+	private_key = "7c"
 
 	cuenta = w3.eth.account.from_key(private_key).address
 
 	w3.eth.default_account = w3.eth.account.from_key(private_key).address
 
-	contract = w3.eth.contract(address='0x63...', abi=contract_abi)
+	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
 
 	nonce = w3.eth.get_transaction_count(w3.eth.default_account)
 
-	txn_dict = contract.functions.doUser(login, score).build_transaction({
+	txn_dict = contract.functions.doUser(login, score, tournamentId).build_transaction({
 		'from': cuenta,
         'value': 0,
         'gas': 1000000,
@@ -69,11 +127,6 @@ def agregar_o_actualizar_usuario(login, score):
 	tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 	# Esta ultima no es necesaria, pero la consideran una buena práctica (pero no la he probado aun)
 	# w3.eth.waitForTransactionReceipt(tx_hash)
-
-def obtener_puntaje_usuario(login):
-    # Llamar a la función getUserScore del contrato inteligente
-    puntaje = contract.functions.getUserScore(login).call()
-    return puntaje
 
 def torneos_inscripcion_list(request):
     torneos_mantenimiento2()
