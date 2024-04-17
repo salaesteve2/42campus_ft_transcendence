@@ -41,8 +41,8 @@ jugador2_rebote_raqueta = jugador2_x - raqueta["ancho"] / 2
 
 max_puntuacion = 20
 
-jugador_velocidad = 120
-pelota_velocidad_c = 90
+jugador_velocidad = 140
+pelota_velocidad_c = 150
 pelota_velocidad_m = pelota_velocidad_c * math.sqrt(2) 
 
 def ajusta_velocidad_pelota(vx, vy):
@@ -56,6 +56,23 @@ def ajusta_velocidad_pelota(vx, vy):
 		result = { 'x': vx2, 'y': vy2, }
 	else:
 		result = { 'x': vx, 'y': vy, }
+	if result['x'] < 0:
+		result['x'] = result['x'] * -1
+	return result
+
+def ajusta_velocidad_pelota2(vx, vy):
+	v_m = math.sqrt(vx*vx + vy*vy)
+	if v_m != pelota_velocidad_m:
+		mul = pelota_velocidad_m / v_m
+		vx2 = vx * mul
+		vy2 = vy * mul
+		if abs(vx2) < (pelota_velocidad_c / 2):
+			vx2 = fSigno(vx2) * pelota_velocidad_c / 2
+		result = { 'x': vx2, 'y': vy2, }
+	else:
+		result = { 'x': vx, 'y': vy, }
+	if result['x'] > 0:
+		result['x'] = result['x'] * -1
 	return result
 
 def fSigno(d):
@@ -287,7 +304,7 @@ def fMoverPelota(partido):
 		print(suma_vy)
 		partido.pelota_velocidad_y += suma_vy
 		partido.pelota_velocidad_x = - partido.pelota_velocidad_x # rebote en raqueta
-		result = ajusta_velocidad_pelota(partido.pelota_velocidad_x, partido.pelota_velocidad_y)
+		result = ajusta_velocidad_pelota2(partido.pelota_velocidad_x, partido.pelota_velocidad_y)
 		partido.pelota_velocidad_x = result['x']
 		partido.pelota_velocidad_y = result['y']
 	partido.pelota_x = new_x

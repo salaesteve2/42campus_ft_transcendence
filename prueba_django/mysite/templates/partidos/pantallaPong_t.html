@@ -275,13 +275,11 @@ function setKeydown() {
         // up arrow 
         if (e.which === 38 && ! upArrow) {
             upArrow = true;
-            $("#tecla").text("↑"); 
             sendInfoToServer("up_begin");
       }
       // down arrow
       else if (e.which === 40 && ! downArrow) {
           downArrow = true;
-          $("#tecla").text("↓");
           sendInfoToServer("down_begin");
      }
    } );
@@ -292,17 +290,16 @@ function setKeyup() {
         // up arrow
         if (e.which === 38 && upArrow) {
             upArrow = false;
-            $("#tecla").text("_");
             sendInfoToServer("up_end");
       }
       // down arrow
       else if (e.which === 40 && downArrow) {
             downArrow = false;
-            $("#tecla").text("_");
             sendInfoToServer("down_end");
      }
    } );
 }
+coloca();
 
 function loop() {
     if (stop) return;
@@ -313,7 +310,7 @@ function loop() {
 function loop2() {
     if (stop) return;
     if (! sendingKey)  getCommandsFromServer();
-    setTimeout(loop2, 90);
+    setTimeout(loop2, 40);
 }
 
 $(document).ready(function(){
@@ -404,9 +401,7 @@ $(document).ready(function(){
         coloca();
     }
     setKeydown();
-    setKeyup();    
-    $("#b_volver").hide();
-    coloca();
+    setKeyup();
     loop2();
 });
 
