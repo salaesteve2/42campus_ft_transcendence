@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="../../static/base.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% if username2 %}
+    <script>
+        localStorage.setItem('username2', '{{username2}}');
+    </script>
+    {% endif %}
     {% if request.user.is_authenticated %}
     <script>
         // Funciones de manejo de estado
