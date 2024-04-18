@@ -704,7 +704,7 @@ window.addEventListener('popstate', (event) => {
             var user = $(this).data("user-id");
             if (done == 0)
                 editT2(torneoId, user);
-                done = 1;
+                done = 0;
         });
 
         function editT2(torneoId, user) {
