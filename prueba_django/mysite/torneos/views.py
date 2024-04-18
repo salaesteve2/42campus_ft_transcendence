@@ -400,18 +400,16 @@ def get_alias(username):
 	return alias
 
 # Función para reemplazar cadenas en la lista lpr2 según los alias definidos en UserSettings
-# def replace_with_alias(lista):
-#     new_lista = []
-#     for sublist in lista:
-#         new_sublist = []
-#         for word in sublist:
-#             if all(char in '()[]\',' or char.isspace() for char in word):  # Verificar si toda la palabra debe ser ignorada
-#                 new_sublist.append(word)  # Si es así, añadir la palabra sin cambios a la nueva sublista
-#             else:
-#                 alias = get_alias(word)  # Obtener el alias para la palabra actual
-#                 new_sublist.append(alias)  # Añadir el alias a la nueva sublista
-#         new_lista.append(new_sublist)  # Agregar la nueva sublista a la lista principal
-#     return new_lista
+def replace_with_alias(input_string):
+    output_string = ""
+    words = re.findall(r'\b[^\W\d_]+\b|\W', input_string)  # Encuentra todas las palabras en la cadena que no contienen caracteres especiales ni números, o encuentra caracteres especiales
+    for word in words:
+        if word.isalnum():  # Si es una palabra alfanumérica
+            alias = get_alias(word)  # Obtener el alias para la palabra actual
+            output_string += alias  # Reemplazar la palabra por su alias
+        else:  # Si es un carácter especial
+            output_string += word  # Mantener el carácter especial sin cambios
+    return output_string
 
 
 # para cuando no se han presentado ninguno de los jugadores
