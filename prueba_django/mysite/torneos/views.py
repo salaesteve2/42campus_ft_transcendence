@@ -611,7 +611,8 @@ def torneo_jugar(idJugador):
 		margen = datetime.timedelta(seconds=30)
 		mep = datetime.timedelta(minutes=torneo.minutos_entre_partidos)
 		dmp = datetime.timedelta(minutes=torneo.minutos_duracion_maxima_partidos)
-		mepPn = (torneo.fase_actual - 1) * mep
+		mdmp = datetime.timedelta(minutes=torneo.minutos_duracion_maxima_partidos)
+		mepPn = (torneo.fase_actual - 1) * (mep + mdmp)
 		torneoFase_comienzo_partidos = torneo.comienzo_partidos + mepPn
 		limiteTiempoTorneo = torneoFase_comienzo_partidos + dmp
 		limiteTiempoConUnJugador = torneoFase_comienzo_partidos + margen
