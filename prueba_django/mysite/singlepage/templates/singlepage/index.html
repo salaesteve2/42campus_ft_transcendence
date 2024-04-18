@@ -110,7 +110,8 @@
                 $.get(languageUrl, function() {
                     // Una vez que el idioma ha sido cambiado, recarga el contenido dinámico
                     number = localStorage.getItem('number');
-                    updateDynamicContent(number);
+                    if (number)
+                        updateDynamicContent(number);
                 });
                 $.get(languageUrl, function() {
                     location.reload();  // Recarga la página después de cambiar el idioma
