@@ -60,6 +60,8 @@ class FaseTorneo(models.Model):
 	lista_jugadores = models.TextField(default="")
 	lista_partidos = models.TextField(default="")
 	lista_partidos_resultados = models.TextField(default="")
+	lista_partidos_alias = models.TextField(default="")
+	lista_partidos_resultados_alias = models.TextField(default="")
 	ganadores = models.ManyToManyField(User, blank=True, default=None, related_name = 'ft_users_ganadores')
 	class Meta:
 		unique_together = (("torneo", "fase"), )
