@@ -89,7 +89,66 @@
             </div>
         </div>
     </nav>
+    <script>
+        $(document).ready(function() {
+            $('a[href^="#"]').on('click', function(event) {
+                event.preventDefault(); // Previene la acción por defecto del enlace
+                var hrefValue = $(this).attr('href');
+                var number = hrefValue.substring(1); // Elimina el signo de numeral para obtener el número
+                console.log('Número extraído:', number);
+                localStorage.setItem('number', number);
+                // Aquí puedes llamar a tu función y pasar el número si es necesario // Ejemplo de función siendo llamada con el número
+            });
+        });
+        $(document).ready(function() {
+            // Intercepta los clics en los enlaces de cambio de idioma
+            $('.nav-link').on('click', function(e) {
+                e.preventDefault();  // Evita que el navegador siga el enlace de forma predeterminada
+                var languageUrl = $(this).attr('href');  // Captura la URL del enlace, que debería ser algo como '/change_en/', '/change_es/', etc.
 
+                // Envía una solicitud AJAX al servidor para cambiar el idioma
+                $.get(languageUrl, function() {
+                    // Una vez que el idioma ha sido cambiado, recarga el contenido dinámico
+                    number = localStorage.getItem('number');
+                    updateDynamicContent(number);
+                });
+                $.get(languageUrl, function() {
+                    location.reload();  // Recarga la página después de cambiar el idioma
+                });
+            });
+        });
+        function updateDynamicContent(url2) {
+            // Aquí, vuelve a cargar el contenido que depende del idioma
+            // Por ejemplo, puedes hacer una llamada AJAX a una vista que devuelva el contenido actualizado
+            if (url2 == '5')
+                url3 = "check";
+            else if (url2 == '6')
+                url3 = "arranque_rapido";
+            else if (url2 == '7')
+                url3 = "partidos_mlist";
+            else if (url2 == '8')
+                url3 = "partidos_list";
+            else if (url2 == '9')
+                url3 = "torneos_inscripcion_list";
+            else if (url2 == '10')
+                url3 = "torneos_info_list";
+            else if (url2 == '11')
+                url3 = "arranque_torneo";
+            else if (url2 == '12')
+                url3 = "torneos_admin";
+            console.log('URL de la vista:', url3);
+            $.ajax({
+                url: url3,  // Asegúrate de que esta URL es correcta y que la vista devuelve contenido basado en el idioma actual
+                type: 'GET',
+                success: function(response) {
+                    $('#contenido-dinamico').html(response);
+                },
+                error: function() {
+                    console.error('Error al cargar el contenido actualizado');
+                }
+            });
+        }
+    </script>
         <!-- Contenido principal -->
         <div id="content" class="mt-3">
             <!-- Contenido cargado desde el servidor se inserta aquí por JavaScript -->
