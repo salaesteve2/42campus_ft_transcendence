@@ -46,7 +46,8 @@ class Torneo(models.Model):
 		t = datetime.datetime.now()
 		margen = datetime.timedelta(seconds=30)
 		mep = datetime.timedelta(minutes=self.minutos_entre_partidos)
-		mepPn = (self.fase_actual - 1) * mep
+		mdmp = datetime.timedelta(minutes=self.minutos_duracion_maxima_partidos)
+		mepPn = (self.fase_actual - 1) * (mep + mdmp)
 		tOk = self.comienzo_partidos + mepPn
 		if tOk - margen < t and t < tOk + margen:
 			return True
