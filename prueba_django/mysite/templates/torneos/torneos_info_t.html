@@ -54,10 +54,6 @@
                 <th>{% trans "Matches and results" %}</th>
                 <td colspan='5'>{{ faseTorneo.lista_partidos_resultados_alias }}</td>
             </tr>
-            <tr>
-                <th>{% trans "Winners" %}</th>
-                <td colspan='5'>{{ faseTorneo.ganadores.all|join:", " }}</td>
-            </tr>
             {% endfor %}        
             {% endfor %}
         </table>
