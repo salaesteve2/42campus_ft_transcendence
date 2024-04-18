@@ -560,6 +560,7 @@
             localStorage.setItem('miEstado', JSON.stringify(estado));
         }
     function pushStateFunction() {
+        localStorage.removeItem('number');
         window.onbeforeunload = guardarEstadoHome();
         history.pushState({ view: "home" }, null, "/");
         // history.pushState({ view: "home" }, null, "/");
