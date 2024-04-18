@@ -537,12 +537,16 @@ def torneos_info_list(request):
 		idTorneo = torneo.id
 		fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
 		for faseTorneo in fasesTorneo:
+			print("PROCESS:\n")
 			lpr1 = faseTorneo.lista_partidos_resultados
+			lpr1a = faseTorneo.lista_partidos_resultados
+			print(lpr1)
 			lpr2 = re.sub( "{[0-9]+}", "", lpr1)
 			faseTorneo.lista_partidos_resultados = lpr2
-			lpr1a = faseTorneo.lista_partidos_resultados_alias
-			lpr2a = re.sub( "{[0-9]+}", "", lpr1a)
-			faseTorneo.lista_partidos_resultados_alias = lpr2a
+			print(faseTorneo.lista_partidos_resultados)
+			faseTorneo.lista_partidos_resultados_alias = replace_with_alias(lpr1a)
+			print("PROCESS2:\n")
+			print(faseTorneo.lista_partidos_resultados_alias)
 		torneo2 = {}
 		torneo2['copy'] = torneo
 		torneo2['fases'] = fasesTorneo
