@@ -1,6 +1,7 @@
 # coding=utf-8
    
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 from django.shortcuts import render, redirect
 from .models import Torneo, FaseTorneo
@@ -36,6 +37,9 @@ def torneos_inscripcion_list(request):
             lpr1 = faseTorneo.lista_partidos_resultados
             lpr2 = re.sub( "{[0-9]+}", "", lpr1)
             faseTorneo.lista_partidos_resultados = lpr2
+            lpr1alias = faseTorneo.lista_partidos_resultados_alias
+            lpr2alias = re.sub( "{[0-9]+}", "", lpr1alias)
+            faseTorneo.lista_partidos_resultados_alias = lpr2alias
         
         jugadores_con_alias = []
         for jugador in torneo.jugadores.all():
@@ -78,50 +82,53 @@ def update_alias(request):
 	#return redirect('torneos_inscripcion_list')
 
 def torneos_inscripcion(request):
-    activate_language(request)
-    if not request.user.is_authenticated:
-        return redirect('home')
+	activate_language(request)
+	if not request.user.is_authenticated:
+		return redirect('home')
 
-    idTorneo = int(request.GET.get('idTorneo'))
-    idUser = (request.GET.get('idUser'))
-    torneo = Torneo.objects.get(id=idTorneo)
-    user = User.objects.get(id=idUser)
+	idTorneo = int(request.GET.get('idTorneo'))
+	idUser = (request.GET.get('idUser'))
+	torneo = Torneo.objects.get(id=idTorneo)
+	user = User.objects.get(id=idUser)
 
-    if torneo.jugadores.filter(id=idUser).exists():
-        torneo.jugadores.remove(user)
-    else:
-        torneo.jugadores.add(user)
+	if torneo.jugadores.filter(id=idUser).exists():
+		torneo.jugadores.remove(user)
+	else:
+		torneo.jugadores.add(user)
 
-    torneo.save()
-    torneos_mantenimiento2()
-    t = datetime.datetime.now()
-    torneos_con_alias = {}
-    torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
-    for torneo in torneos:
-        idTorneo = torneo.id
-        fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
-        for faseTorneo in fasesTorneo:
-            lpr1 = faseTorneo.lista_partidos_resultados
-            lpr2 = re.sub( "{[0-9]+}", "", lpr1)
-            faseTorneo.lista_partidos_resultados = lpr2
+	torneo.save()
+	torneos_mantenimiento2()
+	t = datetime.datetime.now()
+	torneos_con_alias = {}
+	torneos = Torneo.objects.all().filter(comienzo_inscripcion__lt=t, fin_inscripcion__gt=t)
+	for torneo in torneos:
+		idTorneo = torneo.id
+		fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
+		for faseTorneo in fasesTorneo:
+			lpr1 = faseTorneo.lista_partidos_resultados
+			lpr2 = re.sub( "{[0-9]+}", "", lpr1)
+			faseTorneo.lista_partidos_resultados = lpr2
+			lpr1alias = faseTorneo.lista_partidos_resultados_alias
+			lpr2alias = re.sub( "{[0-9]+}", "", lpr1alias)
+			faseTorneo.lista_partidos_resultados_alias = lpr2alias
+			
+		jugadores_con_alias = []
+		for jugador in torneo.jugadores.all():
+			user_settings, created = UserSettings.objects.get_or_create(user=jugador)
+			alias = user_settings.alias
+			if alias and alias != "":
+				jugadores_con_alias.append(alias)
+			else:
+				jugadores_con_alias.append(jugador.username)
+				
+		torneos_con_alias[torneo] = {
+			'copy': torneo,
+			'alias_jugadores': jugadores_con_alias
+		}
 
-        jugadores_con_alias = []
-        for jugador in torneo.jugadores.all():
-            user_settings, created = UserSettings.objects.get_or_create(user=jugador)
-            alias = user_settings.alias
-            if alias and alias != "":
-                jugadores_con_alias.append(alias)
-            else:
-                jugadores_con_alias.append(jugador.username)
-
-        torneos_con_alias[torneo] = {
-            'copy': torneo,
-            'alias_jugadores': jugadores_con_alias
-        }
-	
-    context = {'torneos_con_alias': torneos_con_alias, 'user': request.user}
-    form_html = render(request, 'torneos/torneos_inscripcion_t.html', context).content.decode()
-    return JsonResponse({'redirect_url': '/', 'form_html': form_html})
+	context = {'torneos_con_alias': torneos_con_alias, 'user': request.user}
+	form_html = render(request, 'torneos/torneos_inscripcion_t.html', context).content.decode()
+	return JsonResponse({'redirect_url': '/', 'form_html': form_html})
 	
 def torneos_admin(request):
 	torneos_mantenimiento2()
@@ -380,6 +387,33 @@ def torneos_mantenimiento2():
 					print(torneo.id)
 					#agregar_o_actualizar_usuario(ganador, torneo.fase_actual, torneo.id)
 
+def get_alias(username):
+	user_s, created = User.objects.get_or_create(username=username)
+	if not created:
+		user_settings, created = UserSettings.objects.get_or_create(user=user_s)
+		if not created:
+			alias = user_settings.alias
+	if created:
+		alias = username
+	if not alias or alias == "":
+		alias = username
+	return alias
+
+# Función para reemplazar cadenas en la lista lpr2 según los alias definidos en UserSettings
+# def replace_with_alias(lista):
+#     new_lista = []
+#     for sublist in lista:
+#         new_sublist = []
+#         for word in sublist:
+#             if all(char in '()[]\',' or char.isspace() for char in word):  # Verificar si toda la palabra debe ser ignorada
+#                 new_sublist.append(word)  # Si es así, añadir la palabra sin cambios a la nueva sublista
+#             else:
+#                 alias = get_alias(word)  # Obtener el alias para la palabra actual
+#                 new_sublist.append(alias)  # Añadir el alias a la nueva sublista
+#         new_lista.append(new_sublist)  # Agregar la nueva sublista a la lista principal
+#     return new_lista
+
+
 # para cuando no se han presentado ninguno de los jugadores
 def cierre_fase(torneo): # probar ???
 	#print("cierre de fase comienzo")
@@ -399,7 +433,9 @@ def cierre_fase(torneo): # probar ???
 		return False
 	faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)		
 	lpr = faseTorneo.lista_partidos_resultados
+	lpralias = faseTorneo.lista_partidos_resultados_alias
 	faseTorneo.lista_partidos_resultados = re.sub( "{[0-9]+}", "-", lpr)
+	faseTorneo.lista_partidos_resultados_alias = re.sub( "{[0-9]+}", "-", lpralias)
 	faseTorneo.save()
 	#print("cierre de fase fin")
 	return True
@@ -446,6 +482,7 @@ def torneo_nuevaFase(torneo):
 	pasaUltimoJugador = False
 	n = 0
 	lp = "[ "
+	lpalias = "[ "
 	lista_jugadores = ""
 	for jn in list:
 		j = jn[0]
@@ -456,25 +493,36 @@ def torneo_nuevaFase(torneo):
 		if n % 2 == 0:
 			if n != 0:
 				lp += ", "
+				lpalias += ", "
 			lp  += "( " + user.username + " {" +  str(user.id) + "}"
+			lpalias += "( " + user.username + " {" +  str(user.id) + "}"
 		else:
 			lp += ", " + user.username + " {" + str(user.id) + "} )"
+			lpalias += ", " + user.username + " {" + str(user.id) + "} )"
 		n += 1	
 	if n % 2 == 1:
 		lp += " )"
+		lpalias += " )"
 		pasaUltimoJugador = True
 	lp += " ]"
+	lpalias += " ]"
 	#print(lp)
 	lp1 = lp
+	lpalias1 = lpalias
 	if pasaUltimoJugador:
 		s1 = "{" +  str(user.id) + "}"
+		s1alias = "{" +  str(user.id) + "}"
 		lp1 = lp.replace(s1, "*")
+		lpalias1 = lpalias.replace(s1alias, "*")
 		faseTorneo.save() #por comprobar motivo
 		faseTorneo.ganadores.add(user)	
 	lp2 = re.sub( "{[0-9]+}", "", lp)
+	lpalias2 = re.sub( "{[0-9]+}", "", lpalias)
 	faseTorneo.lista_jugadores = lista_jugadores
 	faseTorneo.lista_partidos = lp2
+	faseTorneo.lista_partidos_alias = lpalias2
 	faseTorneo.lista_partidos_resultados = lp1
+	faseTorneo.lista_partidos_resultados = lpalias1
 	faseTorneo.save()
 	torneo.fase_actual = fase_actual
 	torneo.save()
@@ -494,6 +542,9 @@ def torneos_info_list(request):
 			lpr1 = faseTorneo.lista_partidos_resultados
 			lpr2 = re.sub( "{[0-9]+}", "", lpr1)
 			faseTorneo.lista_partidos_resultados = lpr2
+			lpr1a = faseTorneo.lista_partidos_resultados_alias
+			lpr2a = re.sub( "{[0-9]+}", "", lpr1a)
+			faseTorneo.lista_partidos_resultados_alias = lpr2a
 		torneo2 = {}
 		torneo2['copy'] = torneo
 		torneo2['fases'] = fasesTorneo
@@ -649,32 +700,48 @@ def torneo_result(idTorneo, fase, idJugador1, idJugador2, puntos1, puntos2):
 		return
 	s1 = "{" + str(idJugador1) +  "}"
 	s2 = "{" + str(idJugador2) +  "}"
+	s1alias = "{" + str(idJugador1) +  "}"
+	s2alias = "{" + str(idJugador2) +  "}"
 	lpr = faseTorneo.lista_partidos_resultados
+	lpralias = faseTorneo.lista_partidos_resultados_alias
 	if puntos1 == -1:
 		p1 = " -"
+		p1alias = " -"
 	else:
 		p1 = str(puntos1)
+		p1alias = str(puntos1)
 	if puntos2 == -1:
 		p2 = " -"
+		p2alias = " -"
 	else:
 		p2 = str(puntos2)		
+		p2alias = str(puntos2)
 	if puntos1 >= puntos2: # en caso de empate a puntos gana el jugaodor1
 		m1 = " *"
 		m2 = ""
+		m1alias = " *"
+		m2alias = ""
 		user1 = User.objects.get(id=idJugador1)
 		#print("ganador 1 "+ user1.username)
 		faseTorneo.ganadores.add(user1)
 	else:
 		m1 = ""
 		m2 = " *"
+		m1alias = ""
+		m2alias = " *"
 		user2 = User.objects.get(id=idJugador2)
 		#print("ganador 2 "+ user2.username)
 		faseTorneo.ganadores.add(user2)
 	r1 = p1 + m1
 	r2 = p2 + m2
+	r1alias = p1alias + m1alias
+	r2alias = p2alias + m2alias
 	lpr2 = lpr.replace(s1, r1).replace(s2, r2)
+	lpr2alias = lpralias.replace(s1alias, r1alias).replace(s2alias, r2alias)
+	
 	#print(lpr2)
 	faseTorneo.lista_partidos_resultados = lpr2
+	faseTorneo.lista_partidos_resultados_alias = lpr2alias
 	faseTorneo.save()
 	#print("torneo_result fin")
 	return
