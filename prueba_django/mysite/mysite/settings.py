@@ -151,7 +151,7 @@ LOCALE_PATHS = [
 USE_I18N = True # permite la traducción
 USE_L10N = True # números y fechas locales
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Madrid'
 
 USE_TZ = False # antes True !!!!! con True no puedo restar datetimes
 
