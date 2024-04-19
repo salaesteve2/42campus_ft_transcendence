@@ -307,9 +307,30 @@ function loop() {
     requestAnimationFrame(loop); // al siguiente frame ejecuta loop
 }
 
+let tmp = "";
+let cont = 0;
+
 function loop2() {
     if (stop) return;
-    if (! sendingKey)  getCommandsFromServer();
+    let temp2 = "";
+    if (! sendingKey)  {
+      temp2 = getCommandsFromServer();
+      if (temp2 === tmp)
+      {
+        cont++;
+      }
+    }
+    tmp = temp2;
+    if (cont === 180)
+    {
+      var hrefValue = localStorage.getItem('number')
+      if (hrefValue === '6')
+      {
+        window.onbeforeunload = guardarEstadoHome();
+        history.pushState({ view: "home" }, null, "/");
+      }
+      window.location.href = '/';
+    }
     setTimeout(loop2, 40);
 }
 
