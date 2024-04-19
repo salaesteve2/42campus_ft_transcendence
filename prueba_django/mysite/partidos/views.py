@@ -601,7 +601,7 @@ def fun_arranque_torneo(request): #arranque torneo
 	dd = torneo_jugar(currentUser.id)
 	# dd  = { 'ok': True, 'idTorneo': idTorneo, 'fase': fase, 'idJugador1': idJugador1, 'idJugador2': idJugador2 }
 	if not dd['ok'] :
-		return redirect('home')
+		return redirect('home_section')
 	activate_language(request)
 	if currentUser.id == dd['idJugador1']:
 		numJugador = 1
