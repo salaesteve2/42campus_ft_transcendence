@@ -35,7 +35,6 @@ class Migration(migrations.Migration):
                 ('fase', models.IntegerField(default=0)),
                 ('lista_partidos', models.TextField(default='')),
                 ('lista_partidos_resultados', models.TextField(default='')),
-                ('lista_partidos_alias', models.TextField(default='')),
                 ('lista_partidos_resultados_alias', models.TextField(default='')),
                 ('ganadores', models.ManyToManyField(blank=True, default=None, related_name='ft_users_ganadores', to=settings.AUTH_USER_MODEL)),
                 ('jugadores', models.ManyToManyField(blank=True, default=None, related_name='ft_users_jugadores', to=settings.AUTH_USER_MODEL)),
