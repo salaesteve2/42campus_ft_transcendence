@@ -89,14 +89,6 @@
         $(document).on("click", "#edit-torneo-btn", function() {
             newT();
         });
-        function newT() {
-            // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
-            $.get("{% url 'torneos_edit' %}", function(data) {
-                // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
-                $("#contenido-dinamico").html(data);
-                $("#contenido-a-eliminar4").hide();
-            });
-        }
         $(document).on("click", ".delete-torneo-btn", function() {
             var torneoId = $(this).data("torneo-id");
             deleteT(torneoId);
