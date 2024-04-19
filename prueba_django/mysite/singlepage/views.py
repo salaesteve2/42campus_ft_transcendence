@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from general.views import activate_language
 from base.views import torneo_jugar, proximos_torneos
+from django.http import JsonResponse
 
 def index(request):
     activate_language(request)
