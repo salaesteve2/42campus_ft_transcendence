@@ -338,6 +338,12 @@ function loop2() {
         history.pushState({ view: "home" }, null, "/");
         localStorage.setItem('number', 1);
       }
+      if (hrefValue === '11')
+      {
+        window.onbeforeunload = guardarEstadoHome2();
+        history.pushState({ view: "home" }, null, "/");
+        localStorage.setItem('number', 1);
+      }
       window.location.href = '/';
     }
     setTimeout(loop2, 40);
