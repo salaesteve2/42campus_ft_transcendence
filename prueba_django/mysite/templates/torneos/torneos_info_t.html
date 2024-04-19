@@ -51,7 +51,7 @@
             {% for faseTorneo in torneo.fases %}
             <tr>
                 <td rowspan='2' valign='top'>{{ faseTorneo.fase }}</td>
-                <th>{% trans "Matches and results" %}</th>
+                <th>{% trans "Matches" %}</th>
                 <td colspan='5'>{{ faseTorneo.lista_partidos_resultados_alias }}</td>
             </tr>
             {% endfor %}        
