@@ -105,7 +105,7 @@
             $('.nav-link').on('click', function(e) {
                 e.preventDefault();  // Evita que el navegador siga el enlace de forma predeterminada
                 var languageUrl = $(this).attr('href');  // Captura la URL del enlace, que debería ser algo como '/change_en/', '/change_es/', etc.
-
+                
                 // Envía una solicitud AJAX al servidor para cambiar el idioma
                 $.get(languageUrl, function() {
                     // Una vez que el idioma ha sido cambiado, recarga el contenido dinámico
@@ -114,7 +114,10 @@
                         updateDynamicContent(number);
                 });
                 $.get(languageUrl, function() {
-                    location.reload();  // Recarga la página después de cambiar el idioma
+                    setTimeout(() => {
+                    location.reload();
+                    }, 100);
+                      // Recarga la página después de cambiar el idioma
                 });
             });
         });
