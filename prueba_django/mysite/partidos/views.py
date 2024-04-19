@@ -349,6 +349,7 @@ def fMoverPelota(partido):
 		partido.terminado = True
 		partido.fin = t2
 		fPartidoAnotarResultado(partido)
+		patata = 1
 		return
 	if partido.tipo == "T" and (partido.estadoTorneo == "1" or partido.estadoTorneo == "2") and partido.limiteTiempoConUnJugador < t2:
 		if patata != 0:
@@ -361,6 +362,7 @@ def fMoverPelota(partido):
 		else:
 			partido.jugador1_marcador = -1 # -1 indica "no presentado"
 		fPartidoAnotarResultado(partido)
+		patata = 1
 		return		
 	if partido.pausa: # estaba en pausa y la pausa ha acabado
 		s = diffTimeSec(partido.finDePausa, t2)
@@ -410,6 +412,7 @@ def fMoverPelota(partido):
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
+		patata = 1
 		return
 	elif new_x < min_x:	# consigue punto jugador 2
 		#print("punto jugador 2 y pausa")
@@ -429,6 +432,7 @@ def fMoverPelota(partido):
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
+		patata = 1
 		return
 	partido.pelota_x = new_x # actualiza de momento
 	#print("probar si pelota toca raquetas")
