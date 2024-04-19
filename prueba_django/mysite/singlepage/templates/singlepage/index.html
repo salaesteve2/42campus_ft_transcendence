@@ -563,6 +563,11 @@
             const estado = null;
             localStorage.setItem('miEstado', JSON.stringify(estado));
         }
+    function guardarEstadoHome2() {
+            const contenidoDinamico = document.getElementById('contenido-dinamico').innerHTML; // Asegúrate que este ID corresponde al contenedor de tu contenido dinámico
+            const estado = null;
+            localStorage.setItem('miEstado', null);
+        }
     function pushStateFunction() {
         localStorage.removeItem('number');
         window.onbeforeunload = guardarEstadoHome();
