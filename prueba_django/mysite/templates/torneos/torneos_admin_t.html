@@ -86,9 +86,6 @@
                 }
             });
         }
-        $(document).on("click", "#edit-torneo-btn", function() {
-            newT();
-        });
         $(document).on("click", ".delete-torneo-btn", function() {
             var torneoId = $(this).data("torneo-id");
             deleteT(torneoId);
