@@ -37,9 +37,6 @@ def torneos_inscripcion_list(request):
             lpr1 = faseTorneo.lista_partidos_resultados
             lpr2 = re.sub( "{[0-9]+}", "", lpr1)
             faseTorneo.lista_partidos_resultados = lpr2
-            lpr1alias = faseTorneo.lista_partidos_resultados_alias
-            lpr2alias = re.sub( "{[0-9]+}", "", lpr1alias)
-            faseTorneo.lista_partidos_resultados_alias = lpr2alias
         
         jugadores_con_alias = []
         for jugador in torneo.jugadores.all():
@@ -108,9 +105,9 @@ def torneos_inscripcion(request):
 			lpr1 = faseTorneo.lista_partidos_resultados
 			lpr2 = re.sub( "{[0-9]+}", "", lpr1)
 			faseTorneo.lista_partidos_resultados = lpr2
-			lpr1alias = faseTorneo.lista_partidos_resultados_alias
-			lpr2alias = re.sub( "{[0-9]+}", "", lpr1alias)
-			faseTorneo.lista_partidos_resultados_alias = lpr2alias
+			# lpr1alias = faseTorneo.lista_partidos_resultados_alias
+			# lpr2alias = re.sub( "{[0-9]+}", "", lpr1alias)
+			# faseTorneo.lista_partidos_resultados_alias = lpr2alias
 			
 		jugadores_con_alias = []
 		for jugador in torneo.jugadores.all():
@@ -431,9 +428,6 @@ def cierre_fase(torneo): # probar ???
 		return False
 	faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)		
 	lpr = faseTorneo.lista_partidos_resultados
-	lpralias = faseTorneo.lista_partidos_resultados_alias
-	faseTorneo.lista_partidos_resultados = re.sub( "{[0-9]+}", "-", lpr)
-	faseTorneo.lista_partidos_resultados_alias = re.sub( "{[0-9]+}", "-", lpralias)
 	faseTorneo.save()
 	#print("cierre de fase fin")
 	return True
@@ -480,7 +474,6 @@ def torneo_nuevaFase(torneo):
 	pasaUltimoJugador = False
 	n = 0
 	lp = "[ "
-	lpalias = "[ "
 	lista_jugadores = ""
 	for jn in list:
 		j = jn[0]
@@ -491,36 +484,25 @@ def torneo_nuevaFase(torneo):
 		if n % 2 == 0:
 			if n != 0:
 				lp += ", "
-				lpalias += ", "
 			lp  += "( " + user.username + " {" +  str(user.id) + "}"
-			lpalias += "( " + user.username + " {" +  str(user.id) + "}"
 		else:
 			lp += ", " + user.username + " {" + str(user.id) + "} )"
-			lpalias += ", " + user.username + " {" + str(user.id) + "} )"
 		n += 1	
 	if n % 2 == 1:
 		lp += " )"
-		lpalias += " )"
 		pasaUltimoJugador = True
 	lp += " ]"
-	lpalias += " ]"
 	#print(lp)
 	lp1 = lp
-	lpalias1 = lpalias
 	if pasaUltimoJugador:
 		s1 = "{" +  str(user.id) + "}"
-		s1alias = "{" +  str(user.id) + "}"
 		lp1 = lp.replace(s1, "*")
-		lpalias1 = lpalias.replace(s1alias, "*")
 		faseTorneo.save() #por comprobar motivo
 		faseTorneo.ganadores.add(user)	
 	lp2 = re.sub( "{[0-9]+}", "", lp)
-	lpalias2 = re.sub( "{[0-9]+}", "", lpalias)
 	faseTorneo.lista_jugadores = lista_jugadores
 	faseTorneo.lista_partidos = lp2
-	faseTorneo.lista_partidos_alias = lpalias2
 	faseTorneo.lista_partidos_resultados = lp1
-	faseTorneo.lista_partidos_resultados = lpalias1
 	faseTorneo.save()
 	torneo.fase_actual = fase_actual
 	torneo.save()
@@ -702,48 +684,33 @@ def torneo_result(idTorneo, fase, idJugador1, idJugador2, puntos1, puntos2):
 		return
 	s1 = "{" + str(idJugador1) +  "}"
 	s2 = "{" + str(idJugador2) +  "}"
-	s1alias = "{" + str(idJugador1) +  "}"
-	s2alias = "{" + str(idJugador2) +  "}"
 	lpr = faseTorneo.lista_partidos_resultados
-	lpralias = faseTorneo.lista_partidos_resultados_alias
 	if puntos1 == -1:
 		p1 = " -"
-		p1alias = " -"
 	else:
 		p1 = str(puntos1)
-		p1alias = str(puntos1)
 	if puntos2 == -1:
 		p2 = " -"
-		p2alias = " -"
 	else:
 		p2 = str(puntos2)		
-		p2alias = str(puntos2)
 	if puntos1 >= puntos2: # en caso de empate a puntos gana el jugaodor1
 		m1 = " *"
 		m2 = ""
-		m1alias = " *"
-		m2alias = ""
 		user1 = User.objects.get(id=idJugador1)
 		#print("ganador 1 "+ user1.username)
 		faseTorneo.ganadores.add(user1)
 	else:
 		m1 = ""
 		m2 = " *"
-		m1alias = ""
-		m2alias = " *"
 		user2 = User.objects.get(id=idJugador2)
 		#print("ganador 2 "+ user2.username)
 		faseTorneo.ganadores.add(user2)
 	r1 = p1 + m1
 	r2 = p2 + m2
-	r1alias = p1alias + m1alias
-	r2alias = p2alias + m2alias
 	lpr2 = lpr.replace(s1, r1).replace(s2, r2)
-	lpr2alias = lpralias.replace(s1alias, r1alias).replace(s2alias, r2alias)
 	
 	#print(lpr2)
 	faseTorneo.lista_partidos_resultados = lpr2
-	faseTorneo.lista_partidos_resultados_alias = lpr2alias
 	faseTorneo.save()
 	#print("torneo_result fin")
 	return
