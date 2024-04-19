@@ -83,11 +83,6 @@
                 }
             });
         }
-        $(document).on("click", ".delete-torneo-btn", function() {
-            var torneoId = $(this).data("torneo-id");
-            deleteT(torneoId);
-        });
-
         function deleteT(torneoId) {
             $.ajax({
                 url: "{% url 'torneos_delete' %}?idTorneo=" + torneoId,
