@@ -49,6 +49,7 @@
         }
 }
         document.addEventListener('DOMContentLoaded', function() {
+	    console.log("SALUSREVISA\n")
             recuperarYRestaurarEstado();
         });
 
@@ -288,7 +289,7 @@
                             window.location.href = "{% url 'index' %}";
                             //$("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-                            history.replaceState({ view: "Logout" }, null, "/");
+                            history.pushState({ view: "Logout" }, null, "/");
                         });
                     }
                     function mostrarQR() {
@@ -298,7 +299,7 @@
                             //window.location.href = "{% url 'index' %}";
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-                            history.replaceState({ view: "check" }, null, "/");
+                            history.pushState({ view: "check" }, null, "/");
                         }).fail(function(xhr) {
                             // Maneja los errores, como el token expirado
                             if (xhr.status === 400) {
@@ -317,7 +318,7 @@
                                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                                 $("#contenido-dinamico").html(data);
                                 $("#contenido-a-eliminar").hide();
-                                history.replaceState({ view: "partido" }, null, "/");
+                                history.pushState({ view: "partido" }, null, "/");
                             });
                         }
                         
@@ -328,7 +329,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-                            history.replaceState({ view: "partidos_mlist" }, null, "/");
+                            history.pushState({ view: "partidos_mlist" }, null, "/");
                         });
                     }
                     function mostrarLista() {
@@ -337,7 +338,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-			                history.replaceState({ view: "partidos_list" }, null, "/");
+			                history.pushState({ view: "partidos_list" }, null, "/");
                         });
                     }
                     function mostrarInsLista() {
@@ -346,7 +347,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-                            history.replaceState({ view: "torneos_inscripcion_list" }, null, "/");
+                            history.pushState({ view: "torneos_inscripcion_list" }, null, "/");
                         });
                     }
                     function mostrarInfLista() {
@@ -356,7 +357,7 @@
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
                      
-                            history.replaceState({ view: "torneos_info_list" }, null, "/");
+                            history.pushState({ view: "torneos_info_list" }, null, "/");
                         });
                     }
                     function mostrarPT() {
@@ -368,7 +369,7 @@
                                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                                 $("#contenido-dinamico").html(data);
                                 $("#contenido-a-eliminar").hide();
-                                history.replaceState({ view: "torneos_play" }, null, "/");
+                                history.pushState({ view: "torneos_play" }, null, "/");
                             });
                         }
                         
@@ -379,7 +380,7 @@
                             // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                             $("#contenido-dinamico").html(data);
                             $("#contenido-a-eliminar").hide();
-                            history.replaceState({ view: "torneos_admin" }, null, "/"); 
+                            history.pushState({ view: "torneos_admin" }, null, "/"); 
 				// history.pushState({ view: "torneos_admin" }, null, "/");
                         });
                     }
@@ -476,7 +477,7 @@
                         // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                         $("#contenido-dinamico").html(data);
                         $("#contenido-a-eliminar").hide();
-                        history.replaceState({ view: "torneos_admin" }, null, "/");
+                        history.pushState({ view: "torneos_admin" }, null, "/");
                     });
                 }
 		</script>
@@ -492,7 +493,7 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
-                    history.replaceState({ view: "check" }, null, "/")
+                    history.pushState({ view: "check" }, null, "/")
                 });
             }
         </script>
@@ -509,7 +510,7 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
-                    history.replaceState({ view: "torneos_inscripcion_list" }, null, "/")
+                    history.pushState({ view: "torneos_inscripcion_list" }, null, "/")
                 });
             }
         </script>
@@ -546,7 +547,7 @@
                     // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                     $("#contenido-dinamico").html(data);
                     $("#contenido-a-eliminar").hide();
-                    history.replaceState({ view: "google_code" }, null, "/")
+                    history.pushState({ view: "google_code" }, null, "/")
                 });
             }
         //localStorage.removeItem('username2');
@@ -596,7 +597,7 @@
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
-                history.replaceState({ view: "login" }, null, "/");
+                history.pushState({ view: "login" }, null, "/");
 
             });
         }
@@ -606,7 +607,7 @@
                 // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
                 $("#contenido-dinamico").html(data);
                 $("#contenido-a-eliminar").hide();
-                history.replaceState({ view: "signup" }, null, "/");
+                history.pushState({ view: "signup" }, null, "/");
             });
         }
         function mostrarSignup42() {
