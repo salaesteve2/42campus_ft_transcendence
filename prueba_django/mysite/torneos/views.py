@@ -33,10 +33,11 @@ def torneos_inscripcion_list(request):
     for torneo in torneos:
         idTorneo = torneo.id
         fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
-        for faseTorneo in fasesTorneo:
-            lpr1 = faseTorneo.lista_partidos_resultados
-            lpr2 = re.sub( "{[0-9]+}", "", lpr1)
-            faseTorneo.lista_partidos_resultados = lpr2
+        if (fasesTorneo):
+            for faseTorneo in fasesTorneo:
+                lpr1 = faseTorneo.lista_partidos_resultados
+                lpr2 = re.sub( "{[0-9]+}", "", lpr1)
+                faseTorneo.lista_partidos_resultados = lpr2
         
         jugadores_con_alias = []
         for jugador in torneo.jugadores.all():
@@ -377,7 +378,10 @@ def torneos_mantenimiento2():
 			torneo_nuevaFase(torneo)
 			if (torneo.terminado == True):
 				print("GANADOR:\n")
-				ganadores = FaseTorneo.objects.get(torneo=torneo, fase=torneo.fase_actual).ganadores.all()
+				try:
+					ganadores = FaseTorneo.objects.get(torneo=torneo, fase=torneo.fase_actual).ganadores.all()
+				except FaseTorneo.DoesNotExist:
+					return
 				for ganador in ganadores:
 					print(ganador.username)
 					print(torneo.fase_actual)
@@ -426,7 +430,10 @@ def cierre_fase(torneo): # probar ???
 	#print("fecha-hora de terminacion de partidos " + str(terminacion_partidos_fase))
 	if t < terminacion_partidos_fase:
 		return False
-	faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)		
+	try:
+		faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
+	except FaseTorneo.DoesNotExist:
+			return False	
 	lpr = faseTorneo.lista_partidos_resultados
 	faseTorneo.save()
 	#print("cierre de fase fin")
@@ -438,9 +445,12 @@ def torneo_nuevaFase(torneo):
 	if fase_actual == 0:
 		jugadores = torneo.jugadores
 	else:
-		faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
-		jugadores = faseTorneo.ganadores
-		lista_partidos_resultados = faseTorneo.lista_partidos_resultados
+		try:
+			faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
+			jugadores = faseTorneo.ganadores
+			lista_partidos_resultados = faseTorneo.lista_partidos_resultados
+		except FaseTorneo.DoesNotExist:
+			return
 		#print(lista_partidos_resultados)
 		if "{" in lista_partidos_resultados:
 			return # sin acabar la fase actual
@@ -519,16 +529,11 @@ def torneos_info_list(request):
 		idTorneo = torneo.id
 		fasesTorneo = FaseTorneo.objects.filter(torneo=idTorneo).order_by('fase')
 		for faseTorneo in fasesTorneo:
-			print("PROCESS:\n")
 			lpr1 = faseTorneo.lista_partidos_resultados
 			lpr1a = faseTorneo.lista_partidos_resultados
-			print(lpr1)
 			lpr2 = re.sub( "{[0-9]+}", "", lpr1)
 			faseTorneo.lista_partidos_resultados = lpr2
-			print(faseTorneo.lista_partidos_resultados)
 			faseTorneo.lista_partidos_resultados_alias = replace_with_alias(lpr1a)
-			print("PROCESS2:\n")
-			print(faseTorneo.lista_partidos_resultados_alias)
 		torneo2 = {}
 		torneo2['copy'] = torneo
 		torneo2['fases'] = fasesTorneo
@@ -596,10 +601,13 @@ def proximos_torneos(idJugador):
 				ok = True
 			comienzo = comienzo_partidos
 		else:
-			faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
-			lista_jugadores = strToListOfInt(faseTorneo.lista_jugadores)
-			if idJugador in lista_jugadores:
-				ok = True
+			try:
+				faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
+				lista_jugadores = strToListOfInt(faseTorneo.lista_jugadores)
+				if idJugador in lista_jugadores:
+					ok = True
+			except FaseTorneo.DoesNotExist:
+				continue
 			comienzo = comienzo_partidos + (torneo.fase_actual - 1) * mep
 		if t > comienzo or not ok:
 			continue
@@ -618,7 +626,10 @@ def torneo_jugar(idJugador):
 		fase_actual = torneo.fase_actual
 		if fase_actual == 0:
 			continue
-		faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
+		try:
+			faseTorneo = FaseTorneo.objects.get(torneo=torneo, fase=fase_actual)
+		except FaseTorneo.DoesNotExist:
+			return { 'ok': False }
 		lpr = faseTorneo.lista_partidos_resultados
 		lista_jugadores = strToListOfInt(faseTorneo.lista_jugadores)
 		pJugador1 = -1
