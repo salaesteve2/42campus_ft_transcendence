@@ -28,7 +28,12 @@ def home_section(request):
         jugar = res['ok']
         proximosTorneos = proximos_torneos(request.user.id)
         hayProximosTorneos = (len(proximosTorneos) > 0)
-    context = { 'jugar': jugar, 
+        context = { 'jugar': jugar, 
                     'proximosTorneos': proximosTorneos, 
                     'hayProximosTorneos': hayProximosTorneos }
-    return render(request, 'singlepage/index.html', context)
+        if res['ok']:
+            return render(request, 'singlepage/index.html', context)
+        else:
+            return JsonResponse({'caca': 'chupi'})
+    else:
+        return render(request, 'singlepage/index.html')
