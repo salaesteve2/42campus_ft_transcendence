@@ -170,9 +170,11 @@ function sendInfoToServer(key) {
    //sendingKey = false;
 }
 
+var mensaje2 = " ";
+
  function getCommandsFromServer() {
    var mensaje = idPartido.toString() + ";" + myLanguage; // <<
-   var obj1 = { "mensaje": mensaje }; 
+   var obj1 = { "mensaje": mensaje };
    $.ajax({
         url:   aj_status,    // url que recibe la peticion
         type:  'POST',         // metodo de envio
@@ -181,17 +183,23 @@ function sendInfoToServer(key) {
         dataType: 'json',
         success: function (response) { // una vez que la url recibe el request lo procesa y devuelve response
               mensaje = response['mensaje'].toString();
+              mensaje2 = response['mensaje'].toString();
               nOk++;
               if (vDebug) {
                   $("#getPostStatusOk").text("post status ok --" + nOk + " -- " + mensaje);
               }
               processCommands(mensaje); // procesa el mensaje con la lista de comandos
+
          },
          error:  function (error) { 
               nErr++;
               $("#getPostStatusErr").text("post status error -- " + nErr + " -- " + error.toString() );
           }
     });
+    if (mensaje2) {
+      return mensaje2;
+    }
+    return " ";
 }
 
 function processCommands(comandos) {    
