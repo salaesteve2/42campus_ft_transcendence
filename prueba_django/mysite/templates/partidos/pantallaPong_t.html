@@ -336,6 +336,7 @@ function loop2() {
       {
         window.onbeforeunload = guardarEstadoHome2();
         history.pushState({ view: "home" }, null, "/");
+        localStorage.setItem('number', 1);
       }
       window.location.href = '/';
     }
