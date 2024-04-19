@@ -34,8 +34,10 @@ class Torneo(models.Model):
 			return 1
 		p = 1
 		mep = datetime.timedelta(minutes=self.minutos_entre_partidos)
+		pep = datetime.timedelta(minutes=self.minutos_duracion_maxima_partidos)
+		pmep = mep + pep
 		while True:
-			if t < (self.comienzo_partidos + mep * p):
+			if t < (self.comienzo_partidos + pmep * p):
 				return p+1
 			p += 1
 	def esHoraDeEmpezar(self):
