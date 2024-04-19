@@ -334,7 +334,7 @@ function loop2() {
       var hrefValue = localStorage.getItem('number')
       if (hrefValue === '6')
       {
-        window.onbeforeunload = guardarEstadoHome();
+        window.onbeforeunload = guardarEstadoHome2();
         history.pushState({ view: "home" }, null, "/");
       }
       window.location.href = '/';
