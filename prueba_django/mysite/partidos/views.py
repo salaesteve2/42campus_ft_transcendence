@@ -411,8 +411,8 @@ def fMoverPelota(partido):
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
+			patata = 1
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
-		patata = 1
 		return
 	elif new_x < min_x:	# consigue punto jugador 2
 		#print("punto jugador 2 y pausa")
@@ -431,8 +431,8 @@ def fMoverPelota(partido):
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
+			patata = 1
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
-		patata = 1
 		return
 	partido.pelota_x = new_x # actualiza de momento
 	#print("probar si pelota toca raquetas")
