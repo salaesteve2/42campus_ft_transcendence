@@ -13,12 +13,14 @@ from django.db.models import Q, F
 from django.db import IntegrityError
 from .models import Partido_enJuego, Partido_historia
 from torneos.views import torneo_jugar, torneo_result
+from torneos.models import Torneo, FaseTorneo
 from general.views import activate_language
 from general.models import UserSettings
 from web3 import Web3
 from web3.contract import Contract
 from web3.auto import w3
 from eth_account import Account
+import re
 import os
 import datetime
 import math
@@ -563,19 +565,44 @@ def fun_rearranque(request, vTipo): # vTipo: "T" = torneo, "R" = rápida
 		result['ok'] = True
 	return result
 
+def numero_fases(idTorneo):
+	instancia = Torneo.objects.get(id=idTorneo)
+	x = instancia.jugadores.count()
+	fases = 0
+	while x > 1:
+		fases = fases + 1
+		x = x / 2
+	return fases
+
+def player_has_played(usern, idTorneo, fase):
+	instancia = Torneo.objects.get(id=idTorneo)
+	try:
+		faseTorneo = FaseTorneo.objects.get(torneo=instancia, fase=fase)
+	except FaseTorneo.DoesNotExist:
+		return False
+	lpr = faseTorneo.lista_partidos_resultados
+	name = usern + " {"
+	if name in lpr:
+		return False
+	# jugador1_marcador
+	return True
+
+
 def fun_arranque_torneo(request): #arranque torneo
 	if not request.user.is_authenticated:
 		return redirect('home')
-	# nuevo >>
-	result = fun_rearranque(request, "T")
-	if result['ok']:
-		return result['response']
+	
 	# << nuevo
 	currentUser = request.user
 	dd = torneo_jugar(currentUser.id)
 	# dd  = { 'ok': True, 'idTorneo': idTorneo, 'fase': fase, 'idJugador1': idJugador1, 'idJugador2': idJugador2 }
 	if not dd['ok'] :
 		return redirect('home_section')
+	IDE = currentUser.username
+	# nuevo >>
+	result = fun_rearranque(request, "T")
+	if result['ok']:
+		return result['response']
 	activate_language(request)
 	if currentUser.id == dd['idJugador1']:
 		numJugador = 1
@@ -603,6 +630,8 @@ def fun_arranque_torneo(request): #arranque torneo
 		partido.save()
 		idPartido = partido.id
 	else:
+		if (dd['fase'] > numero_fases(dd['idTorneo']) or player_has_played(IDE, dd['idTorneo'], dd['fase'])):
+			return JsonResponse({'caca': 'chupi'})
 		partido = Partido_enJuego() #crea nuevo partido (sin arrancar) y coloca el primer jugador
 		partido.setDateTimes()
 		partido.tipo = "T"
@@ -612,7 +641,7 @@ def fun_arranque_torneo(request): #arranque torneo
 		partido.limiteTiempoTorneo = dd['limiteTiempoTorneo']
 		partido.limiteTiempoConUnJugador = dd['limiteTiempoConUnJugador']
 		partido.jugador1 = User.objects.get(id=dd['idJugador1'])
-		partido.jugador2 = User.objects.get(id=dd['idJugador2'])		
+		partido.jugador2 = User.objects.get(id=dd['idJugador2'])
 		partido.save()
 		idPartido = partido.id
 	myLanguage = request.session.get('myLanguage')
@@ -626,7 +655,6 @@ def fun_arranque_torneo(request): #arranque torneo
 	}
 	# numJugador: 1 = izq, 2 = der
 	return render(request, 'partidos/pantallaPong_t.html', mycontext)
-	# enviar el html-javascript que atiende el partido cambiando: idPartido, numJugador, myLanguage, limiteHoraPartido
 	
 def fun_arranque_rapido(request): # arranque de partido rápido
 	if not request.user.is_authenticated:
