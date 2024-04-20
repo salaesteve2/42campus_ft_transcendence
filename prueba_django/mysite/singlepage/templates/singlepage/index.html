@@ -690,35 +690,42 @@ function renderView(view) {
         mostrarLogout2();
         break;
       case "check":
+        localStorage.setItem('number', '5');
         mostrarQR2();
         break;
       case "partido":
-	localStorage.setItem('number', '6');
+	    localStorage.setItem('number', '6');
         mostrarPartido2();
         break;
       case "partidos_mlist":
+        localStorage.setItem('number', '7');
         mostrarMLista2();
         break;
       case "partidos_list":
+        localStorage.setItem('number', '8');
         mostrarLista2();
         break;
       case "torneos_inscripcion_list":
+        localStorage.setItem('number', '9');
         mostrarInsLista2();
         break;
       case "torneos_info_list":
+        localStorage.setItem('number', '10');
         mostrarInfLista2();
         break;
       case "torneos_play":
-	localStorage.setItem('number', '11');
+	    localStorage.setItem('number', '11');
         mostrarPT2();
         break;
       case "torneos_admin":
+        localStorage.setItem('number', '12');
         mostrarTA2();
         break;
       case "google_code":
         mostrarcode2('{{username2}}');
         break;
       case "home":
+        localStorage.setItem('number', '1');
       // $("#contenido-dinamico").html();
         window.onbeforeunload = guardarEstadoHome();
         location.reload();
