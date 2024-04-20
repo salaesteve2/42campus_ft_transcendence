@@ -157,7 +157,6 @@ def torneos_edit(request):
 	if not request.user.is_staff: 
 		return
 	if request.method == 'POST':
-		#print("edición terminada -> hay que salvar (modificar o insertar nuevo)")
 		idTorneo = int(request.POST.get('idTorneo'))
 		form = TorneoForm(request.POST) # datos procedentes del form
 		if form.is_valid():
@@ -170,19 +169,16 @@ def torneos_edit(request):
 				torneo.comienzo_partidos = cd['comienzo_partidos']
 				torneo.minutos_duracion_maxima_partidos = cd['minutos_duracion_maxima_partidos']
 				torneo.minutos_entre_partidos = cd['minutos_entre_partidos']
-				#print("salva modificación")
 				torneo.save()
 			else: # new
 				torneo = Torneo() # new torneo
 				torneo.setDateTimes()
-				#print(torneo)
 				torneo.nombre = cd['nombre']
 				torneo.comienzo_inscripcion = cd['comienzo_inscripcion']
 				torneo.fin_inscripcion = cd['fin_inscripcion']
 				torneo.comienzo_partidos = cd['comienzo_partidos']
 				torneo.minutos_duracion_maxima_partidos = cd['minutos_duracion_maxima_partidos']
 				torneo.minutos_entre_partidos = cd['minutos_entre_partidos']
-				#print("salva nuevo")
 				torneo = Torneo(**cd)
 				torneo.save()
 				form_data_serializable = {
@@ -203,7 +199,6 @@ def torneos_edit(request):
 		# crear el html para editar (comienzo de edición)
 		idTorneo = request.GET.get('idTorneo')
 		if (idTorneo):  # modificar
-			#print("html para modificar")
 			idTorneo = int(idTorneo)
 			torneo = Torneo.objects.get(id=idTorneo)
 			dd = {
@@ -218,7 +213,6 @@ def torneos_edit(request):
 			form_html = render(request, 'torneos/torneos_edit_t.html', {'form': form, 'idTorneo': idTorneo}).content.decode()
 			return JsonResponse({'redirect_url': '/', 'form_html': form_html})
 		else: # nuevo
-			#print("html para añadir nuevo")
 			idTorneo = -1 
 			torneo = Torneo() # vacío
 			torneo.setDateTimes()
@@ -360,11 +354,9 @@ def torneos_mantenimiento2():
 	# lo mejor es repetir esto en todo lo que se haga dentro de torneos
 	# se intentó meter en home pero da errores 
 	# si se presenta un solo jugador el resultado lo resuelve el propio partido arranque_torneo
-	print("mantenimiento")
 	t = datetime.datetime.now()
 	torneos = Torneo.objects.filter(fin_inscripcion__lt=t, terminado=False)
 	for torneo in torneos:
-		#print("mantenimiento " + torneo.nombre)
 		if torneo.fase_actual != 0: # la fase 0 no se puede cerrar (no tiene partidos)
 			ok = cierre_fase(torneo)
 			if not ok:
@@ -372,12 +364,9 @@ def torneos_mantenimiento2():
 		# si logra cerrar la fase intenta poner una fase nueva
 		fase_actual = torneo.fase_actual
 		fase_calculada = torneo.getFase()
-		#print("fase calculada = " + str(fase_calculada))
 		if fase_calculada > fase_actual:
-			#print('mantenimiento de torneo ' + torneo.nombre)
 			torneo_nuevaFase(torneo)
 			if (torneo.terminado == True):
-				print("GANADOR:\n")
 				try:
 					ganadores = FaseTorneo.objects.get(torneo=torneo, fase=torneo.fase_actual).ganadores.all()
 				except FaseTorneo.DoesNotExist:
@@ -415,7 +404,6 @@ def replace_with_alias(input_string):
 
 # para cuando no se han presentado ninguno de los jugadores
 def cierre_fase(torneo): # probar ???
-	#print("cierre de fase comienzo")
 	fase_actual = torneo.fase_actual
 	if fase_actual == 0:
 		return False
@@ -427,7 +415,6 @@ def cierre_fase(torneo): # probar ???
 	comienzo_partidos_fase = comienzo_partidos + mep * (fase_actual - 1)
 	terminacion_partidos_fase = comienzo_partidos_fase + mdmp
 	t = datetime.datetime.now()
-	#print("fecha-hora de terminacion de partidos " + str(terminacion_partidos_fase))
 	if t < terminacion_partidos_fase:
 		return False
 	try:
@@ -436,12 +423,10 @@ def cierre_fase(torneo): # probar ???
 			return False	
 	lpr = faseTorneo.lista_partidos_resultados
 	faseTorneo.save()
-	#print("cierre de fase fin")
 	return True
 
 def torneo_nuevaFase(torneo):
 	fase_actual = torneo.fase_actual
-	#print("nueva fase")
 	if fase_actual == 0:
 		jugadores = torneo.jugadores
 	else:
@@ -451,7 +436,6 @@ def torneo_nuevaFase(torneo):
 			lista_partidos_resultados = faseTorneo.lista_partidos_resultados
 		except FaseTorneo.DoesNotExist:
 			return
-		#print(lista_partidos_resultados)
 		if "{" in lista_partidos_resultados:
 			return # sin acabar la fase actual
 	list = []
@@ -459,12 +443,10 @@ def torneo_nuevaFase(torneo):
 		tup2 = ( jugador.id, random.random() ) # orden aleatorio - tupla de 2 ( id, número_aleatorio)
 		list.append(tup2)
 	if len(list) == 0:
-		print('no quedan jugadores')
 		torneo.terminado = True
 		torneo.save()
 		return
 	if len(list) == 1:
-		print('hay un ganador')
 		torneo.terminado = True
 		torneo.save()
 		# # DESCOMENTAR PARA ESCRIBIR AL BLOCKCHAIN
@@ -475,7 +457,6 @@ def torneo_nuevaFase(torneo):
     	# agregar_o_actualizar_usuario(login, score)
 		return
 	fSortListOfTuple(list)
-	#print(list)
 	fase_actual += 1
 	faseTorneo = FaseTorneo() # nueva fase
 	faseTorneo.torneo = torneo
@@ -502,7 +483,6 @@ def torneo_nuevaFase(torneo):
 		lp += " )"
 		pasaUltimoJugador = True
 	lp += " ]"
-	#print(lp)
 	lp1 = lp
 	if pasaUltimoJugador:
 		s1 = "{" +  str(user.id) + "}"
@@ -614,7 +594,6 @@ def proximos_torneos(idJugador):
 		date_time = comienzo.strftime("%Y-%m-%d %H:%M:%S")
 		result.append(date_time) 
 	result.sort()
-	#print(result)
 	return result
 
 def torneo_jugar(idJugador):
@@ -675,7 +654,6 @@ def torneo_result(idTorneo, fase, idJugador1, idJugador2, puntos1, puntos2):
 		faseTorneo = FaseTorneo.objects.get(torneo=idTorneo, fase=fase)
 	except FaseTorneo.DoesNotExist:
 		return
-	#print("torneo_result")
 	lista_jugadores = strToListOfInt(faseTorneo.lista_jugadores)
 	n = 0
 	pj1 = -1
@@ -708,20 +686,16 @@ def torneo_result(idTorneo, fase, idJugador1, idJugador2, puntos1, puntos2):
 		m1 = " *"
 		m2 = ""
 		user1 = User.objects.get(id=idJugador1)
-		#print("ganador 1 "+ user1.username)
 		faseTorneo.ganadores.add(user1)
 	else:
 		m1 = ""
 		m2 = " *"
 		user2 = User.objects.get(id=idJugador2)
-		#print("ganador 2 "+ user2.username)
 		faseTorneo.ganadores.add(user2)
 	r1 = p1 + m1
 	r2 = p2 + m2
 	lpr2 = lpr.replace(s1, r1).replace(s2, r2)
 	
-	#print(lpr2)
 	faseTorneo.lista_partidos_resultados = lpr2
 	faseTorneo.save()
-	#print("torneo_result fin")
 	return
