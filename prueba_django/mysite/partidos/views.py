@@ -140,10 +140,6 @@ def agregar_o_actualizar_usuario(login, score, tournamentId):
 
 	private_key = os.environ.get("PRKEY")
 
-	print("ADRRKEY11:\n")
-	print(contract_address)
-	print(private_key)
-
 	cuenta = w3.eth.account.from_key(private_key).address
 
 	w3.eth.default_account = w3.eth.account.from_key(private_key).address
@@ -235,7 +231,6 @@ def fMoverJugador1(partido):
 	t1 = partido.jugador1_actualizacion
 	t2 = datetime.datetime.now()
 	s = diffTimeSec(t1, t2)
-	#print("j1 seconds="	+ str(s))
 	new_y = partido.jugador1_y + partido.jugador1_velocidad_y * s
 	new_y = fLimit(new_y, min_y, max_y)
 	partido.jugador1_y = new_y
@@ -247,17 +242,14 @@ def fKeyJugador1(partido, key):
 		partido.jugador1_velocidad_y = 0
 	elif key == "down_begin":
 		partido.jugador1_velocidad_y = jugador_velocidad
-		#print("j1 down vvv")
 	elif key == "up_begin":
 		partido.jugador1_velocidad_y = - jugador_velocidad
-		#print("j1 up ^^^")
 		
 # Para el jugador 2 del partido: actualiza la posición, cambia el update
 def fMoverJugador2(partido):
 	t1 = partido.jugador2_actualizacion
 	t2 = datetime.datetime.now()
 	s = diffTimeSec(t1, t2)
-	#print("j2 seconds="	+ str(s))
 	new_y = partido.jugador2_y + partido.jugador2_velocidad_y * s
 	new_y = fLimit(new_y, min_y, max_y)
 	partido.jugador2_y = new_y
@@ -269,10 +261,8 @@ def fKeyJugador2(partido, key):
 		partido.jugador2_velocidad_y = 0
 	elif key == "down_begin":
 		partido.jugador2_velocidad_y = jugador_velocidad
-		#print("j2 down vvv")
 	elif key == "up_begin":
 		partido.jugador2_velocidad_y = - jugador_velocidad
-		#print("j2 up ^^^")
 
 # mensaje Key = idPartido + ";" + numJugador + ";" + key
 # key: down_begin, down_end, up_begin, up_end
@@ -313,7 +303,6 @@ def fJugador2TocaPelota(partido):
 
 def fPartidoAnotarResultado(partido):
 	# partido = Partido_enJuego
-	print("anotar resultado partido")
 	if partido.tipo == "R": # partido rápido
 		partido2 = Partido_historia() # nuevo
 		partido2.partido_enJuego_id = partido.id 
@@ -371,31 +360,24 @@ def fMoverPelota(partido):
 			partido.pelota_x = 0
 			partido.pelota_y = 0
 			partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
-			#print("pausa acabada")
 			return
 	if partido.pausa:
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
 		return
-	#print("mover pelota")
 	t1 = partido.pelota_actualizacion
 	s = diffTimeSec(t1, t2)
 	# y
 	new_y = partido.pelota_y + partido.pelota_velocidad_y * s
-	#print("mover pelota y=" + str(new_y))
 	if new_y > max_y: # rebote en pared
-		#print("rebote pared max_y")
 		new_y = max_y - (new_y - max_y)
 		partido.pelota_velocidad_y = -partido.pelota_velocidad_y # cambio de dirección
 	elif new_y < min_y: #rebote en pared
-		#print("rebote pared min_y")
 		new_y = min_y + (min_y - new_y)
 		partido.pelota_velocidad_y = -partido.pelota_velocidad_y # cambio de dirección
 	partido.pelota_y = new_y
 	# x
 	new_x = partido.pelota_x + partido.pelota_velocidad_x * s	
-	#print("mover pelota x=" + str(new_x))	
 	if new_x > max_x:	# consigue punto jugador 1
-		#print("punto jugador 1 y pausa")
 		s1 = datetime.timedelta(seconds=1)
 		partido.pausa = True
 		partido.finDePausa = t2 + s1
@@ -415,7 +397,6 @@ def fMoverPelota(partido):
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
 		return
 	elif new_x < min_x:	# consigue punto jugador 2
-		#print("punto jugador 2 y pausa")
 		s1 = datetime.timedelta(seconds=1)
 		partido.pausa = True
 		partido.finDePausa = t2 + s1
@@ -435,24 +416,19 @@ def fMoverPelota(partido):
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
 		return
 	partido.pelota_x = new_x # actualiza de momento
-	#print("probar si pelota toca raquetas")
 	if fJugador1TocaPelota(partido):
-		print("toca jugador 1")
 		if new_x < jugador1_rebote_raqueta:
 			new_x = jugador1_rebote_raqueta + (jugador1_rebote_raqueta - new_x)
 		suma_vy = math.sin((partido.pelota_y - partido.jugador1_y) / dist_y) * pelota_velocidad_c * 0.8
-		print(suma_vy)
 		partido.pelota_velocidad_y += suma_vy
 		partido.pelota_velocidad_x = - partido.pelota_velocidad_x # rebote en raqueta
 		result = ajusta_velocidad_pelota(partido.pelota_velocidad_x, partido.pelota_velocidad_y)
 		partido.pelota_velocidad_x = result['x']
 		partido.pelota_velocidad_y = result['y']
 	if fJugador2TocaPelota(partido):
-		print("toca jugador 2")
 		if new_x > jugador2_rebote_raqueta:
 			new_x = jugador2_rebote_raqueta - (new_x - jugador2_rebote_raqueta)
 		suma_vy = math.sin((partido.pelota_y - partido.jugador2_y) / dist_y) * pelota_velocidad_c * 0.8
-		print(suma_vy)
 		partido.pelota_velocidad_y += suma_vy
 		partido.pelota_velocidad_x = - partido.pelota_velocidad_x # rebote en raqueta
 		result = ajusta_velocidad_pelota2(partido.pelota_velocidad_x, partido.pelota_velocidad_y)
@@ -466,13 +442,10 @@ def fEnviarStatus(mensajeStatus):
 	aMensajeStatus = mensajeStatus.split(";")
 	idPartido = int(aMensajeStatus[0])
 	myLanguage = aMensajeStatus[1]
-	#print(idPartido)
 	try:
 		partido = Partido_enJuego.objects.get(id=idPartido) 
 	except Partido_enJuego.DoesNotExist:
-		#print("error al buscar partido")
 		return
-	#print("mover")
 	fMoverPelota(partido) # cambia pelota_actualizacion
 	fMoverJugador1(partido)
 	fMoverJugador2(partido)
@@ -533,7 +506,6 @@ def fun_keys(request): # process aj_keys
 	if not request.user.is_authenticated:
 		return
 	mensajeKey = request.POST.get('mensaje') # mensajeKey = idPartido + ";" + numJugador + ";" + key # numJugador 1 o 2 (izq o der)
-	#print("mensajeKey: idPartido;numJugador;key=" + mensajeKey + "*")
 	fRecibirKey(mensajeKey)
 	return JsonResponse({}, status=200)
 
@@ -541,9 +513,7 @@ def fun_status(request): # process aj_status
 	if not request.user.is_authenticated:
 		return
 	mensajeStatus = request.POST.get('mensaje') # mensajeStatus = idPartido;myLanguage
-	#print("mensajeStatus: idPartido=" + mensajeStatus)
 	strStatus = fEnviarStatus(mensajeStatus)
-	print("back: " + strStatus) # !!!
 	return JsonResponse({"mensaje": strStatus}, status=200)
 	
 def fun_rearranque(request, vTipo): # vTipo: "T" = torneo, "R" = rápida
@@ -621,7 +591,6 @@ def fun_arranque_torneo(request): #arranque torneo
 	except Partido_enJuego.DoesNotExist:
 		partido_existe = False
 	if partido_existe: #
-		print("partido de torneo encontrado")
 		t2 = datetime.datetime.now()
 		s1 = datetime.timedelta(seconds=1)
 		partido.estadoTorneo = "A" # ambos jugadores dentro
@@ -634,7 +603,6 @@ def fun_arranque_torneo(request): #arranque torneo
 		partido.save()
 		idPartido = partido.id
 	else:
-		print("partido de torneo nuevo")
 		partido = Partido_enJuego() #crea nuevo partido (sin arrancar) y coloca el primer jugador
 		partido.setDateTimes()
 		partido.tipo = "T"
