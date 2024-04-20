@@ -31,19 +31,30 @@
 
         function recuperarYRestaurarEstado() {
             const estadoGuardado = JSON.parse(localStorage.getItem('miEstado'));
+            var url = localStorage.getItem("number");
             if (estadoGuardado) {
                 if (estadoGuardado.html) {
                     document.getElementById('contenido-dinamico').innerHTML = estadoGuardado.html; // Restaura el contenido HTML guardado
                     if (estadoGuardado.html.startsWith("<!-- mostrarPartido2() -->")) {
                         if (estadoGuardado.html.includes("limiteDuracionPartido = \"\";")) {
-                            mostrarPartido2();
+                            if (url == '6')
+                            {
+                                mostrarPartido2();
+                            }
+                            else {
+                                renderView('home');
+                            }
                         }
                         else {
-                            mostrarPT2();
+                            if (url == '11')
+                            {
+                                mostrarPT2();
+                            }
+                            else {
+                                renderView('home');
+                            }
                         }
                     }
-                // else
-                    // localStorage.removeItem('miEstado');
                 window.scrollTo(0, estadoGuardado.scrollPosition); // Restaura la posición de scroll
             }
         }
