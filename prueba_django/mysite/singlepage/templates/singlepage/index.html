@@ -673,7 +673,10 @@
             //     });
             // }
 
-
+</script>
+    {% if request.user.is_authenticated %}
+<script>
+	
 function renderView(view) {
   // Carga la plantilla index.html
   $.get(`{% url 'index' %}`, function(data) {
@@ -687,6 +690,7 @@ function renderView(view) {
         mostrarSignup2();
         break;*/
       case "logout":
+	localStorage.setItem('number', '4');
         mostrarLogout2();
         break;
       case "check":
@@ -760,8 +764,9 @@ window.addEventListener('popstate', (event) => {
     // No es necesario recargar la página después de la redirección, ya que el navegador manejará la nueva URL automáticamente
 //});
 
-    </script>
-	<script>
+</script>
+{% endif %}
+<script>
     var done = 0;
     $(document).ready(function() {
         $("#alias-form").on("submit", function(e) {
