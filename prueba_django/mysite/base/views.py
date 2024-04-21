@@ -125,20 +125,13 @@ def user_api(request):
 
     authorization_code = url_obj.query.split("=")[2] if "code" in url_obj.query else None
     # Parámetros necesarios para la solicitud POST
-    print(authorization_code)
     hostname = url_obj.query.split("=")[1] if "hostname" in url_obj.query else None
-    print(hostname)
     partes = hostname.split('&')
     hostname = partes[0]
-    print(hostname)
-
     client_id = os.getenv('ID')
     client_secret = os.getenv('SECRET')
     code =  authorization_code
     redirect_uri = 'https://' + str(hostname) + '/api2'  # Tu URL de redirección
-    print("REDIR:\\n")
-    print(redirect_uri)
-
     if code:
         # Realiza la solicitud POST a la URL de token de acceso
         data = {
@@ -149,7 +142,6 @@ def user_api(request):
             'redirect_uri': redirect_uri
         }
         response = requests.post('https://api.intra.42.fr/oauth/token', data=data)
-        print(response.status_code )
 
         if response.status_code == 200:
 
@@ -251,9 +243,7 @@ def doble_factor(request):
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
             user_id = payload['user_id']
             user = User.objects.get(id=user_id)
-            print(user)
         except jwt.ExpiredSignatureError:
-            print('Token expirado')
             return JsonResponse({'error': 'Token expirado'},status=400)
     estado_2fa = UserSettings.objects.get(user=request.user).two_factor_auth_enabled
     if not estado_2fa:
@@ -279,7 +269,6 @@ def doble_factor(request):
     else:
         user = request.user
         qr_path = 'static/{}_qr.png'.format(user.username)
-        print(request.method)
         if request.method == 'GET':
             return render(request, 'base/google_t.html', {'qr_path': qr_path, 'username': user.username})
         return render(request, 'singlepage/index.html', {'qr_path': qr_path, 'username': user.username})

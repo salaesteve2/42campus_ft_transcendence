@@ -113,6 +113,24 @@
 });
         });
     });
+    // $(document).on("click", ".edit-torneo-btn2", function() {
+    //         var torneoId = $(this).data("torneo-id");
+    //         var user = $(this).data("user-id");
+    //         if (done == 0)
+    //             editT2(torneoId, user);
+    //             done = 1;
+    //     });
+
+    //     function editT2(torneoId, user) {
+    //         $.ajax({
+    //             url: "{% url 'torneos_inscripcion' %}?idTorneo=" + torneoId + '&idUser=' + user,
+    //             method: "GET",
+    //             success: function(data) {
+    //                 $("#contenido-dinamico").html(data.form_html);
+    //                 $("#contenido-a-eliminar4").hide();
+    //             }
+    //         });
+    //     }
 </script>
 <a href="{% url 'home' %}" class="btn btn-primary links" onclick="pushStateFunction()">{% trans "Home" %}</a>
 

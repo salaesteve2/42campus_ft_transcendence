@@ -49,7 +49,7 @@
                     // Manejar la respuesta exitosa
                     if (response.error) {
                         // Si hay un error, muestra un mensaje de error en algún lugar del HTML
-                        $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
+                        $('#mensajeError').text("{% trans 'An error occurred while processing the form.  ' %}");
                     } else if (response.redirect_url) {
                         // Si hay una URL de redirección, redirige a esa URL
                         localStorage.setItem('form5', response.form5_data);
@@ -61,7 +61,7 @@
                 })
                 .fail(function(xhr, errmsg, err) {
                     // Manejar el fallo de la solicitud
-                    console.error('La solicitud falló con un error ' + xhr.status + ': ' + xhr.responseText);
+                    console.error("{% trans 'The request failed with an error ' %}" + xhr.status + ': ' + xhr.responseText);
                 });
         });
     });

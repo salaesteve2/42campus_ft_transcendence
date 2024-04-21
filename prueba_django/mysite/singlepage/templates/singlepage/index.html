@@ -106,7 +106,6 @@
                 event.preventDefault(); // Previene la acción por defecto del enlace
                 var hrefValue = $(this).attr('href');
                 var number = hrefValue.substring(1); // Elimina el signo de numeral para obtener el número
-                console.log('Número extraído:', number);
                 localStorage.setItem('number', number);
                 // Aquí puedes llamar a tu función y pasar el número si es necesario // Ejemplo de función siendo llamada con el número
             });
@@ -151,7 +150,6 @@
                 url3 = "arranque_torneo";
             else if (url2 == '12')
                 url3 = "torneos_admin";
-            console.log('URL de la vista:', url3);
             $.ajax({
                 url: url3,  // Asegúrate de que esta URL es correcta y que la vista devuelve contenido basado en el idioma actual
                 type: 'GET',
@@ -159,7 +157,7 @@
                     $('#contenido-dinamico').html(response);
                 },
                 error: function() {
-                    console.error('Error al cargar el contenido actualizado');
+                    console.error("{% trans 'Error loading updated content ' %}");
                 }
             });
         }
@@ -893,7 +891,7 @@ window.addEventListener('popstate', (event) => {
                     // Manejar la respuesta exitosa
                     if (response.error) {
                         // Si hay un error, muestra un mensaje de error en algún lugar del HTML
-                        $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
+                        $('#mensajeError').text("{% trans 'An error occurred while processing the form.  ' %}");
                     } else if (response.redirect_url) {
                         // Si hay una URL de redirección, redirige a esa URL
                         localStorage.setItem('form5', response.form5_data);
@@ -905,7 +903,7 @@ window.addEventListener('popstate', (event) => {
                 })
                 .fail(function(xhr, errmsg, err) {
                     // Manejar el fallo de la solicitud
-                    console.error('La solicitud falló con un error ' + xhr.status + ': ' + xhr.responseText);
+                    console.error("{% trans 'The request failed with an error ' %}" + xhr.status + ': ' + xhr.responseText);
                 });
         });
     });

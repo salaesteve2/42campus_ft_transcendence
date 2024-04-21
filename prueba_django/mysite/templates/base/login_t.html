@@ -52,7 +52,7 @@
                 // Manejar la respuesta exitosa
                 if (response.error) {
                     // Si hay un error, muestra un mensaje de error en algún lugar del HTML
-                    $('#mensajeError').text("Ha ocurrido un error al procesar el formulario.");
+                    $('#mensajeError').text("{% trans 'An error occurred while processing the form.  ' %}");
                 } else if (response.redirect_url) {
                     localStorage.setItem('username2', response.username2);
                     // Si hay una URL de redirección, redirige a esa URL
@@ -65,7 +65,7 @@
             })
             .fail(function(xhr, errmsg, err) {
                 // Manejar el fallo de la solicitud // Obtener el mensaje de error relevante
-                $('#mensajeError').text("Error en el login o contraseña incorrecta"); // Mostrar el mensaje de error al usuario
+                $('#mensajeError').text("{% trans 'Log in error or wrong password ' %}"); // Mostrar el mensaje de error al usuario
             });
     });
 });

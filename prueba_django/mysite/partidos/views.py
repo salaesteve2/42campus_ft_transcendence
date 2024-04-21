@@ -166,17 +166,17 @@ def agregar_o_actualizar_usuario(login, score, tournamentId):
 def BlockPartido(partido):
 	if partido.terminado == False:
 		if partido.jugador1_marcador >= partido.jugador2_marcador:
-			#agregar_o_actualizar_usuario(partido.jugador2.username, partido.nFaseTorneo - 1, partido.idTorneo)
 			print("JUGADOR fuera!\n\n")
 			print(partido.jugador2.username)
 			print(partido.nFaseTorneo)
 			print(partido.idTorneo)
+			# # agregar_o_actualizar_usuario(partido.jugador2.username, partido.nFaseTorneo - 1, partido.idTorneo)
 		else:
-			#agregar_o_actualizar_usuario(partido.jugador1.username, partido.nFaseTorneo - 1, partido.idTorneo)
 			print("JUGADOR fuera!\n\n")
 			print(partido.jugador1.username)
 			print(partido.nFaseTorneo)
 			print(partido.idTorneo)
+			# # agregar_o_actualizar_usuario(partido.jugador1.username, partido.nFaseTorneo - 1, partido.idTorneo)
 def ajusta_velocidad_pelota(vx, vy):
 	v_m = math.sqrt(vx*vx + vy*vy)
 	if v_m != pelota_velocidad_m:
