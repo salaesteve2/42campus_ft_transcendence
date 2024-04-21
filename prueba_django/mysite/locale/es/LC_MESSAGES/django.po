@@ -186,7 +186,6 @@ msgid "Welcome!"
 msgstr "¡Bienvenido!"
 
 #: templates/base/login_t.html:25 templates/base/signup_t.html:18
-#, fuzzy
 #| msgid "User name"
 msgid "Username"
 msgstr "Nombre de usuario"
@@ -200,13 +199,11 @@ msgid "Log in error or wrong password "
 msgstr "Error de autentificación o contraseña incorrecta "
 
 #: templates/base/login_t.html:81
-#, fuzzy
 #| msgid "I haven't signedup yet"
 msgid "I haven't signed up yet"
 msgstr "Todavía no estoy registrado"
 
 #: templates/base/signup_t.html:26
-#, fuzzy
 #| msgid "Password"
 msgid "Confirm Password"
 msgstr "Contraseña"
@@ -216,7 +213,6 @@ msgid "Register"
 msgstr "Registrarse"
 
 #: templates/base/signup_t.html:47
-#, fuzzy
 #| msgid "I have already signedup"
 msgid "I have already signed up"
 msgstr "Ya me he registrado"
