@@ -375,7 +375,8 @@ def torneos_mantenimiento2():
 					print(ganador.username)
 					print(torneo.fase_actual)
 					print(torneo.id)
-					#agregar_o_actualizar_usuario(ganador, torneo.fase_actual, torneo.id)
+					# SILENCIAR ARRIBA Y DESILENCIAR AQUI 
+					# agregar_o_actualizar_usuario(ganador, torneo.fase_actual, torneo.id)
 
 def get_alias(username):
 	user_s, created = User.objects.get_or_create(username=username)
