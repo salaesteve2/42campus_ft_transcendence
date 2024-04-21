@@ -410,10 +410,12 @@ def cierre_fase(torneo): # probar ???
 		return False
 	comienzo_partidos = torneo.comienzo_partidos
 	minutos_duracion_maxima_partidos = torneo.minutos_duracion_maxima_partidos + 1 # se suma 1 min como margen
-	mdmp = datetime.timedelta(minutes=minutos_duracion_maxima_partidos) 
+	mdmp = datetime.timedelta(minutes=minutos_duracion_maxima_partidos)
+	minutos_duracion_maxima_partidos2 = torneo.minutos_duracion_maxima_partidos
+	mdmp2 = datetime.timedelta(minutes=minutos_duracion_maxima_partidos2)
 	minutos_entre_partidos = torneo.minutos_entre_partidos
 	mep = datetime.timedelta(minutes=minutos_entre_partidos)
-	comienzo_partidos_fase = comienzo_partidos + mep * (fase_actual - 1)
+	comienzo_partidos_fase = comienzo_partidos + (mep + mdmp2) * (fase_actual - 1)
 	terminacion_partidos_fase = comienzo_partidos_fase + mdmp
 	t = datetime.datetime.now()
 	if t < terminacion_partidos_fase:
@@ -573,6 +575,7 @@ def proximos_torneos(idJugador):
 	t = datetime.datetime.now()
 	for torneo in torneos:
 		mep = datetime.timedelta(minutes=torneo.minutos_entre_partidos)
+		pep = datetime.timedelta(minutes=torneo.minutos_duracion_maxima_partidos)
 		comienzo_partidos = torneo.comienzo_partidos
 		fase_actual = torneo.fase_actual		
 		ok = False
@@ -589,7 +592,7 @@ def proximos_torneos(idJugador):
 					ok = True
 			except FaseTorneo.DoesNotExist:
 				continue
-			comienzo = comienzo_partidos + (torneo.fase_actual - 1) * mep
+			comienzo = comienzo_partidos + (torneo.fase_actual - 1) * (mep + pep)
 		if t > comienzo or not ok:
 			continue
 		date_time = comienzo.strftime("%Y-%m-%d %H:%M:%S")
