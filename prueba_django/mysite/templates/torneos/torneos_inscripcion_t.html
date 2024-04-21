@@ -97,40 +97,22 @@
             }
             // Show success message
             if (data.new_alias == "") {
-                alert("Alias eliminated ");
+                alert("{% trans 'Alias eliminated ' %}");
             }
             else {
-                alert("Updated alias: " + data.new_alias);
+                alert("{% trans 'Updated alias: ' %}" + data.new_alias);
             }  
         } else {
             // Show error message
-            alert("Error updating alias!");
+            alert("{% trans 'Alias not valid ' %}");
         }
     },
     error: function(xhr, status, error) {
-        alert("Error updating alias!");
+        alert("{% trans 'Error updating alias ' %}");
     }
 });
         });
     });
-    // $(document).on("click", ".edit-torneo-btn2", function() {
-    //         var torneoId = $(this).data("torneo-id");
-    //         var user = $(this).data("user-id");
-    //         if (done == 0)
-    //             editT2(torneoId, user);
-    //             done = 1;
-    //     });
-
-    //     function editT2(torneoId, user) {
-    //         $.ajax({
-    //             url: "{% url 'torneos_inscripcion' %}?idTorneo=" + torneoId + '&idUser=' + user,
-    //             method: "GET",
-    //             success: function(data) {
-    //                 $("#contenido-dinamico").html(data.form_html);
-    //                 $("#contenido-a-eliminar4").hide();
-    //             }
-    //         });
-    //     }
 </script>
 <a href="{% url 'home' %}" class="btn btn-primary links" onclick="pushStateFunction()">{% trans "Home" %}</a>
 
