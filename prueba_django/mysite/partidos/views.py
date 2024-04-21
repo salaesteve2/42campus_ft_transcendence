@@ -164,7 +164,7 @@ def agregar_o_actualizar_usuario(login, score, tournamentId):
 	#w3.eth.waitForTransactionReceipt(tx_hash)
 
 def BlockPartido(partido):
-	if partido.terminado == False:
+	if partido.terminado == False and partido.tipo == "T":
 		if partido.jugador1_marcador >= partido.jugador2_marcador:
 			print("JUGADOR fuera!\n\n")
 			print(partido.jugador2.username)
