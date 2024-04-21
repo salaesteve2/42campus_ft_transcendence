@@ -611,7 +611,7 @@ def fun_arranque_torneo(request): #arranque torneo
 		numJugador = 2
 		strOtroJugador = "1"
 	partido_existe = True
-		doble = 0
+	doble = 0
 	try:
 		partido = Partido_enJuego.objects.get(tipo="T", idTorneo=dd['idTorneo'], nFaseTorneo=dd['fase'], estadoTorneo=strOtroJugador, jugador1=currentUser)
 		# busca el primer partido enJuego que cumple las condiciones
