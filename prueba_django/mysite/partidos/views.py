@@ -611,11 +611,20 @@ def fun_arranque_torneo(request): #arranque torneo
 		numJugador = 2
 		strOtroJugador = "1"
 	partido_existe = True
+		doble = 0
 	try:
-		partido = Partido_enJuego.objects.get(tipo="T", idTorneo=dd['idTorneo'], nFaseTorneo=dd['fase'], estadoTorneo=strOtroJugador)
+		partido = Partido_enJuego.objects.get(tipo="T", idTorneo=dd['idTorneo'], nFaseTorneo=dd['fase'], estadoTorneo=strOtroJugador, jugador1=currentUser)
 		# busca el primer partido enJuego que cumple las condiciones
 		# los estados en caso de torneo son: "0": sin jugadores, "1": jugador 1 dentro, "2": jugador 2 dentro, "A": ambos jugadores dentro
 	except Partido_enJuego.DoesNotExist:
+		doble = doble + 1
+	try:
+		partido = Partido_enJuego.objects.get(tipo="T", idTorneo=dd['idTorneo'], nFaseTorneo=dd['fase'], estadoTorneo=strOtroJugador, jugador2=currentUser)
+		# busca el primer partido enJuego que cumple las condiciones
+		# los estados en caso de torneo son: "0": sin jugadores, "1": jugador 1 dentro, "2": jugador 2 dentro, "A": ambos jugadores dentro
+	except Partido_enJuego.DoesNotExist:
+		doble = doble + 1
+	if doble >= 2:
 		partido_existe = False
 	if partido_existe: #
 		t2 = datetime.datetime.now()
