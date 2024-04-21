@@ -779,7 +779,7 @@ window.addEventListener('popstate', (event) => {
     type: "POST",
     url: url,
     data: formData,
-    success: function(data) {
+ success: function(data) {
         if (data.success) {
             // Update alias on the page (if new_alias is returned)
             if (data.new_alias) {
@@ -787,18 +787,18 @@ window.addEventListener('popstate', (event) => {
             }
             // Show success message
             if (data.new_alias == "") {
-                alert("Alias eliminated ");
+                alert("{% trans 'Alias eliminated ' %}");
             }
             else {
-                alert("Updated alias: " + data.new_alias);
-            } 
+                alert("{% trans 'Updated alias: ' %}" + data.new_alias);
+            }  
         } else {
             // Show error message
-            alert("Error updating alias!");
+            alert("{% trans 'Alias not valid ' %}");
         }
     },
     error: function(xhr, status, error) {
-        alert("Error updating alias!");
+        alert("{% trans 'Error updating alias ' %}");
     }
 });
         });
