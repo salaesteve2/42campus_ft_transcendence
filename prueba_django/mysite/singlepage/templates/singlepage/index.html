@@ -183,7 +183,7 @@
         {%endif%}
         {% if error %}
             <script>
-                window.alert("Datos incorrectos");
+                window.alert("{% trans 'Wrong data ' %}");
                 setTimeout(showMessage, 2000);
                 window.location.href = "{% url 'index' %}";
             </script>
@@ -314,7 +314,7 @@
                             // Maneja los errores, como el token expirado
                             if (xhr.status === 400) {
                                 // Token expirado o cualquier otro error de cliente
-                                alert("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
+                                alert("{% trans 'Sesion expired. Please log in again ' %}");
                                 // Redirigir al usuario a la página de inicio de sesión o manejar como se desee
                             }
                         });
@@ -779,7 +779,7 @@ window.addEventListener('popstate', (event) => {
     type: "POST",
     url: url,
     data: formData,
- success: function(data) {
+    success: function(data) {
         if (data.success) {
             // Update alias on the page (if new_alias is returned)
             if (data.new_alias) {
