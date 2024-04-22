@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='usersettings',
             name='alias',
-            field=models.CharField(max_length=50, default='', blank=True),  # Define el valor predeterminado como una cadena vacía
+            field=models.CharField(max_length=50, default=''),  # Define el valor predeterminado como una cadena vacía
         ),
     ]
