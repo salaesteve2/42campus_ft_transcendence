@@ -277,7 +277,11 @@ def fRecibirKey(mensajeKey):
 		partido = Partido_enJuego.objects.get(id=idPartido)
 	except Partido_enJuego.DoesNotExist:
 		return
-	if numJugador == 1:
+	if key == "stop":
+		partido.desconectado = True
+		partido.terminado = True
+		partido.save()
+	elif numJugador == 1:
 		fMoverJugador1(partido)
 		fKeyJugador1(partido, key)
 	elif numJugador == 2:
