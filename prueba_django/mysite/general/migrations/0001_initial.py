@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('two_factor_auth_enabled', models.BooleanField(default=False)),
                 ('language', models.CharField(max_length=10, choices=[('no', 'No'), ('en', 'English'), ('es', 'Spanish'), ('fr', 'French')])),
-                ('alias', models.CharField(max_length=50, blank=True)),
+                ('alias', models.CharField(max_length=50, default="")),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
