@@ -349,6 +349,7 @@ function loop2() {
         localStorage.setItem('number', 1);
       }
       window.location.href = '/';
+      sendInfoToServer("stop");
     }
     setTimeout(loop2, 40);
 }
