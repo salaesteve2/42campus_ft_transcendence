@@ -34,8 +34,10 @@ class Torneo(models.Model):
 			return 1
 		p = 1
 		mep = datetime.timedelta(minutes=self.minutos_entre_partidos)
+		pep = datetime.timedelta(minutes=self.minutos_duracion_maxima_partidos)
+		pmep = mep + pep
 		while True:
-			if t < (self.comienzo_partidos + mep * p):
+			if t < (self.comienzo_partidos + pmep * p):
 				return p+1
 			p += 1
 	def esHoraDeEmpezar(self):
@@ -46,7 +48,8 @@ class Torneo(models.Model):
 		t = datetime.datetime.now()
 		margen = datetime.timedelta(seconds=30)
 		mep = datetime.timedelta(minutes=self.minutos_entre_partidos)
-		mepPn = (self.fase_actual - 1) * mep
+		mdmp = datetime.timedelta(minutes=self.minutos_duracion_maxima_partidos)
+		mepPn = (self.fase_actual - 1) * (mep + mdmp)
 		tOk = self.comienzo_partidos + mepPn
 		if tOk - margen < t and t < tOk + margen:
 			return True
@@ -59,6 +62,7 @@ class FaseTorneo(models.Model):
 	lista_jugadores = models.TextField(default="")
 	lista_partidos = models.TextField(default="")
 	lista_partidos_resultados = models.TextField(default="")
+	lista_partidos_resultados_alias = models.TextField(default="")
 	ganadores = models.ManyToManyField(User, blank=True, default=None, related_name = 'ft_users_ganadores')
 	class Meta:
 		unique_together = (("torneo", "fase"), )

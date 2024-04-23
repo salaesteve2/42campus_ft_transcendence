@@ -12,3 +12,8 @@ table, th, td {
   padding: 4px;
   margin: 2px;
 }
+
+.thead-primary {
+  background-color: #007bff; /* Azul de Bootstrap para btn-primary */
+  color: white; /* Texto blanco para contraste */
+}

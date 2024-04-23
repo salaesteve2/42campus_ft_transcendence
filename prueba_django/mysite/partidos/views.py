@@ -13,15 +13,25 @@ from django.db.models import Q, F
 from django.db import IntegrityError
 from .models import Partido_enJuego, Partido_historia
 from torneos.views import torneo_jugar, torneo_result
+from torneos.models import Torneo, FaseTorneo
 from general.views import activate_language
+from general.models import UserSettings
+from web3 import Web3
+from web3.contract import Contract
+from web3.auto import w3
+from eth_account import Account
+import re
+import os
 import datetime
 import math
 
 # constantes globales
 
+patata = 1
+
 campo = { "ancho": 800, "alto": 400 }
 sep = 15 # separacion del jugador con el fondo de la pista
-raqueta = { "ancho": 10, "alto": 80 }
+raqueta = { "ancho": 10, "alto": 90 }
 pelota = { "ancho": 15, "alto": 15 }
 
 jugador1_x = 0 - campo["ancho"] / 2 + sep # 0 = centro
@@ -38,12 +48,135 @@ dist_y = (raqueta["alto"] + pelota["alto"]) / 2 # distancia y para choque de raq
 jugador1_rebote_raqueta = jugador1_x + raqueta["ancho"] / 2
 jugador2_rebote_raqueta = jugador2_x - raqueta["ancho"] / 2
 
-max_puntuacion = 20
+max_puntuacion = 3
 
-jugador_velocidad = 120
-pelota_velocidad_c = 90
+jugador_velocidad = 140
+pelota_velocidad_c = 300
 pelota_velocidad_m = pelota_velocidad_c * math.sqrt(2) 
 
+def agregar_o_actualizar_usuario(login, score, tournamentId):
+
+	contract_abi = [
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "userScore",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tournamentId",
+				"type": "uint32"
+			}
+		],
+		"name": "doUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "Users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "login",
+				"type": "string"
+			},
+			{
+				"internalType": "uint8",
+				"name": "score",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint32",
+				"name": "tournamentId",
+				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+
+	contract_address = os.environ.get("COADDR")
+	
+	w3 = Web3(Web3.HTTPProvider('https://rpc2.sepolia.org'))
+
+	private_key = os.environ.get("PRKEY")
+
+	cuenta = w3.eth.account.from_key(private_key).address
+
+	w3.eth.default_account = w3.eth.account.from_key(private_key).address
+
+	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+
+	nonce = w3.eth.get_transaction_count(w3.eth.default_account)
+
+	txn_dict = contract.functions.doUser(login, score, tournamentId).build_transaction({
+	 	'from': cuenta,
+        'value': 0,
+        'gas': 1000000,
+        'gasPrice': w3.to_wei('50', 'gwei'),  # Reemplaza '50' con el precio de gas deseado en gwei
+        'nonce': nonce,
+    })
+
+	signed_txn = w3.eth.account.sign_transaction(txn_dict, private_key=private_key)
+	tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+	# Esta ultima no es necesaria, pero la consideran una buena práctica (pero no la he probado aun)
+	#w3.eth.waitForTransactionReceipt(tx_hash)
+
+def BlockPartido(partido):
+	if partido.terminado == False and partido.tipo == "T":
+		if partido.jugador1_marcador >= partido.jugador2_marcador:
+			# print("JUGADOR fuera!\n\n")
+			# print(partido.jugador2.username)
+			# print(partido.nFaseTorneo)
+			# print(partido.idTorneo)
+			agregar_o_actualizar_usuario(partido.jugador2.username, partido.nFaseTorneo - 1, partido.idTorneo)
+		else:
+			# print("JUGADOR fuera!\n\n")
+			# print(partido.jugador1.username)
+			# print(partido.nFaseTorneo)
+			# print(partido.idTorneo)
+			agregar_o_actualizar_usuario(partido.jugador1.username, partido.nFaseTorneo - 1, partido.idTorneo)
 def ajusta_velocidad_pelota(vx, vy):
 	v_m = math.sqrt(vx*vx + vy*vy)
 	if v_m != pelota_velocidad_m:
@@ -55,6 +188,23 @@ def ajusta_velocidad_pelota(vx, vy):
 		result = { 'x': vx2, 'y': vy2, }
 	else:
 		result = { 'x': vx, 'y': vy, }
+	if result['x'] < 0:
+		result['x'] = result['x'] * -1
+	return result
+
+def ajusta_velocidad_pelota2(vx, vy):
+	v_m = math.sqrt(vx*vx + vy*vy)
+	if v_m != pelota_velocidad_m:
+		mul = pelota_velocidad_m / v_m
+		vx2 = vx * mul
+		vy2 = vy * mul
+		if abs(vx2) < (pelota_velocidad_c / 2):
+			vx2 = fSigno(vx2) * pelota_velocidad_c / 2
+		result = { 'x': vx2, 'y': vy2, }
+	else:
+		result = { 'x': vx, 'y': vy, }
+	if result['x'] > 0:
+		result['x'] = result['x'] * -1
 	return result
 
 def fSigno(d):
@@ -83,7 +233,6 @@ def fMoverJugador1(partido):
 	t1 = partido.jugador1_actualizacion
 	t2 = datetime.datetime.now()
 	s = diffTimeSec(t1, t2)
-	#print("j1 seconds="	+ str(s))
 	new_y = partido.jugador1_y + partido.jugador1_velocidad_y * s
 	new_y = fLimit(new_y, min_y, max_y)
 	partido.jugador1_y = new_y
@@ -95,17 +244,14 @@ def fKeyJugador1(partido, key):
 		partido.jugador1_velocidad_y = 0
 	elif key == "down_begin":
 		partido.jugador1_velocidad_y = jugador_velocidad
-		#print("j1 down vvv")
 	elif key == "up_begin":
 		partido.jugador1_velocidad_y = - jugador_velocidad
-		#print("j1 up ^^^")
 		
 # Para el jugador 2 del partido: actualiza la posición, cambia el update
 def fMoverJugador2(partido):
 	t1 = partido.jugador2_actualizacion
 	t2 = datetime.datetime.now()
 	s = diffTimeSec(t1, t2)
-	#print("j2 seconds="	+ str(s))
 	new_y = partido.jugador2_y + partido.jugador2_velocidad_y * s
 	new_y = fLimit(new_y, min_y, max_y)
 	partido.jugador2_y = new_y
@@ -117,10 +263,8 @@ def fKeyJugador2(partido, key):
 		partido.jugador2_velocidad_y = 0
 	elif key == "down_begin":
 		partido.jugador2_velocidad_y = jugador_velocidad
-		#print("j2 down vvv")
 	elif key == "up_begin":
 		partido.jugador2_velocidad_y = - jugador_velocidad
-		#print("j2 up ^^^")
 
 # mensaje Key = idPartido + ";" + numJugador + ";" + key
 # key: down_begin, down_end, up_begin, up_end
@@ -133,7 +277,11 @@ def fRecibirKey(mensajeKey):
 		partido = Partido_enJuego.objects.get(id=idPartido)
 	except Partido_enJuego.DoesNotExist:
 		return
-	if numJugador == 1:
+	if key == "stop":
+		partido.desconectado = True
+		partido.terminado = True
+		partido.save()
+	elif numJugador == 1:
 		fMoverJugador1(partido)
 		fKeyJugador1(partido, key)
 	elif numJugador == 2:
@@ -161,7 +309,6 @@ def fJugador2TocaPelota(partido):
 
 def fPartidoAnotarResultado(partido):
 	# partido = Partido_enJuego
-	print("anotar resultado partido")
 	if partido.tipo == "R": # partido rápido
 		partido2 = Partido_historia() # nuevo
 		partido2.partido_enJuego_id = partido.id 
@@ -189,12 +336,20 @@ def fPartidoAnotarResultado(partido):
 	
 def fMoverPelota(partido):
 	t2 = datetime.datetime.now()
+	global patata
 	if partido.tipo == "T" and partido.limiteTiempoTorneo < t2:
+		if patata != 0:
+			patata = 0
+			BlockPartido(partido)
 		partido.terminado = True
 		partido.fin = t2
 		fPartidoAnotarResultado(partido)
+		patata = 1
 		return
-	if partido.tipo == "T" and (partido.estadoTorneo == "1" or partido.estadoTorneo == "2") and partido.limiteTiempoConUnJugador < t2: 
+	if partido.tipo == "T" and (partido.estadoTorneo == "1" or partido.estadoTorneo == "2") and partido.limiteTiempoConUnJugador < t2:
+		if patata != 0:
+			patata = 0
+			BlockPartido(partido)
 		partido.terminado = True
 		partido.fin = t2
 		if partido.estadoTorneo == "1":
@@ -202,6 +357,7 @@ def fMoverPelota(partido):
 		else:
 			partido.jugador1_marcador = -1 # -1 indica "no presentado"
 		fPartidoAnotarResultado(partido)
+		patata = 1
 		return		
 	if partido.pausa: # estaba en pausa y la pausa ha acabado
 		s = diffTimeSec(partido.finDePausa, t2)
@@ -210,31 +366,24 @@ def fMoverPelota(partido):
 			partido.pelota_x = 0
 			partido.pelota_y = 0
 			partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
-			#print("pausa acabada")
 			return
 	if partido.pausa:
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
 		return
-	#print("mover pelota")
 	t1 = partido.pelota_actualizacion
 	s = diffTimeSec(t1, t2)
 	# y
 	new_y = partido.pelota_y + partido.pelota_velocidad_y * s
-	#print("mover pelota y=" + str(new_y))
 	if new_y > max_y: # rebote en pared
-		#print("rebote pared max_y")
 		new_y = max_y - (new_y - max_y)
 		partido.pelota_velocidad_y = -partido.pelota_velocidad_y # cambio de dirección
 	elif new_y < min_y: #rebote en pared
-		#print("rebote pared min_y")
 		new_y = min_y + (min_y - new_y)
 		partido.pelota_velocidad_y = -partido.pelota_velocidad_y # cambio de dirección
 	partido.pelota_y = new_y
 	# x
 	new_x = partido.pelota_x + partido.pelota_velocidad_x * s	
-	#print("mover pelota x=" + str(new_x))	
 	if new_x > max_x:	# consigue punto jugador 1
-		#print("punto jugador 1 y pausa")
 		s1 = datetime.timedelta(seconds=1)
 		partido.pausa = True
 		partido.finDePausa = t2 + s1
@@ -244,13 +393,16 @@ def fMoverPelota(partido):
 		partido.pelota_velocidad_x = fSigno(partido.pelota_velocidad_x) * pelota_velocidad_c
 		partido.pelota_velocidad_y = fSigno(partido.pelota_velocidad_y) * pelota_velocidad_c
 		if partido.jugador1_marcador >= max_puntuacion:
+			if patata != 0:
+				patata = 0
+				BlockPartido(partido)
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
+			patata = 1
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
 		return
 	elif new_x < min_x:	# consigue punto jugador 2
-		#print("punto jugador 2 y pausa")
 		s1 = datetime.timedelta(seconds=1)
 		partido.pausa = True
 		partido.finDePausa = t2 + s1
@@ -260,33 +412,32 @@ def fMoverPelota(partido):
 		partido.pelota_velocidad_x = fSigno(partido.pelota_velocidad_x) * pelota_velocidad_c
 		partido.pelota_velocidad_y = fSigno(partido.pelota_velocidad_y) * pelota_velocidad_c
 		if partido.jugador2_marcador >= max_puntuacion:
+			if patata != 0:
+				patata = 0
+				BlockPartido(partido)
 			partido.terminado = True
 			partido.fin = t2
 			fPartidoAnotarResultado(partido)
+			patata = 1
 		partido.pelota_actualizacion = t2 # en todos los casos se fija pelota_actualizacion
 		return
 	partido.pelota_x = new_x # actualiza de momento
-	#print("probar si pelota toca raquetas")
 	if fJugador1TocaPelota(partido):
-		print("toca jugador 1")
 		if new_x < jugador1_rebote_raqueta:
 			new_x = jugador1_rebote_raqueta + (jugador1_rebote_raqueta - new_x)
 		suma_vy = math.sin((partido.pelota_y - partido.jugador1_y) / dist_y) * pelota_velocidad_c * 0.8
-		print(suma_vy)
 		partido.pelota_velocidad_y += suma_vy
 		partido.pelota_velocidad_x = - partido.pelota_velocidad_x # rebote en raqueta
 		result = ajusta_velocidad_pelota(partido.pelota_velocidad_x, partido.pelota_velocidad_y)
 		partido.pelota_velocidad_x = result['x']
 		partido.pelota_velocidad_y = result['y']
 	if fJugador2TocaPelota(partido):
-		print("toca jugador 2")
 		if new_x > jugador2_rebote_raqueta:
 			new_x = jugador2_rebote_raqueta - (new_x - jugador2_rebote_raqueta)
 		suma_vy = math.sin((partido.pelota_y - partido.jugador2_y) / dist_y) * pelota_velocidad_c * 0.8
-		print(suma_vy)
 		partido.pelota_velocidad_y += suma_vy
 		partido.pelota_velocidad_x = - partido.pelota_velocidad_x # rebote en raqueta
-		result = ajusta_velocidad_pelota(partido.pelota_velocidad_x, partido.pelota_velocidad_y)
+		result = ajusta_velocidad_pelota2(partido.pelota_velocidad_x, partido.pelota_velocidad_y)
 		partido.pelota_velocidad_x = result['x']
 		partido.pelota_velocidad_y = result['y']
 	partido.pelota_x = new_x
@@ -297,13 +448,10 @@ def fEnviarStatus(mensajeStatus):
 	aMensajeStatus = mensajeStatus.split(";")
 	idPartido = int(aMensajeStatus[0])
 	myLanguage = aMensajeStatus[1]
-	#print(idPartido)
 	try:
 		partido = Partido_enJuego.objects.get(id=idPartido) 
 	except Partido_enJuego.DoesNotExist:
-		#print("error al buscar partido")
 		return
-	#print("mover")
 	fMoverPelota(partido) # cambia pelota_actualizacion
 	fMoverJugador1(partido)
 	fMoverJugador2(partido)
@@ -318,8 +466,16 @@ def fEnviarStatus(mensajeStatus):
 	if not partido.empezado:
 		status =	status + "e," +	_("Waiting player 2") + ";"
 		if partido.tipo == "T":
-			status = status + "j1n," + partido.jugador1.username + ";"
-			status = status + "j2n," + partido.jugador2.username + ";"
+			user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador1)
+			alias1 = user_settings.alias
+			if alias1 == "":
+				alias1 = partido.jugador1.username
+			user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador2)
+			alias2 = user_settings.alias
+			if alias2 == "":
+				alias2 = partido.jugador2.username
+			status = status + "j1n," + alias1 + ";"
+			status = status + "j2n," + alias2 + ";"
 		else: # "R"
 			status = status + "j1n," + partido.jugador1.username + ";"
 	else:
@@ -330,8 +486,20 @@ def fEnviarStatus(mensajeStatus):
 		s = diffTimeSec(t1, t2)
 		if s<2:
 			# los nombre sirven especialmente para la vista del jugador que acaba de entrar
-			status =	status + "j1n," + partido.jugador1.username + ";"
-			status =	status + "j2n," + partido.jugador2.username + ";"
+			if partido.tipo == "T":
+				user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador1)
+				alias1 = user_settings.alias
+				if alias1 == "":
+					alias1 = partido.jugador1.username
+				user_settings, created = UserSettings.objects.get_or_create(user=partido.jugador2)
+				alias2 = user_settings.alias
+				if alias2 == "":
+					alias2 = partido.jugador2.username
+				status = status + "j1n," + alias1 + ";"
+				status = status + "j2n," + alias2 + ";"
+			else:
+				status =	status + "j1n," + partido.jugador1.username + ";"
+				status =	status + "j2n," + partido.jugador2.username + ";"
 			status = status + "e," + _("Playing") + ";"
 	if partido.terminado:
 		status =	status + "j1m," + str(partido.jugador1_marcador) + ";"
@@ -344,7 +512,6 @@ def fun_keys(request): # process aj_keys
 	if not request.user.is_authenticated:
 		return
 	mensajeKey = request.POST.get('mensaje') # mensajeKey = idPartido + ";" + numJugador + ";" + key # numJugador 1 o 2 (izq o der)
-	#print("mensajeKey: idPartido;numJugador;key=" + mensajeKey + "*")
 	fRecibirKey(mensajeKey)
 	return JsonResponse({}, status=200)
 
@@ -352,9 +519,7 @@ def fun_status(request): # process aj_status
 	if not request.user.is_authenticated:
 		return
 	mensajeStatus = request.POST.get('mensaje') # mensajeStatus = idPartido;myLanguage
-	#print("mensajeStatus: idPartido=" + mensajeStatus)
 	strStatus = fEnviarStatus(mensajeStatus)
-	print("back: " + strStatus) # !!!
 	return JsonResponse({"mensaje": strStatus}, status=200)
 	
 def fun_rearranque(request, vTipo): # vTipo: "T" = torneo, "R" = rápida
@@ -400,22 +565,48 @@ def fun_rearranque(request, vTipo): # vTipo: "T" = torneo, "R" = rápida
 	# numJugador: 1 = izq, 2 = der
 	result['response'] = render(request, 'partidos/pantallaPong_t.html', mycontext)
 	# enviar el html-javascript que atiende el partido cambiando: idPartido, numJugador, myLanguage, limiteHoraPartido
-	result['ok'] = True
+	if partido.empezado == True or (partido.desconectado == False and partido.tipo == "R"):
+		result['ok'] = True
 	return result
+
+def numero_fases(idTorneo):
+	instancia = Torneo.objects.get(id=idTorneo)
+	x = instancia.jugadores.count()
+	fases = 0
+	while x > 1:
+		fases = fases + 1
+		x = x / 2
+	return fases
+
+def player_has_played(usern, idTorneo, fase):
+	instancia = Torneo.objects.get(id=idTorneo)
+	try:
+		faseTorneo = FaseTorneo.objects.get(torneo=instancia, fase=fase)
+	except FaseTorneo.DoesNotExist:
+		return False
+	lpr = faseTorneo.lista_partidos_resultados
+	name = usern + " {"
+	if name in lpr:
+		return False
+	# jugador1_marcador
+	return True
+
 
 def fun_arranque_torneo(request): #arranque torneo
 	if not request.user.is_authenticated:
 		return redirect('home')
-	# nuevo >>
-	result = fun_rearranque(request, "T")
-	if result['ok']:
-		return result['response']
+	
 	# << nuevo
 	currentUser = request.user
 	dd = torneo_jugar(currentUser.id)
 	# dd  = { 'ok': True, 'idTorneo': idTorneo, 'fase': fase, 'idJugador1': idJugador1, 'idJugador2': idJugador2 }
 	if not dd['ok'] :
-		return redirect('home')
+		return redirect('home_section')
+	IDE = currentUser.username
+	# nuevo >>
+	result = fun_rearranque(request, "T")
+	if result['ok']:
+		return result['response']
 	activate_language(request)
 	if currentUser.id == dd['idJugador1']:
 		numJugador = 1
@@ -424,14 +615,22 @@ def fun_arranque_torneo(request): #arranque torneo
 		numJugador = 2
 		strOtroJugador = "1"
 	partido_existe = True
+	doble = 0
 	try:
-		partido = Partido_enJuego.objects.get(tipo="T", idTorneo=dd['idTorneo'], nFaseTorneo=dd['fase'], estadoTorneo=strOtroJugador)
+		partido = Partido_enJuego.objects.get(tipo="T", idTorneo=dd['idTorneo'], nFaseTorneo=dd['fase'], estadoTorneo=strOtroJugador, jugador1=currentUser)
 		# busca el primer partido enJuego que cumple las condiciones
 		# los estados en caso de torneo son: "0": sin jugadores, "1": jugador 1 dentro, "2": jugador 2 dentro, "A": ambos jugadores dentro
 	except Partido_enJuego.DoesNotExist:
+		doble = doble + 1
+	try:
+		partido = Partido_enJuego.objects.get(tipo="T", idTorneo=dd['idTorneo'], nFaseTorneo=dd['fase'], estadoTorneo=strOtroJugador, jugador2=currentUser)
+		# busca el primer partido enJuego que cumple las condiciones
+		# los estados en caso de torneo son: "0": sin jugadores, "1": jugador 1 dentro, "2": jugador 2 dentro, "A": ambos jugadores dentro
+	except Partido_enJuego.DoesNotExist:
+		doble = doble + 1
+	if doble >= 2:
 		partido_existe = False
 	if partido_existe: #
-		print("partido de torneo encontrado")
 		t2 = datetime.datetime.now()
 		s1 = datetime.timedelta(seconds=1)
 		partido.estadoTorneo = "A" # ambos jugadores dentro
@@ -444,7 +643,8 @@ def fun_arranque_torneo(request): #arranque torneo
 		partido.save()
 		idPartido = partido.id
 	else:
-		print("partido de torneo nuevo")
+		if (dd['fase'] > numero_fases(dd['idTorneo']) or player_has_played(IDE, dd['idTorneo'], dd['fase'])):
+			return JsonResponse({'caca': 'chupi'})
 		partido = Partido_enJuego() #crea nuevo partido (sin arrancar) y coloca el primer jugador
 		partido.setDateTimes()
 		partido.tipo = "T"
@@ -454,7 +654,7 @@ def fun_arranque_torneo(request): #arranque torneo
 		partido.limiteTiempoTorneo = dd['limiteTiempoTorneo']
 		partido.limiteTiempoConUnJugador = dd['limiteTiempoConUnJugador']
 		partido.jugador1 = User.objects.get(id=dd['idJugador1'])
-		partido.jugador2 = User.objects.get(id=dd['idJugador2'])		
+		partido.jugador2 = User.objects.get(id=dd['idJugador2'])
 		partido.save()
 		idPartido = partido.id
 	myLanguage = request.session.get('myLanguage')
@@ -468,7 +668,6 @@ def fun_arranque_torneo(request): #arranque torneo
 	}
 	# numJugador: 1 = izq, 2 = der
 	return render(request, 'partidos/pantallaPong_t.html', mycontext)
-	# enviar el html-javascript que atiende el partido cambiando: idPartido, numJugador, myLanguage, limiteHoraPartido
 	
 def fun_arranque_rapido(request): # arranque de partido rápido
 	if not request.user.is_authenticated:
