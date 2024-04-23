@@ -11,11 +11,12 @@ then
     echo "PostgreSQL started"
 fi
 
-python manage.py flush --no-input
 python manage.py migrate
 
-python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', '', '$ADMINPASS')"
+# Verificar si el superusuario "admin" ya existe
+python manage.py shell -c "from django.contrib.auth.models import User; User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', '', '$ADMINPASS')"
 
-python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_user('staff', '', '$STAFFPASS', is_staff=True)"
+# Verificar si el usuario "staff" ya existe
+python manage.py shell -c "from django.contrib.auth.models import User; User.objects.filter(username='staff').exists() or User.objects.create_user('staff', '', '$STAFFPASS', is_staff=True)"
 
 exec "$@"

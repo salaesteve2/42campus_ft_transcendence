@@ -10,62 +10,6 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- MENU NAVIGATION BAR -->
-<div class="navigation">
-    <ul>
-      <li class="list">
-        <a href="{% url 'home' %}" onclick="showPage('home')">
-          <span class="icon"><ion-icon name="home"></ion-icon></span>
-          <span class="text">home</span>
-        </a>
-      </li>
-      <li class="list" >
-        <a href="{% url 'arranque_rapido' %}" onclick="showPage('game')">
-          <span class="icon"><ion-icon name="logo-game-controller-a"></ion-icon></span>
-          <span class="text">game</span>
-        </a>
-      </li>
-      <li class="list">
-        <a href="#" onclick="showPage('live')">
-          <span class="icon"><ion-icon name="pulse"></ion-icon></span>
-          <span class="text">live</span>
-        </a>
-      </li>
-      <li class="list">
-        <a href="{% url 'partidos_list' %}" onclick="showPage('stats')">
-          <span class="icon"><ion-icon name="stats"></ion-icon></span>
-          <span class="text">stats</span>
-        </a>
-      </li>
-      <li class="list">
-        <a href="#" onclick="showPage('settings')">
-          <span class="icon"><ion-icon name="settings"></ion-icon></span>
-          <span class="text">options</span>
-        </a>
-      </li>
-      <li class="list">
-        <a href="#" onclick="showPage('usrprofile')">
-          <span class="icon"><ion-icon name="people"></ion-icon></span>
-          <span class="text">profile</span>
-        </a>
-      </li>
-    </ul>
-    <div class="language-container">
-        <ul class="language-list">
-            <li><a href="{% url 'es' %}" class="language-link"><img src="../../static/es-flag.png" alt="Español"> Español</a></li>
-            <li><a href="{% url 'en' %}" class="language-link"><img src="../../static/en-flag.png" alt="English"> English</a></li>
-            <li><a href="{% url 'fr' %}" class="language-link"><img src="../../static/fr-flag.png" alt="English"> Français</a></li>
-        </ul>
-    </div>
-
-   <!-- <p>
-      <a href="{% url 'en' %}">English</a>&nbsp;&nbsp;&nbsp;
-      <a href="{% url 'es' %}">Español</a>&nbsp;&nbsp;&nbsp;
-      <a href="{% url 'fr' %}">Français</a>
-    </p>-->
-  </div>
-  
-  
    <!-- PRIMARY CONTENT SECTION -->
         <!-- en esta seccion se abren diferentes divs para albergar todas las páginas del sitio
              en un site mono página -->
@@ -75,24 +19,84 @@
     <div class="container">
         <h1>{% trans "Welcome!" %} {% trans "Login" %}</h1>
         <!--<h1>{% trans "Login" %}</h1>-->
-        <form method="POST">
+        <form id="miFormulario">
             {% csrf_token %}
-            <table>
-            {{ form.as_table }}
-            </table>
-            
-            <div class="button-group">
-                <p><button type="submit">{% trans "Login" %}</button></p>
-                <p><button type="reset">clear</button></p>
+            <div class="mb-3">
+                <label for="id_username" class="form-label">{% trans "Username" %}</label>
+                <input type="text" class="form-control" id="id_username" name="username">
             </div>
-            <!-- todavia no estamos dados de alta en la bbdd -->
-            <p align = "center"><a href="{% url 'signup' %}">{% trans "I haven't signedup yet" %}</a></p>
+            <div class="mb-3">
+                <label for="id_password" class="form-label">{% trans "Password" %}</label>
+                <input type="password" class="form-control" id="id_password" name="password">
+            </div>
+            <div class="button-group">
+                <p>
+                    <button type="submit" class="btn btn-primary links">
+                        <i class="bi bi-person"></i> {% trans "Login" %}
+                    </button>
+                </p>
+                <p>
+                    <button type="reset" class="btn btn-primary links">
+                        <i class="bi bi-x-circle"></i> {% trans "Clear" %}
+                    </button>
+                </p>
+            </div>
         </form>
+        <script>
+        $(document).ready(function() {
+    $('#miFormulario').submit(function(event) {
+        event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
+        var formData = $(this).serialize(); // Serializar los datos del formulario
+        $.post("{% url 'login' %}", formData)
+            .done(function(response) {
+                // Manejar la respuesta exitosa
+                if (response.error) {
+                    // Si hay un error, muestra un mensaje de error en algún lugar del HTML
+                    $('#mensajeError').text("{% trans 'An error occurred while processing the form.  ' %}");
+                } else if (response.redirect_url) {
+                    localStorage.setItem('username2', response.username2);
+                    // Si hay una URL de redirección, redirige a esa URL
+                    window.location.href = response.redirect_url;
+                    pushStateFunction();
+                } else {
+                    // Manejar otro tipo de respuesta, si es necesario
+                    console.log(response);
+                }
+            })
+            .fail(function(xhr, errmsg, err) {
+                // Manejar el fallo de la solicitud // Obtener el mensaje de error relevante
+                $('#mensajeError').text("{% trans 'Log in error or wrong password ' %}"); // Mostrar el mensaje de error al usuario
+            });
+    });
+});
+
+        </script>
+        <div id="contenido-dinamico">
+            
+        </div>
+        <!-- todavia no estamos dados de alta en la bbdd -->
+        <div id="contenido-a-eliminar3">
+            <p>
+                <a href="#" onclick="mostrarSignup()" class="btn btn-primary links">
+                    <i class="bi bi-person-plus"></i> {% trans "I haven't signed up yet" %}
+                </a>
+            </p>
+        </div>
+        <div id="mensajeError" style="color: red;"></div>
+        <script>
+          function mostrarSignup() {
+                  // Realiza una solicitud AJAX para obtener el contenido del formulario de inicio de sesión desde el servidor
+                  $.get("{% url 'signup' %}", function(data) {
+                      
+                      // Inserta el contenido del formulario de inicio de sesión dentro de un contenedor en la página
+                      $("#contenido-dinamico").html(data);
+                      $("#contenido-a-eliminar3").hide();
+                  });
+          }
+      </script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </div>
 </div>
 </main>
-<footer>
-  (c) 42Madrid excentric pong
-</footer>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<!-- mostrarPartido2() -->
 <!DOCTYPE html>
 <html>
 {% load i18n %}
@@ -7,30 +8,66 @@
 <link rel="icon" type="image/x-icon" href="static/favicon.ico">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
 <script>
+// Función que se ejecuta cuando se presiona una tecla
+function detenerDesplazamientoConFlechas(event) {
+    // Verificar si la tecla presionada es alguna de las flechas (arriba, abajo, izquierda, derecha)
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        // Prevenir la acción predeterminada del navegador, que sería desplazar la página
+        event.preventDefault();
+    }
+}
 
-const vDebug = false;
+// Agregar un escuchador de eventos al documento para el evento 'keydown'
+document.addEventListener('keydown', detenerDesplazamientoConFlechas);
 
-const idPartido = {{ idPartido }}; // enviado por el servidor al generar el html
-const numJugador = {{ numJugador }}; // 1 o 2 // jugador 1 a la izquierda -- jugador 2 a la derecha
-const myLanguage = "{{ myLanguage }}"; 
+vDebug = false;
 
-const limiteDuracionPartido = "{{ limiteDuracionPartido }}";
-const limitePuntosPartido = "20";
+idPartido = '{{ idPartido }}'; // enviado por el servidor al generar el html
+numJugador = '{{ numJugador }}'; // 1 o 2 // jugador 1 a la izquierda -- jugador 2 a la derecha
+myLanguage = "{{ myLanguage }}"; 
 
-const aj_keys = "aj_keys";
-const aj_status = "aj_status";
+anchoPantalla = window.innerWidth;
+altoPantalla = window.innerHeight;
+if (altoPantalla > 2000)
+  alto = altoPantalla;
+else if (altoPantalla > 1000)
+  alto = altoPantalla/2 - 200;
+else
+  alto = altoPantalla/2;
+if (anchoPantalla > 1750)
+  ancho = anchoPantalla + 1600;
+else if (anchoPantalla > 1500)
+  ancho = anchoPantalla + anchoPantalla - 1400;
+else if (anchoPantalla > 1250)
+  ancho = anchoPantalla;
+else if (anchoPantalla > 1000)
+  ancho = anchoPantalla - 700;
+else if (anchoPantalla > 750)
+  ancho = anchoPantalla/2;
+else if (anchoPantalla > 500)
+  ancho = anchoPantalla/2 - 250;
+else
+  ancho = anchoPantalla/3 + 10;
 
-const campo = { ancho: 800, alto: 400  };
-const sep = 15; // separación del jugador con el fondo de la pista
-const raqueta = { ancho: 10, alto: 80 };
-const pelota = { ancho: 15, alto: 15 };
 
-const margen = { arriba: 150, izq: 15 };
-const red = { ancho: 15, alto: campo.alto };
+limiteDuracionPartido = "{{ limiteHoraPartido }}";
+limitePuntosPartido = "3";
 
-const jugador1X0 = 0 - campo.ancho / 2 + sep; // 0 = centro
-const jugador2X0 = 0 + campo.ancho / 2 - sep; // 0 = centro
+aj_keys = "aj_keys";
+aj_status = "aj_status";
+
+campo = { ancho: 800, alto: 400  };
+sep = 15; // separación del jugador con el fondo de la pista
+raqueta = { ancho: 10, alto: 80 };
+pelota = { ancho: 15, alto: 15 };
+
+margen = { arriba: 165 + alto/4, izq: 30 + ancho/5 };
+red = { ancho: 15, alto: campo.alto };
+
+jugador1X0 = 0 - campo.ancho / 2 + sep; // 0 = centro
+jugador2X0 = 0 + campo.ancho / 2 - sep; // 0 = centro
 var jugador1Y0 = 0; // 0 = centro
 var jugador2Y0 = 0; // 0 = centro
 
@@ -62,7 +99,7 @@ function setX(obj, x) {
 
 function coloca() {
   var oTabla = $("#tabla");
-  setX(oTabla, campo.ancho / 2  -  105);
+  setX(oTabla, campo.ancho / 2);
   //
   var oSepara = $("#separa");
   setSize(oSepara, 1, campo.alto);
@@ -96,12 +133,9 @@ function coloca() {
       $("#marca2").text("*");
   //    
   var oInfo = $("#info");
-  setPosition(oInfo, sep, sep);
+  setX(oInfo, campo.ancho / 2 - 20)
   $("#limitePuntosPartido").text(limitePuntosPartido);
-  if (limiteDuracionPartido == "")
-    $("#limiteDuracionPartidoRow").hide();
-  else 
-    $("#limiteDuracionPartido").text(limiteDuracionPartido);
+  $("#limiteDuracionPartido").text(limiteDuracionPartido);
 }
 
 var nOk = 0;
@@ -136,9 +170,11 @@ function sendInfoToServer(key) {
    //sendingKey = false;
 }
 
+var mensaje2 = " ";
+
  function getCommandsFromServer() {
    var mensaje = idPartido.toString() + ";" + myLanguage; // <<
-   var obj1 = { "mensaje": mensaje }; 
+   var obj1 = { "mensaje": mensaje };
    $.ajax({
         url:   aj_status,    // url que recibe la peticion
         type:  'POST',         // metodo de envio
@@ -147,17 +183,23 @@ function sendInfoToServer(key) {
         dataType: 'json',
         success: function (response) { // una vez que la url recibe el request lo procesa y devuelve response
               mensaje = response['mensaje'].toString();
+              mensaje2 = response['mensaje'].toString();
               nOk++;
               if (vDebug) {
                   $("#getPostStatusOk").text("post status ok --" + nOk + " -- " + mensaje);
               }
               processCommands(mensaje); // procesa el mensaje con la lista de comandos
+
          },
          error:  function (error) { 
               nErr++;
               $("#getPostStatusErr").text("post status error -- " + nErr + " -- " + error.toString() );
           }
     });
+    if (mensaje2) {
+      return mensaje2;
+    }
+    return " ";
 }
 
 function processCommands(comandos) {    
@@ -241,13 +283,11 @@ function setKeydown() {
         // up arrow 
         if (e.which === 38 && ! upArrow) {
             upArrow = true;
-            $("#tecla").text("↑"); 
             sendInfoToServer("up_begin");
       }
       // down arrow
       else if (e.which === 40 && ! downArrow) {
           downArrow = true;
-          $("#tecla").text("↓");
           sendInfoToServer("down_begin");
      }
    } );
@@ -258,17 +298,16 @@ function setKeyup() {
         // up arrow
         if (e.which === 38 && upArrow) {
             upArrow = false;
-            $("#tecla").text("_");
             sendInfoToServer("up_end");
       }
       // down arrow
       else if (e.which === 40 && downArrow) {
             downArrow = false;
-            $("#tecla").text("_");
             sendInfoToServer("down_end");
      }
    } );
 }
+coloca();
 
 function loop() {
     if (stop) return;
@@ -276,31 +315,136 @@ function loop() {
     requestAnimationFrame(loop); // al siguiente frame ejecuta loop
 }
 
+tmp = "";
+cont = 0;
+
 function loop2() {
     if (stop) return;
-    if (! sendingKey)  getCommandsFromServer();
-    setTimeout(loop2, 90);
+    let temp2 = "";
+    if (! sendingKey)  {
+      temp2 = getCommandsFromServer();
+      if (temp2 === tmp)
+      {
+        cont++;
+      }
+      else
+      {
+        cont = 0;
+      }
+    }
+    tmp = temp2;
+    if (cont === 80 && limiteDuracionPartido === "")
+    {
+      var hrefValue = localStorage.getItem('number')
+      if (hrefValue === '6')
+      {
+        window.onbeforeunload = guardarEstadoHome2();
+        history.pushState({ view: "home" }, null, "/");
+        localStorage.setItem('number', 1);
+      }
+      if (hrefValue === '11')
+      {
+        window.onbeforeunload = guardarEstadoHome2();
+        history.pushState({ view: "home" }, null, "/");
+        localStorage.setItem('number', 1);
+      }
+      window.location.href = '/';
+      sendInfoToServer("stop");
+    }
+    setTimeout(loop2, 40);
 }
 
 $(document).ready(function(){
-    // al final se preparan lo eventos  cuando el documento está listo >>
-    setKeydown();
-    setKeyup();    
-    $("#b_volver").hide();
-    /*
-    $("#b_comandos").click(function(){
-        var comandos0 = $("#t_comandos").val();
-        var comandos = comandos0.replaceAll(" ","");
-        processCommands(comandos);
+      var jugadorNum = parseInt('{{ numJugador }}'); // Asegúrate de que numJugador se pasa correctamente al JavaScript
+
+      // Selector para determinar cuál pala controlar
+      var selectorPala = (jugadorNum === 1) ? '.jugador1' : '.jugador2';
+      var ultimaPosicionY = $(selectorPala).offset().top; // Guardar la última posición Y para comparar
+
+      $(selectorPala).on('touchstart', function(e) {
+          e.preventDefault(); // Prevenir cualquier comportamiento por defecto al iniciar el toque
+      });
+      $(selectorPala).on('touchmove', function(e) {
+        e.preventDefault();
+        var touchLocation = e.targetTouches[0];
+        var pala = $(this);
+        var nuevaPosicionY = touchLocation.pageY - $(window).scrollTop() - pala.height() / 2;
+
+        // Limita el movimiento dentro del área del juego
+        var limiteSuperior = $('#campo').position().top;
+        var limiteInferior = limiteSuperior + $('#campo').height() - pala.height();
+        nuevaPosicionY = Math.max(limiteSuperior, Math.min(nuevaPosicionY, limiteInferior));
+
+        // Simula tecla arriba o abajo basado en el movimiento
+        var tecla = '';
+        if (nuevaPosicionY < ultimaPosicionY) {
+            tecla = 'up_begin';
+        } else if (nuevaPosicionY > ultimaPosicionY) {
+            tecla = 'down_begin';
+        }
+
+        // Actualizar la posición visual de la pala
+        pala.css('top', nuevaPosicionY + 'px');
+        ultimaPosicionY = nuevaPosicionY; // Actualiza la última posición conocida
+
+        // Si se detectó un movimiento relevante, enviar la tecla al servidor
+        if (tecla !== '') {
+            sendInfoToServer(tecla);
+        }
+
+         // Prevenir el comportamiento por defecto del touchmove
     });
-    */
-    // se coloca todo >>
-    coloca();
-    //
-    // start the game
-    // requestAnimationFrame(loop); // old !!!!!!!!!!!!
-    loop2(); // new
-}); // << fin documento listo
+
+    $(window).on('resize', function(){
+        actualizarPosiciones();
+    });
+    $(document).on('DOMContentLoaded', function(){
+        actualizarPosiciones();
+    });
+    function actualizarPosiciones() {
+        // Recalcular las dimensiones del campo
+        anchoPantalla = window.innerWidth;
+        altoPantalla = window.innerHeight;
+        // Recalcula las dimensiones del campo de juego
+        if (altoPantalla > 2000)
+          alto = altoPantalla;
+        else if (altoPantalla > 1000)
+          alto = altoPantalla/2 - 200;
+        else
+          alto = altoPantalla/2;
+        if (anchoPantalla > 1750)
+          ancho = anchoPantalla + 1600;
+        else if (anchoPantalla > 1500)
+          ancho = anchoPantalla + anchoPantalla - 1400;
+        else if (anchoPantalla > 1250)
+          ancho = anchoPantalla;
+        else if (anchoPantalla > 1000)
+          ancho = anchoPantalla - 700;
+        else if (anchoPantalla > 750)
+          ancho = anchoPantalla/2;
+        else if (anchoPantalla > 500)
+          ancho = anchoPantalla/2 - 250;
+        else
+          ancho = anchoPantalla/3 + 10;
+        campo = { ancho: 800, alto: 400  };
+        sep = 15; // separación del jugador con el fondo de la pista
+        raqueta = { ancho: 10, alto: 80 };
+        pelota = { ancho: 15, alto: 15 };
+
+        margen = { arriba: 165 + alto/4, izq: 30 + ancho/5 };
+        red = { ancho: 15, alto: campo.alto };
+
+        jugador1X0 = 0 - campo.ancho / 2 + sep; // 0 = centro
+        jugador2X0 = 0 + campo.ancho / 2 - sep; // 0 = centro
+        var jugador1Y0 = 0; // 0 = centro
+        var jugador2Y0 = 0; // 0 = centro
+        // Recalcula las posiciones de los elementos
+        coloca();
+    }
+    setKeydown();
+    setKeyup();
+    loop2();
+});
 
 </script>
 </head>
@@ -320,12 +464,7 @@ $(document).ready(function(){
 <button id="b_comandos">hacer comandos</button>
 -->
 
-<p id="tecla">_</p>
-<p><button id="b_volver" onclick="location.href='{% url 'home' %}';">{% trans "back to home" %}</button></p>
-<p id="getPostStatusOk">_</p>
-<p id="getPostStatusErr">_</p>
-<p id="getPostKeyOk">_</p>
-<p id="getPostKeyErr">_</p>
+<!-- <a href="{% url 'home' %}" class="btn btn-primary links" onclick="pushStateFunction()">{% trans "Home" %}</a> -->
 
 <!--
 <p>
@@ -345,19 +484,22 @@ Ejemplo: pcxy,55,-88; j1cy,77; j2cy,-99; j1m,5; j2m,3; j1n,Pepe; j2n,Luis; e,Jug
 <img src="static/img_y.png" id="red"/>
 
 <!-- jugador 1 azul-->
-<img src="static/img_b.png" id="jugador1"/>
+<img src="static/img_b.png" id="jugador1" class="paddle jugador1"/>
 
 <!-- jugador 2 rojo-->
-<img src="static/img_r.png" id="jugador2"/>
+<img src="static/img_r.png" id="jugador2" class="paddle jugador2"/>
 
 <!-- pelota -->
 <img src="static/img_pg.png" id="pelota"/>
 
 <div id="info">
-<table>
-<tr id="limiteDuracionPartidoRow"><th>{% trans "Match duration limit" %}</th><td id="limiteDuracionPartido"></td></tr>
-<tr><th>{% trans "Match point limit" %}</th><td id="limitePuntosPartido"></td></tr>
-</table>
+  <table>
+  <tr id="limiteDuracionPartidoRow"><th>D:</th><td id="limiteDuracionPartido"></td>
+  </tr>
+  <tr>
+    <th>P:</th><td id="limitePuntosPartido"></td>
+  </tr>
+  </table>
 </div>
 
 </body>

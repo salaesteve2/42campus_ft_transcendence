@@ -35,10 +35,8 @@ services:
     container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=hello_django
-      - POSTGRES_PASSWORD=hello_django
-      - POSTGRES_DB=hello_django_dev
+    env_file:
+      - ./postgres.env.dev
     # networks:
     #   - services
     restart: unless-stopped
@@ -59,9 +57,8 @@ services:
     container_name: pgadmin
     ports:
       - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "email@trascendence.com"
-      PGADMIN_DEFAULT_PASSWORD: "contra123"
+    env_file:
+      - ./pgadmin.env.dev
     # networks:
     #   - services
     restart: unless-stopped
@@ -150,8 +147,8 @@ services:
   postgres_exporter:
     image: wrouesnel/postgres_exporter
     container_name: postgres_exporter
-    environment:
-      DATA_SOURCE_NAME: "postgresql://hello_django:hello_django@db:5432/hello_django_dev?sslmode=disable"
+    env_file:
+      - ./postgres-exporter.env.dev
     ports:
       - "9187:9187"
     # networks:
