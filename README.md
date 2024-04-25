@@ -8,6 +8,28 @@ Este es un proyecto llamado "Transcendence" desarrollado en la escuela 42. El ob
 - Creación y gestión de torneos.
 - Clasificación de jugadores según sus resultados en los torneos.
 
+## Configuración del .env.dev
+
+# Configuración de la base de datos
+DEBUG=0
+SECRET_KEY=mi_secreto_super_seguro
+DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+SQL_ENGINE=django.db.backends.postgresql
+SQL_DATABASE=database_sql
+SQL_USER=usuario_sql
+SQL_PASSWORD=password_sql
+SQL_HOST=db
+SQL_PORT=5432
+DATABASE=postgres
+ADMINPASS=adminpass
+STAFFPASS=staffpass
+ID="..."
+SECRET="..."
+COADDR="0xb..."
+PRKEY="7c5..."
+TZ=Europe/Madrid
+
+
 ## Instrucciones de Uso
 
 1. Clona este repositorio en tu máquina local.
