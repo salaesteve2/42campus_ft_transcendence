@@ -1,6 +1,6 @@
 # 42campus_ft_transcendence
 
-Este es un proyecto llamado "Transcendence" desarrollado en el contexto de la piscina de la escuela 42. El objetivo principal es crear una aplicación web para gestionar torneos de ping pong entre jugadores.
+Este es un proyecto llamado "Transcendence" desarrollado en la escuela 42. El objetivo principal es crear una aplicación web para gestionar torneos de ping pong entre jugadores.
 
 ## Funcionalidades
 
