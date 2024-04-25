@@ -10,6 +10,7 @@ Este es un proyecto llamado "Transcendence" desarrollado en la escuela 42. El ob
 
 ## Configuración del .env.dev
 
+```plaintext
 DEBUG=0
 SECRET_KEY=mi_secreto_super_seguro
 DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
@@ -27,7 +28,7 @@ SECRET="..."
 COADDR="0xb..."
 PRKEY="7c5..."
 TZ=Europe/Madrid
-
+````
 
 ## Instrucciones de Uso
 
