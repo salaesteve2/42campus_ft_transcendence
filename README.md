@@ -25,4 +25,3 @@ Este es un proyecto llamado "Transcendence" desarrollado en el contexto de la pi
 - @salaesteve2
 - @mikevgb
 - @valarcon42madrid
-- Otros colaboradores
